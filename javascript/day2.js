@@ -19,7 +19,7 @@ var surface_area = function (l, w, h) {
     return (2 * l * w) + (2 * w * h) + (2 * h * l);
 };
 var smallest_side = function (l, w, h) {
-    return Math.min.apply(Math, [(l * w), (w * h), (h * l)]);
+    return Math.min((l * w), (w * h), (h * l));
 };
 
 
