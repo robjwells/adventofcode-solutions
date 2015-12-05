@@ -12,12 +12,12 @@ visited = {location}
 
 def new_loc(current_loc, instruction):
     new_loc_table = {
-        '^': current_loc.x, current_loc.y + 1,
-        'v': current_loc.x, current_loc.y - 1,
-        '>': current_loc.x + 1, current_loc.y,
-        '<': current_loc.x - 1, current_loc.y
+        '^': (current_loc.x, current_loc.y + 1),
+        'v': (current_loc.x, current_loc.y - 1),
+        '>': (current_loc.x + 1, current_loc.y),
+        '<': (current_loc.x - 1, current_loc.y)
     }
-    return Point(new_loc_table[instruction])
+    return Point(*new_loc_table[instruction])
 
 
 for char in instructions:
