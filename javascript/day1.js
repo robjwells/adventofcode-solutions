@@ -21,7 +21,7 @@ console.log('Final floor:', final_floor);
 // Part two
 
 var floor = 0,
-    basement_instruction = 1;
+    basement_instruction = 0;
 
 for (let char of instructions) {
     floor += instruction_values[char];
