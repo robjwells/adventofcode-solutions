@@ -20,5 +20,4 @@ for prefix in ['0' * 5, '0' * 6]:
         if result.startswith(prefix):
             print(num, result)
             break
-        else:
-            num += 1
+        num += 1

@@ -18,8 +18,8 @@ wrapping_paper = 0
 for l, w, h in instructions:
     wrapping_paper += surface_area(l, w, h)
     wrapping_paper += smallest_side(l, w, h)  # slack
-else:
-    print('wrapping paper:', wrapping_paper)
+
+print('wrapping paper:', wrapping_paper)
 
 
 # Part two
@@ -30,5 +30,5 @@ for l, w, h in instructions:
     s1, s2, s3 = sorted([l, w, h])
     ribbon += 2 * s1 + 2 * s2
     ribbon += l * w * h  # bow
-else:
-    print('ribbon:', ribbon)
+
+print('ribbon:', ribbon)
