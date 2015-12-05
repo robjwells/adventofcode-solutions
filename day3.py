@@ -7,7 +7,7 @@ with open('day3_input.txt') as f:
 
 Point = namedtuple('Point', ['x', 'y'])
 location = Point(0, 0)
-visited = [location]
+visited = {location}
 
 
 def new_loc(current_loc, instruction):
@@ -26,8 +26,10 @@ for char in instructions:
     location = new_loc(location, char)
     visited.append(location)
 
-print('At least one present:', len(set(visited)))
+print('At least one present:', len(visited))
 
+
+# Part two
 
 santa_loc = Point(0, 0)
 robo_loc = Point(0, 0)
