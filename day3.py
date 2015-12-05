@@ -16,7 +16,7 @@ def new_loc(current_loc, instruction):
         'v': (current_loc.x, current_loc.y - 1),
         '>': (current_loc.x + 1, current_loc.y),
         '<': (current_loc.x - 1, current_loc.y)
-    }
+        }
     return Point(*new_loc_table[instruction])
 
 
