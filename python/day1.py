@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-with open('day1_input.txt') as f:
+with open('../day1_input.txt') as f:
     instructions = f.read().rstrip()
 
 instruction_values = {'(': 1, ')': -1}

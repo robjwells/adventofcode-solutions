@@ -4,7 +4,7 @@
 
 var fs = require('fs');
 
-var instructions = fs.readFileSync('day2_input.txt', 'utf-8')
+var instructions = fs.readFileSync('../day2_input.txt', 'utf-8')
     .trimRight()
     .split('\n')
     .map(function (el) {

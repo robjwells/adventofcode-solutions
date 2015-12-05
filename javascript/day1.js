@@ -4,7 +4,7 @@
 
 var fs = require('fs');
 
-let instructions = fs.readFileSync('day1_input.txt', 'utf-8').split(''),
+let instructions = fs.readFileSync('../day1_input.txt', 'utf-8').split(''),
     instruction_values = {'(': 1, ')': -1};
 
 var final_floor = instructions
