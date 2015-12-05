@@ -24,7 +24,7 @@ def new_loc(current_loc, instruction):
 
 for char in instructions:
     location = new_loc(location, char)
-    visited.append(location)
+    visited.add(location)
 
 print('At least one present:', len(visited))
 
