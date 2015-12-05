@@ -27,7 +27,7 @@ for (let char of instructions) {
     floor += instruction_values[char];
     basement_instruction += 1;
     if (floor === -1) {
-        console.log('First basement instruction:', basement_instruction)
+        console.log('First basement instruction:', basement_instruction);
         break;
     }
-};
+}
