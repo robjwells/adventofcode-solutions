@@ -12,8 +12,8 @@ var md5_digest = function (string) {
 };
 
 var md5_prefix = 'ckczppom';
+var num = 1;
 ['00000', '000000'].forEach(function (prefix) {
-   var num = 1;
    while (true) {
        var digest = md5_digest(md5_prefix + String(num));
        if (digest.startsWith(prefix)) {
