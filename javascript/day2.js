@@ -7,13 +7,7 @@ var fs = require('fs');
 var instructions = fs.readFileSync('../day2_input.txt', 'utf-8')
     .trimRight()
     .split('\n')
-    .map(function (el) {
-        return el
-            .split('x')
-            .map(function (el) {
-                return parseInt(el, 10);
-            });
-    });
+    .map(line => line.split('x').map(num => parseInt(num, 10)));
 
 var surface_area = function (l, w, h) {
     return (2 * l * w) + (2 * w * h) + (2 * h * l);
