@@ -7,8 +7,8 @@ var crypto = require('crypto')
 
 var md5_digest = function (string) {
     var hash = crypto.createHash('md5');
-    hash.update(string, 'utf-8')
-    return hash.digest('hex')
+    hash.update(string, 'utf-8');
+    return hash.digest('hex');
 };
 
 var md5_prefix = 'ckczppom';
