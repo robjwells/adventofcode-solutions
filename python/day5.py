@@ -7,17 +7,17 @@ with open('../day5_input.txt') as f:
 
 
 def is_nice(string):
-    bad_strings = ['ab', 'cd', 'pq', 'xy']
-    for bad in bad_strings:
-        if string.find(bad) != -1:
-            return False
+    # Avoiding using a regex
+    # bad_strings = ['ab', 'cd', 'pq', 'xy']
+    # for bad in bad_strings:
+    #     if string.find(bad) != -1:
+    #         return False
 
+    no_bad_strings = re.search(r'ab|cd|pq|xy', string) is None
     vowels = set('aeiou')
     enough_vowels = len([c for c in string if c in vowels]) >= 3
-
     has_double_char = re.search(r'(.)\1', string) is not None
-
-    return enough_vowels and has_double_char
+    return no_bad_strings and enough_vowels and has_double_char
 
 
 nice_strings = list(filter(is_nice, lines))
