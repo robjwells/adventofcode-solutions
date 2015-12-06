@@ -31,7 +31,7 @@ print('At least one present:', len(visited))
 
 santa_loc = Point(0, 0)
 robo_loc = Point(0, 0)
-visited = {santa_loc, robo_loc}
+visited = {santa_loc}
 
 for idx, char in enumerate(instructions):
     if idx % 2 == 0:  # Santa
