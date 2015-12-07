@@ -13,6 +13,10 @@ def is_nice(string):
     vowels = set('aeiou')
     enough_vowels = len([c for c in string if c in vowels]) >= 3
 
+    # regex alternatives:
+    # no_bad_strings = re.search(r'ab|cd|pq|xy', string) is None
+    # enough_vowels = len(re.findall(r'[aeiou]', string)) >= 3
+
     has_double_char = re.search(r'(.)\1', string) is not None
 
     return no_bad_strings and enough_vowels and has_double_char
