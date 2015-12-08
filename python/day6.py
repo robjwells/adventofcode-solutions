@@ -19,7 +19,7 @@ for instruction, start, _, end in lines:
 #         func = lambda state: True       # Part one
         func = lambda state: state + 1  # Part two
     elif instruction == 'turn off':
-#         func = lambda state: False    # Part two
+#         func = lambda state: False    # Part one
         func = lambda state: state if state == 0 else state - 1  # Part two
     elif instruction == 'toggle':
 #         func = lambda state: not state  # Part one
