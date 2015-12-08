@@ -26,8 +26,8 @@ for instruction, start, _, end in lines:
         func = lambda state: state + 2  # Part two
 
     for col in range(start_x, end_x + 1):
-        for row in range(start_y, end_y + 1):
-            lights[col][row] = func(lights[col][row])
+        row_part = slice(start_y, end_y + 1)
+        lights[col][row_part] = map(func, lights[col][row_part])
 
 
 print(sum(sum(col) for col in lights))
