@@ -22,14 +22,18 @@ var grid = [];
 for (var x = 0; x < 1000; x += 1) {
     grid[x] = [];
     for (var y = 0; y < 1000; y += 1) {
-        grid[x].push(false);
+        // grid[x].push(false);     // Part one
+        grid[x].push(0);
     }
 }
 
 var transformations = {
-    'turn on': state => true,
-    'turn off': state => false,
-    'toggle': state => !state
+    // 'turn on': state => true,    // Part one
+    'turn on': state => state + 1,  // Part two
+    // 'turn off': state => false,  // Part one
+    'turn off': state => state === 0 ? 0 : state -1,    // Part two
+    // 'toggle': state => !state    // Part one
+    'toggle': state => state + 2    // Part two
 };
 
 instructions.forEach(function (line) {
