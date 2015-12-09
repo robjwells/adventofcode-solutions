@@ -3,11 +3,7 @@
 with open('../day6_input.txt') as f:
     lines = [line.rsplit(maxsplit=3) for line in f.read().splitlines()]
 
-# Part one
-# lights = [[False for i in range(1000)] for j in range(1000)]
-
-# Part two
-lights = [[0 for i in range(1000)] for j in range(1000)]
+lights = [[False for i in range(1000)] for j in range(1000)]
 
 for instruction, start, _, end in lines:
     start_x, start_y = [int(part) for part in start.split(',')]
