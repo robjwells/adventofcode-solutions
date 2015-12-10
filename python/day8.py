@@ -1,7 +1,6 @@
 #!/usr/local/bin/python3
 
-from ast import literal_eval    # safer than plain eval
-import re
+from ast import literal_eval    # Safer than plain eval
 
 with open('../day8_input.txt') as f:
     strings = f.read().splitlines()
@@ -12,7 +11,9 @@ total_chars = sum(len(literal_eval(s)) for s in strings)
 print('Part one:', total_symbols - total_chars)
 
 # Part two
-newly_encoded_chars = sum(
-    len(re.escape(s)) + 2   # Add 2 for the (missing) surrounding quotes
-    for s in strings)
-print('Part two:', newly_encoded_chars - total_symbols)
+# Instead of actually escaping the string using re.escape and measuring it,
+# you can work out the number of extra characters needed by counting the
+# characters that would need escaping. Add 2 for the extra surrounding quote
+# marks mentioned in the problem description.
+total_extra_chars = sum(s.count('"') + s.count('\\') + 2 for s in strings)
+print('Part two:', total_extra_chars)
