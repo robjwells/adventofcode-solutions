@@ -15,7 +15,7 @@ var Point = function (x, y) {
         'toString': function () {
             // This is needed to store the Points in a set, because we don't
             // have the luxury of Python's namedtuples and JavaScript Sets
-            // treat all objects and unequal.
+            // treat all objects as unequal.
             return [this.x, this.y].join(',');
         }
     };
