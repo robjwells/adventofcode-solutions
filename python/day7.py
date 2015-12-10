@@ -18,9 +18,9 @@ def solve(wire):
     parts = signal.split()
 
     if len(parts) == 1:
-        result = solve(parts[0])
+        result = solve(parts[0])    # Refers to another wire
     if len(parts) == 2:     # NOT
-        result = 65535 - solve(parts[1])
+        result = 65535 - solve(parts[1])    # Invert 16-bit unsigned integer
     elif len(parts) == 3:
         left, op, right = parts
         if op == 'AND':
