@@ -38,10 +38,10 @@ def solve(wire):
 
 # Part one
 wires = load_input()
-print(solve('a'))
+print('Signal on wire a:', solve('a'))
 
 
 # Part two
 wires = load_input()
 wires['b'] = 16076
-print(solve('a'))
+print('Signal on wire a after overriding b:', solve('a'))
