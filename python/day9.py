@@ -122,8 +122,10 @@ if __name__ == '__main__':
     with open(input_file) as f:
         lines = parse_input(f.read())
     graph = create_graph(lines)
-    start_node = list(graph.connections.keys())[0]
-    path, weight = breadth_first_search(graph, start_node)
 
-    print(f'Shortest path is:\n{path}')
-    print(f'Weight is {weight}')
+    for start_node in graph.connections.keys():
+        print('Starting at', start_node)
+        path, weight = breadth_first_search(graph, start_node)
+        print(f'Shortest path is:\n{path}')
+        print(f'Weight is {weight}')
+        print()
