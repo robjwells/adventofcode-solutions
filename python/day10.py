@@ -2,6 +2,7 @@
 
 puzzle_input = 1113122113
 
+
 def parse_input(sequence):
     char, *text = str(sequence)
     count = 1
@@ -18,8 +19,10 @@ def parse_input(sequence):
         output += str(count) + char
     return output
 
+
 def test_parse_input():
     assert parse_input('211') == '1221'
+
 
 if __name__ == '__main__':
     for x in range(50):

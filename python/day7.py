@@ -12,7 +12,7 @@ def solve(wire):
     signal = wires.get(wire, wire)  # Fallback in case 'wire' is a number
     try:
         return int(signal)
-    except:
+    except ValueError:
         pass
 
     parts = signal.split()
