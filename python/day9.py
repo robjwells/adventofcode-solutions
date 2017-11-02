@@ -3,7 +3,6 @@
 from collections import defaultdict, deque, namedtuple
 import operator
 import pathlib
-import sys
 
 input_file = pathlib.Path(__file__).parent.parent.joinpath('day9_input.txt')
 
@@ -99,10 +98,16 @@ def breadth_first_search(graph: Graph, start: str, mode: str):
         weight = sum(graph.weight(*p) for p in pairs)
         return weight
 
+    total_nodes = len(graph.connections)
+    total_edges = len([e for l in graph.connections.values() for e in l])
+    average_edge_weight = sum([
+        edge.weight for edge_list in graph.connections.values()
+        for edge in edge_list
+        ]) / total_edges
+
     if mode == 'min':
         minimise = True
         check_func = operator.__lt__
-        best_weight = sys.maxsize
     else:
         minimise = False
         check_func = operator.__gt__
@@ -111,10 +116,17 @@ def breadth_first_search(graph: Graph, start: str, mode: str):
     queue = deque([[start]])
     all_nodes = graph.connections.keys()
     best_path = None
+    best_weight = (total_nodes - 1) * average_edge_weight
 
     while queue:
         temp_path = queue.pop()
-        if minimise and check_func(best_weight, total_weight(temp_path)):
+        temp_weight = total_weight(temp_path)
+        if minimise and check_func(best_weight, temp_weight):
+            # Bail if path is too long already when minimising length
+            continue
+        elif check_func((len(temp_path) - 1) * average_edge_weight,
+                        temp_weight):
+            # If the path is below average, move on to the next
             continue
         if all_nodes - set(temp_path):
             # Not visited all nodes yet
@@ -124,7 +136,6 @@ def breadth_first_search(graph: Graph, start: str, mode: str):
                     queue.append(new_path)
         else:
             # Visited all nodes
-            temp_weight = total_weight(temp_path)
             if check_func(temp_weight, best_weight):
                 best_weight = temp_weight
                 best_path = temp_path
