@@ -1,6 +1,10 @@
 #!/usr/local/bin/python3
 
-from collections import deque, namedtuple
+from collections import defaultdict, deque, namedtuple
+import pathlib
+
+input_file = pathlib.Path(__file__).parent.parent.joinpath('day9_input.txt')
+
 
 def parse_input(text):
     """Parse a list of destinations and weights
@@ -39,15 +43,24 @@ Dublin to Belfast = 141'''
 Edge = namedtuple('Edge', ('src', 'dst', 'weight'))
 # Node = namedtuple('Node', ('value')) # Might just be able to use strings
 
+
 class Graph:
     """Undirected weighted graph"""
     def __init__(self):
-        self.connections = dict()
+        self.connections = defaultdict(list)
+
+    def __str__(self):
+        output = ''
+        for l in self.connections.values():
+            output += '\n'.join(
+                str(e) for e in l)
+            output += '\n\n'
+        return output.rstrip()
 
     def add_edge(self, src: str, dst: str, weight: int):
         """Add an edge to the graph and corresponding nodes if new"""
-        self.connections[src][dst] = Edge(src, dst, weight)
-        self.connections[dst][src] = Edge(dst, src, weight)
+        self.connections[src].append(Edge(src, dst, weight))
+        self.connections[dst].append(Edge(dst, src, weight))
 
     def weight(self, src: str, dst: str):
         """Return the weight between two nodes if edge exists"""
@@ -56,3 +69,17 @@ class Graph:
     def edges(self, node: str):
         """Return all edges for node"""
         return self.connections[node].values()
+
+
+def create_graph(parsed_lines):
+    """Create a graph from lines parsed from the input file"""
+    graph = Graph()
+    for src, dst, weight in lines:
+        graph.add_edge(src, dst, weight)
+    return graph
+
+
+if __name__ == '__main__':
+    with open(input_file) as f:
+        lines = parse_input(f.read())
+    graph = create_graph(lines)
