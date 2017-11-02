@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
 from collections import defaultdict, deque, namedtuple
+import operator
 import pathlib
 import sys
 
@@ -82,28 +83,38 @@ def create_graph(parsed_lines):
     return graph
 
 
-def breadth_first_search(graph: Graph, start: str,
-                         check_func, weight_default):
-    """Search the graph for the 'best' path that visits all nodes
+def breadth_first_search(graph: Graph, start: str, mode: str):
+    """Search the graph for the best path that visits all nodes
 
-    Returns the path that is best according to the check_func function,
-    this allows the search to be generalised. For instance, to have the
-    shortest path pass in a less-than check.
+    Returns the path that is best according to the mode: either min or
+    max.
+
+    The string mode is a bit of a hack, and removes the ability to
+    have a generic checking function. But it also allows me to optimise
+    the minimisation case by skipping paths that are too long despite
+    not visiting all nodes.
     """
     def total_weight(path):
         pairs = zip(path, path[1:])
         weight = sum(graph.weight(*p) for p in pairs)
         return weight
 
+    if mode == 'min':
+        minimise = True
+        check_func = operator.__lt__
+        best_weight = sys.maxsize
+    else:
+        minimise = False
+        check_func = operator.__gt__
+        best_weight = 0
+
     queue = deque([[start]])
     all_nodes = graph.connections.keys()
-
     best_path = None
-    best_weight = weight_default
 
     while queue:
         temp_path = queue.pop()
-        if check_func(best_weight, total_weight(temp_path)):
+        if minimise and check_func(best_weight, total_weight(temp_path)):
             continue
         if all_nodes - set(temp_path):
             # Not visited all nodes yet
@@ -123,16 +134,15 @@ def breadth_first_search(graph: Graph, start: str,
 
 def search_all_min(graph):
     results = []
-    for start_node in graph.connections.keys():
-        results.append(breadth_first_search(
-            graph, start_node, lambda x, y: x < y, sys.maxsize))
+    for start_node in list(graph.connections.keys()):
+        results.append(breadth_first_search(graph, start_node, mode='min'))
     return min(results, key=lambda x: x[1])
+
 
 def search_all_max(graph):
     results = []
-    for start_node in graph.connections.keys():
-        results.append(breadth_first_search(
-            graph, start_node, lambda x, y: x >= y, -1))
+    for start_node in list(graph.connections.keys()):
+        results.append(breadth_first_search(graph, start_node, mode='max'))
     return max(results, key=lambda x: x[1])
 
 
@@ -141,25 +151,5 @@ if __name__ == '__main__':
         lines = parse_input(f.read())
     graph = create_graph(lines)
 
-#     print(search_all_min(graph))
-    print(search_all_max(graph))
-
-#     results = [
-#         (start_node, *breadth_first_search(graph, start_node,
-#                                            lambda x, y: x <= y, sys.maxsize))
-#         for start_node in graph.connections.keys()
-#         ]
-#
-#     for start, path, weight in sorted(results, key=lambda x: x[2]):
-#         print(f'{weight}  {start:16}{path}')
-#
-#     print('\n')
-#
-#     results = [
-#         (start_node, *breadth_first_search(graph, start_node,
-#                                            lambda x, y: x > y, 0))
-#         for start_node in graph.connections.keys()
-#         ]
-#
-#     for start, path, weight in sorted(results, key=lambda x: x[2]):
-#         print(f'{weight}  {start:16}{path}')
+    print('Shortest:', search_all_min(graph))
+    print('Longest:', search_all_max(graph))
