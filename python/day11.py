@@ -38,8 +38,6 @@ def clean_bad_letters(password):
 
 def increment_letter(letter):
     ok_letters = 'abcdefghjkmnpqrstuvwxyz'
-    if letter in 'iol':
-        letter = {'i': 'j', 'l': 'm', 'o': 'p'}[letter]
     cur_index = ok_letters.index(letter)
     if cur_index == len(ok_letters) - 1:
         new_index = 0
