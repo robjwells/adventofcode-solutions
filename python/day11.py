@@ -3,8 +3,6 @@
 import re
 import string
 
-puzzle_input = 'vzbxkghb'
-
 
 def validate_password(password):
     windowed = (''.join(t) for t in zip(password, password[1:], password[2:]))
@@ -62,6 +60,8 @@ def increment_password(pw_list, pw_index=None):
 
 def new_password(current_password):
     candidate = clean_bad_letters(current_password)
+    if candidate == current_password:
+        candidate = increment_password(list(candidate))
     while not validate_password(candidate):
         candidate = ''.join(increment_password(list(candidate)))
     return candidate
@@ -81,4 +81,9 @@ def test_new_password():
 
 
 if __name__ == '__main__':
-    print(new_password(puzzle_input))
+    # Part one
+    puzzle_input = 'vzbxkghb'
+    part_one_pw = new_password(puzzle_input)
+    print(part_one_pw)
+    # Part two
+    print(new_password(part_one_pw))
