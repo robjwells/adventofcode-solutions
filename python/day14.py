@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 
+from collections import defaultdict
 import pathlib
 import re
 
@@ -62,10 +63,26 @@ Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.'''
 if __name__ == '__main__':
     reindeers = parse_input(input_file.read_text())
 
-    # Part one
     race_time = 2503
+
+    # Part one
     print(max([
         calc_distance(race_time, reindeers[k]['speed'],
                       reindeers[k]['flight'], reindeers[k]['rest'])
         for k in reindeers
         ]))
+
+    # Part two
+    reindeer_scores = defaultdict(int)
+    for time in range(1, race_time + 1):
+        distances = defaultdict(int)
+        for r in reindeers:
+            distances[r] = calc_distance(
+                time, reindeers[r]['speed'],
+                reindeers[r]['flight'], reindeers[r]['rest'])
+        ordered = sorted(distances.items(), key=lambda x: x[1], reverse=True)
+        top_score = ordered[0][1]
+        leaders = [r for r, d in ordered if d == top_score]
+        for r in leaders:
+            reindeer_scores[r] += 1
+    print(max(reindeer_scores.items(), key=lambda x: x[1]))
