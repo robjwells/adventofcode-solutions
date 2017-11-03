@@ -106,4 +106,18 @@ def test_sum_happiness():
 if __name__ == '__main__':
     with open(input_file) as f:
         happiness_dict = parse_happiness(f.read())
-    print(find_best_plan(happiness_dict))
+
+    # Part one
+    p1_change, p1_plan = find_best_plan(happiness_dict)
+    print(f'Part one: {p1_change}, {"".join(p1_plan)}')
+
+    # Part two
+    # Add myself to happiness dict, with 0 change
+    guests_only = list(happiness_dict.keys())
+    happiness_dict['Z'] = dict()
+    for g in guests_only:
+        happiness_dict[g]['Z'] = 0
+        happiness_dict['Z'][g] = 0
+
+    p2_change, p2_plan = find_best_plan(happiness_dict)
+    print(f'Part two: {p2_change}, {"".join(p2_plan)}')
