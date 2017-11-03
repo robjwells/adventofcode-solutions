@@ -1,5 +1,7 @@
 #!/usr/local/bin/python3
 
+from functools import reduce
+import operator
 import pathlib
 
 input_file = pathlib.Path(__file__).parent.parent.joinpath('day15_input.txt')
@@ -26,3 +28,40 @@ Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3'''
         Cinnamon=dict(
             capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
     assert parse_input(sample_input) == expected
+
+
+def cookie_score(recipe, ingredient_dict, ignore_calories=True):
+    recipe = filter(lambda t: t[1] > 0, recipe)
+    qual_scores = []
+    for ingredient, amount in recipe:
+        ing_score = [
+            amount * magnitude
+            for quality, magnitude in ingredient_dict[ingredient].items()
+            if quality != 'calories']
+        qual_scores.append(ing_score)
+    qual_totals = map(sum, zip(*qual_scores))
+    # Set negative numbers to zero
+    qual_totals = map(lambda x: x if x > 0 else 0, qual_totals)
+    cookie_score = reduce(operator.mul, qual_totals)
+    return cookie_score
+
+
+def test_score():
+    sample_data = dict(
+        Butterscotch=dict(
+            capacity=-1, durability=-2, flavor=6, texture=3, calories=8),
+        Cinnamon=dict(
+            capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
+    recipe = [('Butterscotch', 44), ('Cinnamon', 56)]
+    assert cookie_score(recipe, sample_data) == 62842880
+
+
+def test_score_zero():
+    """Score is zero when any ingredients have negative total"""
+    sample_data = dict(
+        Butterscotch=dict(
+            capacity=-1, durability=-2, flavor=6, texture=3, calories=8),
+        Cinnamon=dict(
+            capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
+    recipe = [('Butterscotch', 100)]
+    assert cookie_score(recipe, sample_data) == 0
