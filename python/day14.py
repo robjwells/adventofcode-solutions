@@ -18,7 +18,8 @@ def calc_distance(race_time, speed, flight_time, rest_time):
 
 
 def parse_input(text):
-    regex = re.compile(r'''
+    regex = re.compile(
+        r'''
         ^
         (?P<name>\w+) \D+
         (?P<speed>\d+) \D+
@@ -56,3 +57,15 @@ Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.'''
     assert parse_input(sample_input) == dict(
         Comet=dict(speed=14, flight=10, rest=127),
         Dancer=dict(speed=16, flight=11, rest=162))
+
+
+if __name__ == '__main__':
+    reindeers = parse_input(input_file.read_text())
+
+    # Part one
+    race_time = 2503
+    print(max([
+        calc_distance(race_time, reindeers[k]['speed'],
+                      reindeers[k]['flight'], reindeers[k]['rest'])
+        for k in reindeers
+        ]))
