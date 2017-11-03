@@ -11,7 +11,8 @@ def sum_data(d):
     total = 0
     if isinstance(d, dict):
         d = d.values()
-        if 'red' in d: return 0
+        if 'red' in d:
+            return 0
     for item in d:
         if isinstance(item, int):
             total += item
