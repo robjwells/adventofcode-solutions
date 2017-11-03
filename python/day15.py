@@ -31,14 +31,12 @@ Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3'''
 
 
 def cookie_score(recipe, ingredient_dict, ignore_calories=True):
-    recipe = filter(lambda t: t[1] > 0, recipe)
-    qual_scores = []
-    for ingredient, amount in recipe:
-        ing_score = [
-            amount * magnitude
+    qual_scores = [
+        [amount * magnitude
             for quality, magnitude in ingredient_dict[ingredient].items()
             if quality != 'calories']
-        qual_scores.append(ing_score)
+        for ingredient, amount in recipe]
+
     qual_totals = map(sum, zip(*qual_scores))
     # Set negative numbers to zero
     qual_totals = map(lambda x: x if x > 0 else 0, qual_totals)
