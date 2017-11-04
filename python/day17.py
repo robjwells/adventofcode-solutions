@@ -21,6 +21,9 @@ def brute_force(containers, amount):
     return (number_combos, min_containers_ways)
 
 
+# I got completely stuck on the recursion (it'd been a while!)
+# and was helped along by this blog post:
+# https://blog.jverkamp.com/2015/12/17/advent-of-code-day-17/
 def find_containers(containers, amount):
     if not amount:
         yield []
@@ -45,10 +48,9 @@ def recursive(containers, amount):
     number_combos = len(matching_containers)
 
     # Part two
-    matching_containers.sort(key=len)
-    min_containers = len(matching_containers[0])
-    min_ways = len(
-        [c for c in matching_containers if len(c) == min_containers])
+    min_containers = len(min(matching_containers, key=len))
+    min_ways = len([c for c in matching_containers
+                    if len(c) == min_containers])
     return (number_combos, min_ways)
 
 
