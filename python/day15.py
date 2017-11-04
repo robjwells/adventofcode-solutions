@@ -63,3 +63,48 @@ def test_score_zero():
             capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
     recipe = [('Butterscotch', 100)]
     assert cookie_score(recipe, sample_data) == 0
+
+
+def add_lists(*lists):
+    """Add two lists together without numpy
+
+    For example, given lists:
+        [1, 2]  [3, 4]
+    The result is:
+        [4, 6]
+
+    Lists are sliced to prevent mutation.
+    """
+    lists = (l[:] for l in lists)
+    return list(map(sum, zip(*lists)))
+
+
+single_changes = (1, -1, 0, 0)
+single_change_permutations = set(permutations(single_changes))
+
+
+# This is more general but slower than the range-based version below
+def combinations(length, total):
+    """Return a tuple of given length containing integers with sum total"""
+    if length == 1:
+        yield (total,)
+        return
+    for n in range(total + 1):
+        x = n
+        for y in combinations(length - 1, total - x):
+            yield (x,) + y
+
+
+# This is about twice as fast as the general recursive version above
+def combo_four(total):
+    """Return a tuple of four integers totalling 100"""
+    for i in range(total + 1):
+        for j in range(total + 1 - i):
+            for k in range(total + 1 - i - j):
+                l = total - i - j - k
+                yield (i, j, k, l)
+
+
+def brute_force_cookie(ingredients, teaspoons):
+    """Choose best from all possible recipes for number of teaspoons"""
+    pass
