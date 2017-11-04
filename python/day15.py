@@ -122,6 +122,9 @@ def random_recipe(ingredients, teaspoons):
     return amounts + [teaspoons - sum(amounts)]
 
 
+# This is quicker, almost never gets the top-score cookie wrong
+# but gets the 500-calorie cookie wrong about 5% of the time.
+# However, it is roughly 3 times faster than the brute-force search.
 def search_for_best_cookie(starting_recipe, ingredients, teaspoons,
                            recipes_tried, cal_target=500):
     """Incrementally improve starting recipe until it can’t be better"""
@@ -160,7 +163,7 @@ def search_for_best_cookie(starting_recipe, ingredients, teaspoons,
 
     starting_recipe, best_score, best_cals = initial_check(starting_recipe)
     if not best_score:
-        return 0, None
+        return (0, 0)
 
     best_calorie_limit_score = 0
 
@@ -174,19 +177,18 @@ def search_for_best_cookie(starting_recipe, ingredients, teaspoons,
         if score >= best_score:
             best_score = score
             recipes_to_add.extend(new_recipes(current))
-        if score and abs(cal_target - calories) < best_cals:
+        if score and abs(cal_target - calories) <= abs(cal_target - best_cals):
             best_cals = calories
             if calories == cal_target and score > best_calorie_limit_score:
                 best_calorie_limit_score = score
-#             if not recipes_to_add:
-#                 recipes_to_add.extend(new_recipes(current))
+            recipes_to_add.extend(new_recipes(current))
         recipes_to_try.extend(recipes_to_add)
         recipes_tried.add(current)
 
     return best_score, best_calorie_limit_score
 
 
-def repeated_search(ingredients, iterations):
+def repeated_search(ingredients, teaspoons, iterations):
     scores = []
     visited = set()
     while iterations:
@@ -196,21 +198,24 @@ def repeated_search(ingredients, iterations):
         else:
             iterations -= 1
         score = search_for_best_cookie(
-            random_recipe(ingredients, 100),
-            ingredients, 100, recipes_tried = visited)
-        if score:
+            recipe, ingredients, 100,
+            recipes_tried=visited)
+        if sum(score):
             scores.append(score)
-    return max(scores, default=0)
+    if not scores:
+        return (0, 0)
+    else:
+        return (max(t[0] for t in scores),
+                max(t[1] for t in scores))
 
 
 if __name__ == '__main__':
     ingredients = parse_input(input_file.read_text())
-#     p1_cookie, p2_cookie = brute_force_cookie(ingredients, 100)
-#     print('Brute force search')
-#     print(f'Part one: {p1_cookie}')
-#     print(f'Part two: {p2_cookie}')
-
-    p1_cookie, p2_cookie = repeated_search(ingredients, 5000)
+    p1_cookie, p2_cookie = brute_force_cookie(ingredients, 100)
+    print('Brute force search')
+    print(f'Part one: {p1_cookie}')
+    print(f'Part two: {p2_cookie}')
+    p1_cookie, p2_cookie = repeated_search(ingredients, 100, 2000)
     print('Incremental random search')
     print(f'Part one: {p1_cookie}')
     print(f'Part two: {p2_cookie}')
