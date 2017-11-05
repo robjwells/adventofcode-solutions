@@ -47,6 +47,11 @@ class Grid:
                    if 0 <= i < self.total_lights]
         return indices
 
+    def neighbours_lit(self, target):
+        """Return the number of neighbours that are turned on"""
+        indices = self._neighbour_indices(target)
+        return sum(self.lights[idx] for idx in indices)
+
 
 def test_parse():
     assert Grid._parse_input('......\n######') == [0, 0, 0, 0, 0, 0,
@@ -71,3 +76,16 @@ def test_neighbours():
     assert sorted(g._neighbour_indices(7)) == [0, 1, 2, 6, 8, 12, 13, 14]
     assert sorted(g._neighbour_indices(29)) == [22, 23, 28, 34, 35]
     assert sorted(g._neighbour_indices(35)) == [28, 29, 34]
+
+
+def test_neighbours_lit():
+    lights = '''\
+....
+.##.
+.##.
+....'''
+    g = Grid(lights_string=lights, width=4)
+    assert g.neighbours_lit(0) == 1
+    assert g.neighbours_lit(4) == 2
+    assert g.neighbours_lit(5) == 3
+    assert g.neighbours_lit(14) == 2
