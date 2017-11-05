@@ -47,10 +47,33 @@ class Grid:
                    if 0 <= i < self.total_lights]
         return indices
 
-    def neighbours_lit(self, target):
-        """Return the number of neighbours that are turned on"""
+    def neighbours_lit(self, target, light_state):
+        """Return the number of neighbours that are turned on
+
+        light_state is a list of lights, so toggles don't affect
+        other toggles in the same animation step.
+        """
         indices = self._neighbour_indices(target)
-        return sum(self.lights[idx] for idx in indices)
+        return sum(light_state[idx] for idx in indices)
+
+    def toggle(self, index, light_state):
+        """Toggle the light at index based on neighbours
+
+        light_state is a list of lights, so toggles don't affect
+        other toggles in the same animation step.
+
+        A light which is on stays on when 2 or 3 neighbours
+        are on, and turns off otherwise.
+
+        A light which is off turns on if exactly 3 neighbours
+        are on, and stays off otherwise.
+        """
+        lit = light_state[index]
+        neighbour_score = self.neighbours_lit(index, light_state)
+        if lit and neighbour_score not in (2, 3):
+            self.lights[index] = 0
+        elif not lit and neighbour_score == 3:
+            self.lights[index] = 1
 
 
 def test_parse():
@@ -85,7 +108,21 @@ def test_neighbours_lit():
 .##.
 ....'''
     g = Grid(lights_string=lights, width=4)
-    assert g.neighbours_lit(0) == 1
-    assert g.neighbours_lit(4) == 2
-    assert g.neighbours_lit(5) == 3
-    assert g.neighbours_lit(14) == 2
+    light_state = g.lights[:]
+    assert g.neighbours_lit(0, light_state) == 1
+    assert g.neighbours_lit(4, light_state) == 2
+    assert g.neighbours_lit(5, light_state) == 3
+    assert g.neighbours_lit(14, light_state) == 2
+
+
+def test_toggle():
+    lights = '''\
+....
+.###
+.##.
+....'''
+    g = Grid(lights_string=lights, width=4)
+    light_state = g.lights[:]
+    for index, expected in [(0, 0), (2, 1), (11, 1), (14, 0)]:
+        g.toggle(index, light_state)
+        assert g.lights[index] == expected
