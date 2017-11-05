@@ -33,8 +33,6 @@ class Grid:
                 f'Grid of length {len(lights_string)} and width {width}'
                 ' is not rectangular.')
 
-        self.history = []
-
         self.broken_corners = broken_corners
         if broken_corners:
             self.corner_indices = (
@@ -97,27 +95,12 @@ class Grid:
             self.lights[index] = 1
 
     def animate(self, to_stage):
-        """Animate the grid by performing repeated rounds of toggles
-
-        History is used to store previous animation stages to
-        save time in repeated calls.
-        """
-        if not self.history:
-            self.history.append(self.lights[:])
+        """Animate the grid by performing repeated rounds of toggles"""
+        for stage in range(to_stage):
             light_state = self.lights[:]
-            furthest_stage = 0
-        elif to_stage <= len(self.history) - 1:
-            return self.history[to_stage][:]
-        else:
-            light_state = self.history[-1]
-            furthest_stage = len(self.history) - 1
-
-        for stage in range(furthest_stage + 1, to_stage + 1):
             for idx in range(self.total_lights):
                 self.toggle(idx, light_state)
-            self.history.append(self.lights[:])
-            light_state = self.lights[:]
-        return light_state
+        return self.lights[:]
 
 
 def test_parse():
