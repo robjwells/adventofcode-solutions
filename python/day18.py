@@ -11,19 +11,27 @@ class Grid:
     def _parse_input(text):
         return [1 if s == '#' else 0 for s in text.replace('\n', '')]
 
-    def __init__(self, lights_string, width=100):
+    def __init__(self, lights_string, width=None):
         """Create grid from the puzzle input (lights_string)
 
-        Raises ValueError if width doesn't divide cleanly into total length
+        Raises ValueError if width doesn't divide cleanly into total length,
+        or if the grid is not a square and the width is not provided.
         """
         parsed = self._parse_input(lights_string)
-        if len(parsed) % width:
+        self.lights = parsed
+        self.total_lights = len(self.lights)
+
+        if width is None:
+            width = self.total_lights ** 0.5
+            if not width.is_integer():
+                raise ValueError(
+                    f'Grid is not a square and width was not provided.')
+        self.width = int(width)
+
+        if self.total_lights % self.width:
             raise ValueError(
                 f'Grid of length {len(lights_string)} and width {width}'
                 ' is not rectangular.')
-        self.lights = parsed
-        self.total_lights = len(self.lights)
-        self.width = width
 
     def _neighbour_indices(self, index):
         """Return index’s neighbours on a rectangular grid
