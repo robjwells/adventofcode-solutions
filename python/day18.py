@@ -33,6 +33,8 @@ class Grid:
                 f'Grid of length {len(lights_string)} and width {width}'
                 ' is not rectangular.')
 
+        self.history = []
+
     def _neighbour_indices(self, index):
         """Return index’s neighbours on a rectangular grid
 
@@ -83,26 +85,26 @@ class Grid:
         elif not lit and neighbour_score == 3:
             self.lights[index] = 1
 
-    def animate(self, to_stage, history=[]):
+    def animate(self, to_stage):
         """Animate the grid by performing repeated rounds of toggles
 
         History is used to store previous animation stages to
         save time in repeated calls.
         """
-        if not history:
-            history.append(self.lights[:])
+        if not self.history:
+            self.history.append(self.lights[:])
             light_state = self.lights[:]
             furthest_stage = 0
-        elif to_stage <= len(history) - 1:
-            return history[to_stage][:]
+        elif to_stage <= len(self.history) - 1:
+            return self.history[to_stage][:]
         else:
-            light_state = history[-1]
-            furthest_stage = len(history) - 1
+            light_state = self.history[-1]
+            furthest_stage = len(self.history) - 1
 
         for stage in range(furthest_stage + 1, to_stage + 1):
             for idx in range(self.total_lights):
                 self.toggle(idx, light_state)
-            history.append(self.lights[:])
+            self.history.append(self.lights[:])
             light_state = self.lights[:]
         return light_state
 
