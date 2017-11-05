@@ -42,6 +42,19 @@ class Grid:
             for idx in self.corner_indices:
                 self.lights[idx] = 1
 
+    def __str__(self):
+        rows = (
+            slice(start, end)
+            for start, end in zip(
+                range(0, self.total_lights, self.width),
+                range(self.width, self.total_lights + self.width, self.width)
+            ))
+        result = []
+        for row_slice in rows:
+            result.append(
+                ''.join(['#' if l else '.' for l in self.lights[row_slice]]))
+        return '\n'.join(result)
+
     def _neighbour_indices(self, index):
         """Return index’s neighbours on a rectangular grid
 
