@@ -157,3 +157,15 @@ def test_toggle():
     for index, expected in [(0, 0), (2, 1), (11, 1), (14, 0)]:
         g.toggle(index, light_state)
         assert g.lights[index] == expected
+
+
+def test_sample():
+    lights = '''\
+.#.#.#
+...##.
+#....#
+..#...
+#.#..#
+####..'''
+    g = Grid(lights_string=lights)
+    assert sum(g.animate(5)) == 4
