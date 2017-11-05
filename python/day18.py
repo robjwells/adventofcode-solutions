@@ -12,7 +12,14 @@ class Grid:
         return [1 if s == '#' else 0 for s in text.replace('\n', '')]
 
     def __init__(self, lights_string, width=100):
-        """Lights is a list of numbers, 1 for on, 0 for off"""
+        """Create grid from the puzzle input (lights_string)
+
+        Raises ValueError if width doesn't divide cleanly into total length
+        """
+        if len(lights_string) % width:
+            raise ValueError(
+                f'Grid of length {len(lights_string)} and width {width}'
+                ' is not rectangular.')
         self.lights = self._parse_input(lights_string)
         self.total_lights = len(self.lights)
         self.width = width
@@ -36,6 +43,15 @@ class Grid:
 def test_parse():
     assert Grid._parse_input('......\n######') == [0, 0, 0, 0, 0, 0,
                                                    1, 1, 1, 1, 1, 1]
+
+
+def test_misshaped_grid():
+    try:
+        Grid(lights_string=('.' * 5), width=2)
+    except ValueError:
+        assert True
+    else:
+        assert False
 
 
 def test_neighbours():
