@@ -42,17 +42,13 @@ def find_containers(containers, amount):
 # This is much faster than brute forcing, about 3 times
 def recursive(containers, amount):
     containers.sort()
-    matching_containers = list(find_containers(containers, amount))
+    container_lengths = [len(c) for c in find_containers(containers, amount)]
 
     # Part one
-    number_combos = len(matching_containers)
-
+    number_combos = len(container_lengths)
     # Part two
-    min_containers = len(min(matching_containers, key=len))
-    min_ways = len([c for c in matching_containers
-                    if len(c) == min_containers])
+    min_ways = container_lengths.count(min(container_lengths))
     return (number_combos, min_ways)
-
 
 # print(brute_force(puzzle_input, 150))
 print(recursive(puzzle_input, 150))
