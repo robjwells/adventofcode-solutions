@@ -8,17 +8,14 @@ puzzle_input.sort()
 
 
 def brute_force(containers, amount):
-    eggnog_combos = [
-        c
+    combo_lengths = [
+        len(c)
         for i in range(len(containers))
         for c in combinations(containers, i)
         if sum(c) == amount]
-    number_combos = len(eggnog_combos)
-    eggnog_combos.sort(key=len)
-    min_containers = len(eggnog_combos[0])
-    min_containers_ways = len(
-        [c for c in eggnog_combos if len(c) == min_containers])
-    return (number_combos, min_containers_ways)
+    number_combos = len(combo_lengths)
+    min_ways = combo_lengths.count(min(combo_lengths))
+    return (number_combos, min_ways)
 
 
 # I got completely stuck on the recursion (it'd been a while!)
@@ -49,6 +46,7 @@ def recursive(containers, amount):
     # Part two
     min_ways = container_lengths.count(min(container_lengths))
     return (number_combos, min_ways)
+
 
 # print(brute_force(puzzle_input, 150))
 print(recursive(puzzle_input, 150))
