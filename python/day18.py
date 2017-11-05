@@ -25,15 +25,22 @@ class Grid:
         self.total_lights = len(self.lights)
         self.width = width
 
-    def neighbour_indices(self, index):
+    def _neighbour_indices(self, index):
+        """Return index’s neighbours on a rectangular grid
+
+        The 'grid' is virtual so the specified width and
+        length of the light list are used to determine if
+        positions are on the edge or in the corners, and
+        only return indices for neighbours inside the grid.
+        """
         w = self.width
 
         # These aren't always safe, but filtered later
         # along with the upper and lower diagonals.
         positions = [-w, w]
-        if index % 6 != 0:  # Not on the left-hand edge
+        if index % w != 0:  # Not on the left-hand edge
             positions.extend([-(w + 1), -1, w - 1])
-        if (index + 1) % 6 != 0:  # Not on the right-hand edge
+        if (index + 1) % w != 0:  # Not on the right-hand edge
             positions.extend([-(w - 1), 1, w + 1])
 
         indices = [i for i in (index + p for p in positions)
@@ -57,10 +64,10 @@ def test_misshaped_grid():
 
 def test_neighbours():
     g = Grid(lights_string=('#' * 36), width=6)
-    assert sorted(g.neighbour_indices(0)) == [1, 6, 7]
-    assert sorted(g.neighbour_indices(1)) == [0, 2, 6, 7, 8]
-    assert sorted(g.neighbour_indices(5)) == [4, 10, 11]
-    assert sorted(g.neighbour_indices(6)) == [0, 1, 7, 12, 13]
-    assert sorted(g.neighbour_indices(7)) == [0, 1, 2, 6, 8, 12, 13, 14]
-    assert sorted(g.neighbour_indices(29)) == [22, 23, 28, 34, 35]
-    assert sorted(g.neighbour_indices(35)) == [28, 29, 34]
+    assert sorted(g._neighbour_indices(0)) == [1, 6, 7]
+    assert sorted(g._neighbour_indices(1)) == [0, 2, 6, 7, 8]
+    assert sorted(g._neighbour_indices(5)) == [4, 10, 11]
+    assert sorted(g._neighbour_indices(6)) == [0, 1, 7, 12, 13]
+    assert sorted(g._neighbour_indices(7)) == [0, 1, 2, 6, 8, 12, 13, 14]
+    assert sorted(g._neighbour_indices(29)) == [22, 23, 28, 34, 35]
+    assert sorted(g._neighbour_indices(35)) == [28, 29, 34]
