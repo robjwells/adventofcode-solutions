@@ -83,6 +83,29 @@ class Grid:
         elif not lit and neighbour_score == 3:
             self.lights[index] = 1
 
+    def animate(self, to_stage, history=[]):
+        """Animate the grid by performing repeated rounds of toggles
+
+        History is used to store previous animation stages to
+        save time in repeated calls.
+        """
+        if not history:
+            history.append(self.lights[:])
+            light_state = self.lights[:]
+            furthest_stage = 0
+        elif to_stage <= len(history) - 1:
+            return history[to_stage][:]
+        else:
+            light_state = history[-1]
+            furthest_stage = len(history) - 1
+
+        for stage in range(furthest_stage + 1, to_stage + 1):
+            for idx in range(self.total_lights):
+                self.toggle(idx, light_state)
+            history.append(self.lights[:])
+            light_state = self.lights[:]
+        return light_state
+
 
 def test_parse():
     assert Grid._parse_input('......\n######') == [0, 0, 0, 0, 0, 0,
