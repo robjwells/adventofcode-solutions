@@ -11,7 +11,7 @@ class Grid:
     def _parse_input(text):
         return [1 if s == '#' else 0 for s in text.replace('\n', '')]
 
-    def __init__(self, lights_string, width=None):
+    def __init__(self, lights_string, width=None, broken_corners=False):
         """Create grid from the puzzle input (lights_string)
 
         Raises ValueError if width doesn't divide cleanly into total length,
@@ -34,6 +34,15 @@ class Grid:
                 ' is not rectangular.')
 
         self.history = []
+
+        self.broken_corners = broken_corners
+        if broken_corners:
+            self.corner_indices = (
+                0, self.width - 1,
+                self.total_lights - self.width,
+                self.total_lights - 1)
+            for idx in self.corner_indices:
+                self.lights[idx] = 1
 
     def _neighbour_indices(self, index):
         """Return index’s neighbours on a rectangular grid
@@ -78,6 +87,8 @@ class Grid:
         A light which is off turns on if exactly 3 neighbours
         are on, and stays off otherwise.
         """
+        if self.broken_corners and index in self.corner_indices:
+            return
         lit = light_state[index]
         neighbour_score = self.neighbours_lit(index, light_state)
         if lit and neighbour_score not in (2, 3):
@@ -171,3 +182,18 @@ def test_sample():
 ####..'''
     g = Grid(lights_string=lights)
     assert sum(g.animate(5)) == 4
+    bg = Grid(lights_string=lights, broken_corners=True)
+    assert sum(bg.animate(5)) == 17
+
+
+def main():
+    grid_text = input_file.read_text()
+    grid = Grid(lights_string=grid_text, width=100)
+    print(sum(grid.animate(100)))
+    broken_grid = Grid(lights_string=grid_text, width=100,
+                       broken_corners=True)
+    print(sum(broken_grid.animate(100)))
+
+
+if __name__ == '__main__':
+    main()
