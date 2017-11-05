@@ -16,11 +16,12 @@ class Grid:
 
         Raises ValueError if width doesn't divide cleanly into total length
         """
-        if len(lights_string) % width:
+        parsed = self._parse_input(lights_string)
+        if len(parsed) % width:
             raise ValueError(
                 f'Grid of length {len(lights_string)} and width {width}'
                 ' is not rectangular.')
-        self.lights = self._parse_input(lights_string)
+        self.lights = parsed
         self.total_lights = len(self.lights)
         self.width = width
 
