@@ -31,6 +31,7 @@ def matching_pairs(sequence):
     """
     return filter(lambda t: t[0] == t[1], sequence)
 
+
 def sum_matching_digits(pairs):
     """Sum the digits that match the second item of the pair
 
