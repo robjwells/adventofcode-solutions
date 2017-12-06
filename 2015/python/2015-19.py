@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from collections import deque
 import pathlib
 import re
 
@@ -38,35 +37,8 @@ def generate_replacements(molecule: str, replacements: list) -> set:
 
 def steps_to_molecule(molecule: str, replacements: list):
     """Return the minimum number of replacements needed to make molecule"""
-    fewest_steps = 2 ** 32  # Arbitrary large number
-    length_limit = len(molecule)
-    queue = deque()
+    pass
 
-    # e is our starting molecule (always)
-    # 0 is the number of steps to reach e
-    queue.append((0, 'e'))
-    # As we iterate through the molecules, the first
-    # item of the tuple acts as a counter for a
-    # particular 'branch' of the replacement tree
-
-    while queue:
-        steps_so_far, candidate = queue.popleft()
-        if steps_so_far >= fewest_steps:
-            # Can't improve on what we have already
-            continue
-        if len(candidate) > length_limit:
-            # Replacements always add characters, so won't reach molecule
-            continue
-        if candidate == molecule:
-            fewest_steps = steps_so_far
-            continue
-
-        steps_so_far += 1
-        generated = generate_replacements(molecule=candidate,
-                                          replacements=replacements)
-        queue.extend((steps_so_far, mol) for mol in generated)
-
-    return fewest_steps
 
 def test_replacements():
     test_molecule = 'HOH'
@@ -101,7 +73,11 @@ def main():
     generated_molecules = generate_replacements(
         molecule=molecule,
         replacements=replacement_pairs)
-    print(len(generated_molecules))
+    num_generated = len(generated_molecules)
+    print(f'Part one, number of molecules generated: {num_generated}')
+
+#    min_steps_to_molecule =
+#    print(f'Part two, minimum steps to molecule: {min_steps_to_molecule}')
 
 
 if __name__ == '__main__':
