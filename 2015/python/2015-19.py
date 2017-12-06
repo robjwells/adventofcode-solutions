@@ -1,16 +1,37 @@
 #!/usr/bin/env python3
 
+import pathlib
 import re
 
+input_file = pathlib.Path('../input/2015-19.txt')
 
-def generate_replacements(molecule: str, replacements: list):
+def parse_input(text: str) -> (list, str):
+    """Return a list of replacement pairs and the molecule string"""
+    replacement_block, molecule = text.rstrip().split('\n\n')
+    replacement_pairs = [tuple(line.split(' => '))
+                         for line in replacement_block.splitlines()]
+    return replacement_pairs, molecule
+
+
+def generate_replacements(molecule: str, replacements: list) -> set:
     """Return set of permutations for the given molecule
 
     replacements should be a list of (str, str) tuples, with
     the first item being the string to be replaced and
     the second the replacement string.
     """
-    return set()
+    generated = set()
+
+    # This is quadratic!
+    for find_str, replace_str in replacements:
+        for match in re.finditer(find_str, molecule):
+            substring_start, substring_end = match.span()
+            new_molecule = (molecule[:substring_start] +
+                            replace_str +
+                            molecule[substring_end:])
+            generated.add(new_molecule)
+
+    return generated
 
 
 def test_replacements():
@@ -27,7 +48,11 @@ def test_replacements():
 
 
 def main():
-    pass
+    replacement_pairs, molecule = parse_input(input_file.read_text())
+    generated_molecules = generate_replacements(
+        molecule=molecule,
+        replacements=replacement_pairs)
+    print(len(generated_molecules))
 
 
 if __name__ == '__main__':
