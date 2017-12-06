@@ -62,7 +62,7 @@ def test_steps_to_molecule():
         ('H', 'OH'),
         ('O', 'HH'),
         ]
-    expected_steps = 6
+    expected_steps = 3
     result = steps_to_molecule(molecule=test_molecule,
                                replacements=test_replacements)
     assert result == expected_steps
