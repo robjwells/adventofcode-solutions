@@ -33,13 +33,30 @@ def first_house_with_n_presents(target_presents):
 	"""Return the number of the first house with at least total_presents"""
 	presents = 0
 	house_number = 0
-	while presents < total_presents:
+
+	while presents < target_presents:
 		house_number += 1
 		presents = total_presents(house_number)
 	return house_number
 
 
 def test_house_total_presents():
+	test_input = [
+		(1, 10),
+		(2, 30),
+		(3, 40),
+		(4, 70),
+		(5, 60),
+		(6, 120),
+		(7, 80),
+		(8, 150),
+		(9, 130),
+		]
+	for house_number, expected_presents in test_input:
+		assert total_presents(house_number) == expected_presents
+
+
+def test_first_house_with_n_presents():
 	test_input = [
 		(10, 1),
 		(20, 2),
@@ -62,30 +79,11 @@ def test_house_total_presents():
 		assert first_house_with_n_presents(presents) == house_number
 
 
-def test_first_house_with_n_presents():
-	test_input = [
-		(10, 1),
-		(30, 2),
-		(40, 3),
-		(70, 4),
-		(60, 5),
-		(120, 6),
-		(80, 7),
-		(150, 8),
-		(130, 9),
-		]	
-
-
-def first_house_with_n_presents(total_presents):
-	"""Return the number of the first house with at least total_presents"""
-	pass
-
-
 def main(puzzle_input):
-	pass
+	part_one_result = first_house_with_n_presents(puzzle_input)
+	print('Part one:', part_one_result)
 
 
 if __name__ == '__main__':
-	puzzle_input = None
+	puzzle_input = 36000000
 	main(puzzle_input)
-	
