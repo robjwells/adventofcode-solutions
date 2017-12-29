@@ -1,10 +1,10 @@
 def total_presents(house_number, presents_per_elf=10):
     """Calculate how many presents house_number should receive
-    
+
     Each house is visited by numbered elves which match the divisors of
     house_number, and each elf delivers a quantity of presents that
     match the elf’s number times by presents_per_elf.
-    
+
     For instance, given:
         house_number == 9
         presents_per_elf = 10
@@ -31,7 +31,7 @@ def total_presents(house_number, presents_per_elf=10):
 
 def first_house_with_n_presents_linear(target_presents):
     """Return the number of the first house with at least total_presents
-    
+
     This implements a linear search that is too slow to be of practical
     use with the magnitude of the puzzle input.
     """
@@ -47,10 +47,38 @@ def first_house_with_n_presents_linear(target_presents):
 def first_house_with_n_presents_binary(target_presents,
                                        low_point=1, high_point=None):
     """Return the number of the first house with at least total_presents
-    
+
     This implements a binary, or divide and conquer, search.
     """
-    pass
+    if high_point is None:
+        high_point = target_presents
+    closest_presents = high_point * 2
+    closest_house = None
+
+    counter = 0
+    while closest_presents >= target_presents:
+        if counter > 50:
+            break
+        else:
+            counter += 1
+
+        if low_point == high_point:
+            return low_point
+
+        mid_point = low_point + ((high_point - low_point) // 2)
+        mid_point_presents = total_presents(mid_point)
+
+        print('{:,}: {:,}'.format(mid_point, mid_point_presents))
+
+        if mid_point_presents == target_presents:
+            # Found the number of presents exactly (unlikely!)
+            return mid_point
+
+        if mid_point_presents < target_presents:
+            low_point = mid_point
+        elif mid_point_presents > (target_presents * 1.05):
+            # Greater than a 10th away from the target number of presents
+            high_point = mid_point
 
 
 def test_house_total_presents():
@@ -93,7 +121,7 @@ def test_first_house_with_n_presents():
         assert first_house_with_n_presents_binary(presents) == house_number
 
 def main(puzzle_input):
-    part_one_result = first_house_with_n_presents(puzzle_input)
+    part_one_result = first_house_with_n_presents_binary(puzzle_input)
     print('Part one:', part_one_result)
 
 
