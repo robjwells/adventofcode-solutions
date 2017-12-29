@@ -29,18 +29,21 @@ def total_presents(house_number, presents_per_elf=10):
     return sum(d * presents_per_elf for d in divisors)
 
 
-def first_house_with_n_presents_linear(target_presents):
+def first_house_with_n_presents_linear(target_presents, head_start=50):
     """Return the number of the first house with at least total_presents
 
-    This implements a linear search that is too slow to be of practical
-    use with the magnitude of the puzzle input.
+    head_start determines which house to start at — smaller numbers give
+    a larger head start (it is used to divide target_presents).
+
+    This implements a linear search.
     """
     presents = 0
-    house_number = 0
+    house_number = target_presents // head_start
 
     while presents < target_presents:
         house_number += 1
         presents = total_presents(house_number)
+
     return house_number
 
 
@@ -49,6 +52,10 @@ def first_house_with_n_presents_binary(target_presents,
     """Return the number of the first house with at least total_presents
 
     This implements a binary, or divide and conquer, search.
+
+    It doesn’t actually work for this puzzle because the search space
+    is not linearly ascending — lower numbered houses can have higher
+    numbers of presents.
     """
     if high_point is None:
         high_point = target_presents
@@ -76,7 +83,7 @@ def first_house_with_n_presents_binary(target_presents,
         if mid_point_presents < target_presents:
             low_point = mid_point
         elif mid_point_presents > (target_presents * 1.05):
-            # Greater than a 10th away from the target number of presents
+            # Greater than 5% away from the target number of presents
             high_point = mid_point
 
 
@@ -121,7 +128,7 @@ def test_first_house_with_n_presents():
 
 
 def main(puzzle_input):
-    part_one_result = first_house_with_n_presents_binary(puzzle_input)
+    part_one_result = first_house_with_n_presents_linear(puzzle_input)
     print(f'Part one: {part_one_result:,}')
 
 
