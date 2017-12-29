@@ -1,13 +1,17 @@
 def total_presents(house_number, presents_per_elf, elf_limit=None):
     """Calculate how many presents house_number should receive
 
+    elf_limit implements a limit to the number of houses each elf visits,
+    in practice this means only including a divisor D if:
+        D * elf_limit >= house_number
+
     Each house is visited by numbered elves which match the divisors of
     house_number, and each elf delivers a quantity of presents that
     match the elf’s number times by presents_per_elf.
 
     For instance, given:
         house_number == 9
-        presents_per_elf = 10
+        presents_per_elf == 10
     The divisors (and therefore the elves) are:
         [1, 3, 9]
     And the presents delivered by each:
@@ -41,6 +45,10 @@ def first_house_with_n_presents(
 
     head_start determines which house to start at — smaller numbers give
     a larger head start (it is used to divide target_presents).
+
+    elf_limit and presents_per_elf are passed on to the underlying
+    total_presents function, which calculates the number of presents
+    delivered to each house.
 
     This implements a linear search.
     """
