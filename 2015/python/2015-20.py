@@ -34,7 +34,7 @@ def total_presents(house_number, presents_per_elf, elf_limit=None):
     return sum(d * presents_per_elf for d in divisors)
 
 
-def first_house_with_n_presents_linear(
+def first_house_with_n_presents(
         target_presents, head_start=50,
         elf_limit=None, presents_per_elf=10):
     """Return the number of the first house with at least total_presents
@@ -52,43 +52,6 @@ def first_house_with_n_presents_linear(
         presents = total_presents(house_number, elf_limit=elf_limit,
                                   presents_per_elf=presents_per_elf)
     return house_number
-
-
-def first_house_with_n_presents_binary(target_presents,
-                                       low_point=1, high_point=None):
-    """Return the number of the first house with at least total_presents
-
-    This implements a binary, or divide and conquer, search.
-
-    It doesn’t actually work for this puzzle because the search space
-    is not linearly ascending — lower numbered houses can have higher
-    numbers of presents.
-    """
-    if high_point is None:
-        high_point = target_presents
-    closest_presents = high_point * 2
-
-    while closest_presents >= target_presents:
-        if low_point == high_point:
-            return low_point
-        elif high_point - low_point == 1:
-            if total_presents(low_point) >= target_presents:
-                return low_point
-            else:
-                return high_point
-
-        mid_point = low_point + ((high_point - low_point) // 2)
-        mid_point_presents = total_presents(mid_point)
-
-        if mid_point_presents == target_presents:
-            # Found the number of presents exactly (unlikely!)
-            return mid_point
-
-        if mid_point_presents < target_presents:
-            low_point = mid_point
-        elif mid_point_presents > (target_presents * 1.05):
-            # Greater than 5% away from the target number of presents
-            high_point = mid_point
 
 
 def test_house_total_presents():
@@ -127,15 +90,14 @@ def test_first_house_with_n_presents():
         ]
 
     for presents, house_number in test_input:
-        assert first_house_with_n_presents_linear(presents) == house_number
-        assert first_house_with_n_presents_binary(presents) == house_number
+        assert first_house_with_n_presents(presents) == house_number
 
 
 def main(puzzle_input):
-    part_one_result = first_house_with_n_presents_linear(puzzle_input)
+    part_one_result = first_house_with_n_presents(puzzle_input)
     print(f'Part one: {part_one_result:,}')
 
-    part_two_result = first_house_with_n_presents_linear(
+    part_two_result = first_house_with_n_presents(
         puzzle_input, elf_limit=50, presents_per_elf=11)
     print(f'Part two: {part_two_result:,}')
 
