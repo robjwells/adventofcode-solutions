@@ -1,4 +1,4 @@
-def total_presents(house_number, presents_per_elf=10):
+def total_presents(house_number, presents_per_elf, elf_limit=None):
     """Calculate how many presents house_number should receive
 
     Each house is visited by numbered elves which match the divisors of
@@ -17,19 +17,26 @@ def total_presents(house_number, presents_per_elf=10):
     """
     # Set a bound within which to search for divisors
     int_sqrt_ish = int(house_number ** 0.5)
+
     # All the numbers that cleanly divide house_number
     divisors = [
         (x, house_number / x)
         for x in range(1, int_sqrt_ish + 1)
         if house_number % x == 0
         ]
-    # Flat map the divisors and remove duplicates
+
+    # Flatten the divisors list and remove duplicates
     divisors = {divisor for divisor_pair in divisors
                         for divisor in divisor_pair}
+    if elf_limit is not None:
+        divisors = (d for d in divisors
+                    if d * elf_limit >= house_number)
     return sum(d * presents_per_elf for d in divisors)
 
 
-def first_house_with_n_presents_linear(target_presents, head_start=50):
+def first_house_with_n_presents_linear(
+        target_presents, head_start=50,
+        elf_limit=None, presents_per_elf=10):
     """Return the number of the first house with at least total_presents
 
     head_start determines which house to start at — smaller numbers give
@@ -42,8 +49,10 @@ def first_house_with_n_presents_linear(target_presents, head_start=50):
 
     while presents < target_presents:
         house_number += 1
-        presents = total_presents(house_number)
-
+        presents = total_presents(house_number, elf_limit=elf_limit,
+                                  presents_per_elf=presents_per_elf)
+        if house_number % 10_000 == 0:
+            print(f'{house_number:,}: {presents:,}')
     return house_number
 
 
@@ -130,6 +139,10 @@ def test_first_house_with_n_presents():
 def main(puzzle_input):
     part_one_result = first_house_with_n_presents_linear(puzzle_input)
     print(f'Part one: {part_one_result:,}')
+
+    part_two_result = first_house_with_n_presents_linear(
+        puzzle_input, elf_limit=50, presents_per_elf=11)
+    print(f'Part two: {part_two_result:,}')
 
 
 if __name__ == '__main__':
