@@ -51,8 +51,6 @@ def first_house_with_n_presents_linear(
         house_number += 1
         presents = total_presents(house_number, elf_limit=elf_limit,
                                   presents_per_elf=presents_per_elf)
-        if house_number % 10_000 == 0:
-            print(f'{house_number:,}: {presents:,}')
     return house_number
 
 
@@ -69,15 +67,12 @@ def first_house_with_n_presents_binary(target_presents,
     if high_point is None:
         high_point = target_presents
     closest_presents = high_point * 2
-    closest_house = None
 
     while closest_presents >= target_presents:
         if low_point == high_point:
             return low_point
         elif high_point - low_point == 1:
-            high_presents = total_presents(high_point)
-            low_presents = total_presents(low_point)
-            if low_presents >= target_presents:
+            if total_presents(low_point) >= target_presents:
                 return low_point
             else:
                 return high_point
