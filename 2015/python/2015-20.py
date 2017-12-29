@@ -55,20 +55,19 @@ def first_house_with_n_presents_binary(target_presents,
     closest_presents = high_point * 2
     closest_house = None
 
-    counter = 0
     while closest_presents >= target_presents:
-        if counter > 50:
-            break
-        else:
-            counter += 1
-
         if low_point == high_point:
             return low_point
+        elif high_point - low_point == 1:
+            high_presents = total_presents(high_point)
+            low_presents = total_presents(low_point)
+            if low_presents >= target_presents:
+                return low_point
+            else:
+                return high_point
 
         mid_point = low_point + ((high_point - low_point) // 2)
         mid_point_presents = total_presents(mid_point)
-
-        print('{:,}: {:,}'.format(mid_point, mid_point_presents))
 
         if mid_point_presents == target_presents:
             # Found the number of presents exactly (unlikely!)
@@ -120,9 +119,10 @@ def test_first_house_with_n_presents():
         assert first_house_with_n_presents_linear(presents) == house_number
         assert first_house_with_n_presents_binary(presents) == house_number
 
+
 def main(puzzle_input):
     part_one_result = first_house_with_n_presents_binary(puzzle_input)
-    print('Part one:', part_one_result)
+    print(f'Part one: {part_one_result:,}')
 
 
 if __name__ == '__main__':
