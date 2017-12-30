@@ -7,9 +7,7 @@ func totalPresents(for houseNumber: Int,
         houseNumber % candidate == 0
     }.map { smallDivisor in
         [smallDivisor, houseNumber / smallDivisor]
-    }.flatMap {
-        $0
-    }
+    }.joined()
 
     var uniqueDivisors = Set(divisors)
     if let elfLimit = housesPerElf {
