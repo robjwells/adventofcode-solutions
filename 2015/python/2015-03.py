@@ -2,7 +2,7 @@
 
 from collections import namedtuple
 
-with open('../day3_input.txt') as f:
+with open('../input/2015-03.txt') as f:
     instructions = f.read().rstrip()
 
 Point = namedtuple('Point', ['x', 'y'])

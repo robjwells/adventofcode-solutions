@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-with open('../day2_input.txt') as f:
+with open('../input/2015-02.txt') as f:
     instructions = [[int(i) for i in line.split('x')]
                     for line in f.read().splitlines()]
 

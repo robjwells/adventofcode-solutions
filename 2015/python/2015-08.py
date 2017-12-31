@@ -2,7 +2,7 @@
 
 from ast import literal_eval    # Safer than plain eval
 
-with open('../day8_input.txt') as f:
+with open('../input/2015-08.txt') as f:
     strings = f.read().splitlines()
 
 # Part one

@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-with open('../day6_input.txt') as f:
+with open('../input/2015-06.txt') as f:
     lines = [line.rsplit(maxsplit=3) for line in f.read().splitlines()]
 
 lights = [[False for i in range(1000)] for j in range(1000)]

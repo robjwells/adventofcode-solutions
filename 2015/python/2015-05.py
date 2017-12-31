@@ -2,7 +2,7 @@
 
 import re
 
-with open('../day5_input.txt') as f:
+with open('../input/2015-05.txt') as f:
     lines = [l.rstrip() for l in f.readlines()]
 
 

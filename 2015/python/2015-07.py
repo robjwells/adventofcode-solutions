@@ -2,7 +2,7 @@
 
 
 def load_input():
-    with open('../day7_input.txt') as f:
+    with open('../input/2015-07.txt') as f:
         wires = [line.split(' -> ') for line in f.read().splitlines()]
         wires = {w: s for s, w in wires}
     return wires
