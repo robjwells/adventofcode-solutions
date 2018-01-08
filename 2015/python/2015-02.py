@@ -1,5 +1,5 @@
-#!/usr/local/bin/python3
-
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 2: I Was Told There Would Be No Math"""
 import pathlib
 
 
