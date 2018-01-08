@@ -39,9 +39,12 @@ def houses_visited(instructions, number_of_santas=1):
     are counted for the return value.
     """
     # Initialise visited set with origin location
-    visited = {(0, 0)}
+    origin = (0, 0)
+    visited = {origin}
     for santa in range(number_of_santas):
-        location = (0, 0)
+        location = origin
+        # Use the santa number and the total number of santas to divide
+        # up the instructions between each of them
         for direction in instructions[santa::number_of_santas]:
             location = move_location(location, direction)
             visited.add(location)
