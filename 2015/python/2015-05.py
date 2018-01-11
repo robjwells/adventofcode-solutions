@@ -2,6 +2,50 @@
 
 import re
 
+
+def is_nice(candidate):
+    """Check if candidate string passes nice rules
+
+    Returns True if a string is nice, and False otherwise.
+
+    A 'nice' string has the following properties:
+      *  It contains at least vowels [aeiou]
+      *  It contains one letter that appears twice in a row
+      *  It does not contain the strings [ab, cd, pq, xy]
+
+    Nice strings much have all of these properties.
+    """
+    pass
+
+
+def test_nice_strings():
+    """is_nice validates 'nice' strings matching certain rules
+
+    A 'nice' string has the following properties:
+      *  It contains at least vowels [aeiou]
+      *  It contains one letter that appears twice in a row
+      *  It does not contain the strings [ab, cd, pq, xy]
+
+    Nice strings much have all of these properties.
+    """
+    known_nice_strings = [
+        'ugknbfddgicrmopn',
+        'aaa']
+    assert all(is_nice(s) for s in known_nice_strings)
+
+
+def test_naughty_strings():
+    """is_nice rejects strings that are known to be invalid"""
+    known_naughty_strings = [
+        'jchzalrnumimnmhp',     # no double letter
+        'haegwjzuvuyypxyu',     # contains 'xy'
+        'dvszwmarrgswjxmb']     # only one vowel
+    for naughty_string in known_naughty_strings:
+        # Can't shortcut with all because `not None` returns True
+        assert is_nice(naughty_string) is not None
+        assert not is_nice(naughty_string)
+
+
 if __name__ == '__main__':
     with open('../input/2015-05.txt') as f:
         lines = [l.rstrip() for l in f.readlines()]
