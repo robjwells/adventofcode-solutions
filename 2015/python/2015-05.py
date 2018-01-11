@@ -54,6 +54,40 @@ def test_naughty_strings():
         assert not is_nice(naughty_string)
 
 
+def is_new_nice(candidate):
+    """Check if candidate string passes new nice rules
+
+    Returns True if a string is nice, and False otherwise.
+
+    New nice strings have both of the following properties:
+      *  Contain a pair of letters that repeats without overlapping
+      *  Contains one letter that repeats after exactly one letter
+    """
+    pass
+
+def test_new_nice():
+    """is_new_nice validates according to second set of rules
+
+    New nice strings match the following rules:
+      *  Contain a pair of letters that repeats without overlapping
+      *  Contains one letter that repeats after exactly one letter
+    """
+    known_nice_strings = [
+        'qjhvhtzxzqqjkmpb',
+        'xxyxx']
+    assert all(is_new_nice(s) for s in known_nice_strings)
+
+
+def test_new_nice_naughty_strings():
+    """Strings that don't match the new nice rules return False"""
+    known_naughty_strings = [
+        'uurcxstgmygtbstg',
+        'ieodomkazucvgmuy']
+    for naughty_string in known_naughty_strings:
+        assert is_new_nice(naughty_string) is not None
+        assert not is_new_nice(naughty_string)
+
+
 def main(puzzle_input):
     # Part one
     nice_strings = [w for w in puzzle_input if is_nice(w)]
