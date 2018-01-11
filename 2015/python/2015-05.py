@@ -9,20 +9,28 @@ def is_nice(candidate):
     Returns True if a string is nice, and False otherwise.
 
     A 'nice' string has the following properties:
-      *  It contains at least vowels [aeiou]
+      *  It contains at least three vowels [aeiou]
       *  It contains one letter that appears twice in a row
       *  It does not contain the strings [ab, cd, pq, xy]
 
     Nice strings much have all of these properties.
     """
-    pass
+    vowels = set('aeiou')
+    enough_vowels = len([c for c in candidate if c in vowels]) >= 3
+
+    has_double_char = any(a == b for a, b in zip(candidate, candidate[1:]))
+
+    bad_strings = ['ab', 'cd', 'pq', 'xy']
+    no_bad_strings = not [bad for bad in bad_strings if bad in candidate]
+
+    return enough_vowels and has_double_char and no_bad_strings
 
 
 def test_nice_strings():
     """is_nice validates 'nice' strings matching certain rules
 
     A 'nice' string has the following properties:
-      *  It contains at least vowels [aeiou]
+      *  It contains at least three vowels [aeiou]
       *  It contains one letter that appears twice in a row
       *  It does not contain the strings [ab, cd, pq, xy]
 
