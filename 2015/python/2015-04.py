@@ -1,5 +1,5 @@
-#!/usr/local/bin/python3
-
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 4: The Ideal Stocking Stuffer"""
 import hashlib
 
 
@@ -25,7 +25,7 @@ def suffix_for_md5_prefix(secret_key, char='0', length=5, starting_integer=1):
         int_suffix += 1
 
 
-def test_prefix():
+def test_md5_prefix():
     test_cases = [
         ('abcdef', 609043),
         ('pqrstuv', 1048970)]
