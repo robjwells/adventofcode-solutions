@@ -54,9 +54,17 @@ def test_naughty_strings():
         assert not is_nice(naughty_string)
 
 
+def main(puzzle_input):
+    # Part one
+    number_of_nice_strings = len([w for w in puzzle_input if is_nice(w)])
+    print(f'Part one, number of nice strings: {number_of_nice_strings}')
+
+
 if __name__ == '__main__':
     with open('../input/2015-05.txt') as f:
         lines = [l.rstrip() for l in f.readlines()]
+
+    main(lines)
 
     def is_nice(string):
         bad_strings = ['ab', 'cd', 'pq', 'xy']
