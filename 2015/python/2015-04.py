@@ -34,7 +34,12 @@ def test_prefix():
 
 
 def main(secret_key):
-    pass
+    five_zeros_int = suffix_for_md5_prefix(secret_key=secret_key)
+    print(f'Part one, five zeroes: {five_zeros_int}')
+
+    six_zeroes_int = suffix_for_md5_prefix(
+        secret_key=secret_key, length=6, starting_integer=five_zeros_int)
+    print(f'Part two, six zeroes: {six_zeroes_int}')
 
 
 if __name__ == '__main__':
