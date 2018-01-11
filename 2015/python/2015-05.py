@@ -63,7 +63,10 @@ def is_new_nice(candidate):
       *  Contain a pair of letters that repeats without overlapping
       *  Contains one letter that repeats after exactly one letter
     """
-    pass
+    has_repeated_pair = re.search(r'(.{2}).*\1', candidate) is not None
+    has_repeat_one_apart = re.search(r'(.).\1', candidate) is not None
+    return has_repeated_pair and has_repeat_one_apart
+
 
 def test_new_nice():
     """is_new_nice validates according to second set of rules
