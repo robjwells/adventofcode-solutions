@@ -56,34 +56,15 @@ def test_naughty_strings():
 
 def main(puzzle_input):
     # Part one
-    number_of_nice_strings = len([w for w in puzzle_input if is_nice(w)])
-    print(f'Part one, number of nice strings: {number_of_nice_strings}')
+    nice_strings = [w for w in puzzle_input if is_nice(w)]
+    print(f'Part one, number of nice strings: {len(nice_strings)}')
 
 
 if __name__ == '__main__':
-    with open('../input/2015-05.txt') as f:
-        lines = [l.rstrip() for l in f.readlines()]
+    with open('../input/2015-05.txt') as input_file:
+        puzzle_input = input_file.read().splitlines()
 
-    main(lines)
-
-    def is_nice(string):
-        bad_strings = ['ab', 'cd', 'pq', 'xy']
-        no_bad_strings = not any(bad for bad in bad_strings if bad in string)
-
-        vowels = set('aeiou')
-        enough_vowels = len([c for c in string if c in vowels]) >= 3
-
-        has_double_char = any(a == b for a, b in zip(string, string[1:]))
-
-        # regex alternatives:
-        # no_bad_strings = re.search(r'ab|cd|pq|xy', string) is None
-        # enough_vowels = len(re.findall(r'[aeiou]', string)) >= 3
-        # has_double_char = re.search(r'(.)\1', string) is not None
-
-        return no_bad_strings and enough_vowels and has_double_char
-
-    nice_strings = list(filter(is_nice, lines))
-    print('Number of nice strings:', len(nice_strings))
+    main(puzzle_input)
 
     # Part Two
     def new_nice(string):
