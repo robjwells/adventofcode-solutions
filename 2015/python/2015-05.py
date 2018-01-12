@@ -14,7 +14,7 @@ def is_nice(candidate):
       *  It contains one letter that appears twice in a row
       *  It does not contain the strings [ab, cd, pq, xy]
 
-    Nice strings much have all of these properties.
+    Nice strings must have all of these properties.
     """
     vowels = set('aeiou')
     enough_vowels = len([c for c in candidate if c in vowels]) >= 3
@@ -35,7 +35,7 @@ def test_nice_strings():
       *  It contains one letter that appears twice in a row
       *  It does not contain the strings [ab, cd, pq, xy]
 
-    Nice strings much have all of these properties.
+    Nice strings must have all of these properties.
     """
     known_nice_strings = [
         'ugknbfddgicrmopn',
