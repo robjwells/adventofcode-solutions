@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 3: Perfectly Spherical Houses in a Vacuum"""
 
-import pathlib
-
 
 def move_location(current_location, direction):
     """Return a new (x, y) tuple after moving one unit in direction
@@ -97,5 +95,6 @@ def main(puzzle_input):
 
 
 if __name__ == '__main__':
-    puzzle_input = pathlib.Path('../input/2015-03.txt').read_text().rstrip()
+    with open('../input/2015-03.txt') as input_file:
+        puzzle_input = input_file.read().rstrip()
     main(puzzle_input)

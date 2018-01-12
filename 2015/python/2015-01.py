@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 1: Not Quite Lisp"""
 
-import pathlib
-
 
 def final_floor(instructions):
     """Calculate the final floor for a given set of instructions
@@ -64,6 +62,6 @@ def test_first_basement_level():
 
 
 if __name__ == '__main__':
-    input_file = pathlib.Path('../input/2015-01.txt')
-    puzzle_input = input_file.read_text().rstrip()
+    with open('../input/2015-01.txt') as input_file:
+        puzzle_input = input_file.read().rstrip()
     main(puzzle_input)

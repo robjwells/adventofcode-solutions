@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 2: I Was Told There Would Be No Math"""
 
-import pathlib
-
 
 def parse_input(text):
     """Parse a file containing box dimensions LxWxH
@@ -68,6 +66,6 @@ def main(puzzle_input):
 
 
 if __name__ == '__main__':
-    puzzle_input = parse_input(
-        pathlib.Path('../input/2015-02.txt').read_text())
+    with open('../input/2015-02.txt') as input_file:
+        puzzle_input = parse_input(input_file.read())
     main(puzzle_input)
