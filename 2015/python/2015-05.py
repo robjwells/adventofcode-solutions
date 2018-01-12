@@ -93,21 +93,15 @@ def test_new_nice_naughty_strings():
 
 def main(puzzle_input):
     # Part one
-    nice_strings = [w for w in puzzle_input if is_nice(w)]
+    nice_strings = [s for s in puzzle_input if is_nice(s)]
     print(f'Part one, number of nice strings: {len(nice_strings)}')
+
+    # Part two
+    new_nice_strings = [s for s in puzzle_input if is_new_nice(s)]
+    print(f'Part two, number of new nice strings: {len(new_nice_strings)}')
 
 
 if __name__ == '__main__':
     with open('../input/2015-05.txt') as input_file:
         puzzle_input = input_file.read().splitlines()
-
     main(puzzle_input)
-
-    # Part Two
-    def new_nice(string):
-        has_repeated_pair = re.search(r'(.{2}).*\1', string) is not None
-        has_repeat_one_apart = re.search(r'(.).\1', string) is not None
-        return has_repeated_pair and has_repeat_one_apart
-
-    new_nice_strings = list(filter(new_nice, lines))
-    print('Number of new nice strings:', len(new_nice_strings))
