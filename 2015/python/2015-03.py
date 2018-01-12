@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 3: Perfectly Spherical Houses in a Vacuum"""
+
 import pathlib
 
 

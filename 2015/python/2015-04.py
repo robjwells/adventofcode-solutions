@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 4: The Ideal Stocking Stuffer"""
+
 import hashlib
 
 
