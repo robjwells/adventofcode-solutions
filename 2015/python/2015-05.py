@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 5: Doesn't He Have Intern-Elves For This?"""
 
 import re
 
