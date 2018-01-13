@@ -35,11 +35,23 @@ class LightGrid:
         """
         return slice(start_coord[1], end_coord[1] + 1)
 
-    def turn_on(self, start_coord, end_coord):
-        """Turn on an inclusive rectangular range of lights"""
+    def _manipulate(self, transformer, start_coord, end_coord):
+        """Apply transformer to the range between start_coord and end_coord
+
+        transformer is a function that takes one argument — the current
+        state of the light in question — and returns the new state.
+        """
         column_slice = self._col_slice_for_coords(start_coord, end_coord)
         for row in self.matrix[start_coord[0]:end_coord[0] + 1]:
-            row[column_slice] = map(lambda state: True, row[column_slice])
+            row[column_slice] = map(transformer, row[column_slice])
+
+    def turn_on(self, start_coord, end_coord):
+        """Turn on an inclusive rectangular range of lights"""
+        self._manipulate(lambda state: True, start_coord, end_coord)
+
+    def turn_off(self, start_coord, end_coord):
+        """Turn off an inclusive rectangular range of lights"""
+        self._manipulate(lambda state: False, start_coord, end_coord)
 
 
 def test_LightGrid_setup():
@@ -74,6 +86,30 @@ def test_LightGrid_turn_on():
         col_range = range(start_coord[1], end_coord[1] + 1)
         total_on = len(row_range) * len(col_range)
         assert sum(sum(row) for row in grid.matrix) == total_on
+
+
+def test_LightGrid_turn_off():
+    """LightGrid can turn off light ranges"""
+    ranges = [
+        ((0, 0), (999, 999)),
+        ((0, 0), (999, 0)),
+        ((499, 499), (500, 500))
+        ]
+    for start_coord, end_coord in ranges:
+        grid = LightGrid()
+        # First turn on all the lights
+        grid.turn_on((0, 0), (999, 999))
+
+        grid.turn_off(start_coord, end_coord)
+        assert grid.matrix[start_coord[0]][start_coord[1]] == 0
+        assert grid.matrix[end_coord[0]][end_coord[1]] == 0
+
+        # Calculate how many lights should be turned off and
+        # compare against a sum of the light grid
+        row_range = range(start_coord[0], end_coord[0] + 1)
+        col_range = range(start_coord[1], end_coord[1] + 1)
+        total_off = len(row_range) * len(col_range)
+        assert sum(sum(row) for row in grid.matrix) == 1000 * 1000 - total_off
 
 
 if __name__ == '__main__':
