@@ -16,6 +16,31 @@ class LightGrid:
         self.matrix = [[False for _ in range(columns)]
                        for _ in range(rows)]
 
+    @staticmethod
+    def _col_slice_for_coords(start_coord, end_coord):
+        """Return a slice for the column (y) part of the coordinates range
+
+        The two coordinates designate a rectangular section of a matrix
+        and are inclusive. The column slice is the same for each row.
+
+        For example, given coordinates
+            (0, 0) and (1, 1)
+        return
+            slice(0, 2)
+
+        Or coordinates
+            (499, 499) and (500, 500)
+        return
+            slice(499, 501)
+        """
+        return slice(start_coord[1], end_coord[1] + 1)
+
+    def turn_on(self, start_coord, end_coord):
+        """Turn on an inclusive rectangular range of lights"""
+        column_slice = self._col_slice_for_coords(start_coord, end_coord)
+        for row in self.matrix[start_coord[0]:end_coord[0] + 1]:
+            row[column_slice] = map(lambda state: True, row[column_slice])
+
 
 def test_LightGrid_setup():
     """LightGrid correctly initialises 1,000 * 1,000 grid of lights
@@ -28,6 +53,27 @@ def test_LightGrid_setup():
     for row in grid:
         assert len(row) == 1000  # 1,000 columns in each row
     assert sum(sum(row) for row in grid) == 0
+
+
+def test_LightGrid_turn_on():
+    """LightGrid can turn on light ranges"""
+    ranges = [
+        ((0, 0), (999, 999)),
+        ((0, 0), (999, 0)),
+        ((499, 499), (500, 500))
+        ]
+    for start_coord, end_coord in ranges:
+        grid = LightGrid()
+        grid.turn_on(start_coord, end_coord)
+        assert grid.matrix[start_coord[0]][start_coord[1]] == 1
+        assert grid.matrix[end_coord[0]][end_coord[1]] == 1
+
+        # Calculate how many lights should be on and compare
+        # against a sum of the light grid
+        row_range = range(start_coord[0], end_coord[0] + 1)
+        col_range = range(start_coord[1], end_coord[1] + 1)
+        total_on = len(row_range) * len(col_range)
+        assert sum(sum(row) for row in grid.matrix) == total_on
 
 
 if __name__ == '__main__':
