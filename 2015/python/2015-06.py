@@ -53,6 +53,10 @@ class LightGrid:
         """Turn off an inclusive rectangular range of lights"""
         self._manipulate(lambda state: False, start_coord, end_coord)
 
+    def toggle(self, start_coord, end_coord):
+        """Toggle the state of an inclusive range of lights"""
+        self._manipulate(lambda state: not state, start_coord, end_coord)
+
 
 def total_lights_on_helper(grid):
     """Helper function to calculate how many lights are on
