@@ -138,6 +138,33 @@ def test_LightGrid_toggle():
         assert total_lights_on_helper(grid) == expected_lights
 
 
+def parse_instruction(input_line):
+    """Parse a line of puzzle input into an action and two coordinates"""
+
+    def parse_coord_str(coordinate_string):
+        """Parse a coordinate string into a tuple of ints"""
+        return tuple(int(n) for n in coordinate_string.split(','))
+
+    action, start_coord_str, _, end_coord_str = input_line.rsplit(maxsplit=3)
+    return (action,
+            parse_coord_str(start_coord_str),
+            parse_coord_str(end_coord_str))
+
+
+def test_parse_instruction():
+    """parse_instruction correctly interprets a single line of puzzle input"""
+    puzzle_input_lines = [
+        'turn on 0,0 through 999,999',
+        'toggle 0,0 through 999,0',
+        'turn off 499,499 through 500,500']
+    expected = [
+        ('turn on', (0, 0), (999, 999)),
+        ('toggle', (0, 0), (999, 0)),
+        ('turn off', (499, 499), (500, 500))]
+    for input_line, expected_result in zip(puzzle_input_lines, expected):
+        assert parse_instruction(input_line) == expected_result
+
+
 if __name__ == '__main__':
     with open('../input/2015-06.txt') as f:
         puzzle_input = [line.rsplit(maxsplit=3)
