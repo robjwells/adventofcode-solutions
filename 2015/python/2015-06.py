@@ -246,10 +246,13 @@ def test_parse_instruction():
 
 
 def main(puzzle_input):
-    lights = LightGrid()
-    for line in puzzle_input:
-        lights.apply_instruction(*parse_instruction(line))
-    print('Part one, total lights lit:', lights.count_lights_on())
+    grids = [LightGrid(), DimmerGrid()]
+    for grid in grids:
+        for line in puzzle_input:
+            grid.apply_instruction(*parse_instruction(line))
+    p1, p2 = grids
+    print('Part one, total lights lit:', p1.count_lights_on())
+    print('Part two, total brightness:', p2.total_brightness())
 
 
 if __name__ == '__main__':
