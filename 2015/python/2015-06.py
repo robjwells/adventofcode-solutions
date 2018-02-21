@@ -57,14 +57,9 @@ class LightGrid:
         """Toggle the state of an inclusive range of lights"""
         self._manipulate(lambda state: not state, start_coord, end_coord)
 
-
-def total_lights_on_helper(grid):
-    """Helper function to calculate how many lights are on
-
-    This is independent of any function on LightGrid to
-    provide a total of the number of lights enabled.
-    """
-    return sum(sum(row) for row in grid.matrix)
+    def count_lights_on(self):
+        """Total number of lights that are enabled"""
+        return sum(sum(row) for row in self.matrix)
 
 
 def test_LightGrid_setup():
@@ -77,7 +72,7 @@ def test_LightGrid_setup():
     assert len(grid.matrix) == 1000  # 1,000 rows
     for row in grid.matrix:
         assert len(row) == 1000  # 1,000 columns in each row
-    assert total_lights_on_helper(grid) == 0
+    assert grid.count_lights_on() == 0
 
 
 def test_LightGrid_turn_on():
@@ -98,7 +93,7 @@ def test_LightGrid_turn_on():
         row_range = range(start_coord[0], end_coord[0] + 1)
         col_range = range(start_coord[1], end_coord[1] + 1)
         total_on = len(row_range) * len(col_range)
-        assert total_lights_on_helper(grid) == total_on
+        assert grid.count_lights_on() == total_on
 
 
 def test_LightGrid_turn_off():
@@ -122,7 +117,7 @@ def test_LightGrid_turn_off():
         row_range = range(start_coord[0], end_coord[0] + 1)
         col_range = range(start_coord[1], end_coord[1] + 1)
         total_off = len(row_range) * len(col_range)
-        assert total_lights_on_helper(grid) == 1000 * 1000 - total_off
+        assert grid.count_lights_on() == 1000 * 1000 - total_off
 
 
 def test_LightGrid_toggle():
@@ -135,7 +130,7 @@ def test_LightGrid_toggle():
     grid = LightGrid()
     for start_coord, end_coord, expected_lights in ranges_and_expected:
         grid.toggle(start_coord, end_coord)
-        assert total_lights_on_helper(grid) == expected_lights
+        assert grid.count_lights_on() == expected_lights
 
 
 def parse_instruction(input_line):
