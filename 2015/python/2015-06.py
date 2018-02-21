@@ -73,6 +73,11 @@ class LightGrid:
         return sum(sum(row) for row in self.matrix)
 
 
+class DimmerGrid(LightGrid):
+    """A grid of lights with adjustable brightness"""
+    pass
+
+
 def test_LightGrid_setup():
     """LightGrid correctly initialises 1,000 * 1,000 grid of lights
 
@@ -142,6 +147,41 @@ def test_LightGrid_toggle():
     for start_coord, end_coord, expected_lights in ranges_and_expected:
         grid.toggle(start_coord, end_coord)
         assert grid.count_lights_on() == expected_lights
+
+
+def test_DimmerGrid_turn_on():
+    """DimmerGrid.turn_on increases light brightness by 1"""
+    grid = DimmerGrid()
+    expected = [1, 2]
+    for _, brightness in zip(range(2), expected):
+        grid.turn_on((0, 0), (0, 0))
+        assert grid.matrix[0][0] == brightness
+
+
+def test_DimmerGrid_turn_off():
+    """DimmerGrid.turn_off decreases brightness by 1 to minimum of 0"""
+    grid = DimmerGrid()
+    coords = [(0, 0), (0, 0)]
+
+    # Turn the brightness up on light (0, 0) to 2 to start
+    grid.turn_on(*coords)
+    grid.turn_on(*coords)
+    assert grid.matrix[0][0] == 2
+
+    # Start turning down to hit floor of 0
+    expected = [1, 0, 0]
+    for _, brightness in zip(range(3), expected):
+        grid.turn_off(*coords)
+        assert grid.matrix[0][0] == brightness
+
+
+def test_DimmerGrid_toggle():
+    """DimmerGrid.toggle increases brightness by 2"""
+    grid = DimmerGrid()
+    expected = [2, 4]
+    for _, brightness in zip(range(2), expected):
+        grid.toggle((0, 0), (0, 0))
+        assert grid.matrix[0][0] == brightness
 
 
 def parse_instruction(input_line):
