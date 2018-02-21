@@ -79,16 +79,16 @@ class LightGrid:
 class DimmerGrid(LightGrid):
     """A grid of lights with adjustable brightness"""
     def turn_on(self, start_coord, end_coord):
-        """Turn on an inclusive rectangular range of lights"""
+        """Increase brightness of lights in rectangular range by 1"""
         self._manipulate(lambda state: state + 1, start_coord, end_coord)
 
     def turn_off(self, start_coord, end_coord):
-        """Turn off an inclusive rectangular range of lights"""
+        """Decrease brightness of lights in rectangular range by 1 until 0"""
         self._manipulate(lambda state: state - 1 if state else 0,
                          start_coord, end_coord)
 
     def toggle(self, start_coord, end_coord):
-        """Toggle the state of an inclusive range of lights"""
+        """Increase brightness of lights in rectangular range by 2"""
         self._manipulate(lambda state: state + 2, start_coord, end_coord)
 
     def total_brightness(self):
