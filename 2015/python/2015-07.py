@@ -1,11 +1,5 @@
-#!/usr/local/bin/python3
-
-
-def load_input():
-    with open('../input/2015-07.txt') as f:
-        wires = [line.split(' -> ') for line in f.read().splitlines()]
-        wires = {w: s for s, w in wires}
-    return wires
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 7: Some Assembly Required"""
 
 
 def solve(wire):
@@ -36,13 +30,17 @@ def solve(wire):
     return wires[wire]
 
 
-# Part one
-wires = load_input()
-a_value = solve('a')
-print('Signal on wire a:', a_value)
+if __name__ == '__main__':
+    with open('../input/2015-07.txt') as f:
+        puzzle_input = [line.split(' -> ') for line in f.read().splitlines()]
+        puzzle_input = {w: s for s, w in puzzle_input}
 
+    # Part one - expecting 16076
+    wires = puzzle_input.copy()
+    a_value = solve('a')
+    print('Signal on wire a:', a_value)
 
-# Part two
-wires = load_input()
-wires['b'] = a_value
-print('Signal on wire a after overriding b:', solve('a'))
+    # Part two - expecting 2797
+    wires = puzzle_input.copy()
+    wires['b'] = a_value
+    print('Signal on wire a after overriding b:', solve('a'))
