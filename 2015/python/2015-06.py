@@ -57,6 +57,17 @@ class LightGrid:
         """Toggle the state of an inclusive range of lights"""
         self._manipulate(lambda state: not state, start_coord, end_coord)
 
+    def apply_instruction(self, mode, start_coord, end_coord):
+        """Switch on string instruction to turn on, off or toggle lights"""
+        if mode == 'turn off':
+            self.turn_off(start_coord, end_coord)
+        elif mode == 'turn on':
+            self.turn_on(start_coord, end_coord)
+        elif mode == 'toggle':
+            self.toggle(start_coord, end_coord)
+        else:
+            raise ValueError('Mode was not understood')
+
     def count_lights_on(self):
         """Total number of lights that are enabled"""
         return sum(sum(row) for row in self.matrix)
