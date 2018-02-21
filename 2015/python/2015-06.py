@@ -1,6 +1,9 @@
 #!/usr/local/bin/python3
 
 
+import pytest
+
+
 class LightGrid:
     """A grid of lights that can be toggled on and off
 
@@ -87,6 +90,15 @@ class DimmerGrid(LightGrid):
     def toggle(self, start_coord, end_coord):
         """Toggle the state of an inclusive range of lights"""
         self._manipulate(lambda state: state + 2, start_coord, end_coord)
+
+    def total_brightness(self):
+        """Total brightness of all the lights
+
+        Internally this uses the inherited count_lights_on method
+        because the approach of summing the lists in the matrix
+        works as well for ints as it does for bools.
+        """
+        return self.count_lights_on()
 
 
 def test_LightGrid_setup():
@@ -193,6 +205,17 @@ def test_DimmerGrid_toggle():
     for _, brightness in zip(range(2), expected):
         grid.toggle((0, 0), (0, 0))
         assert grid.matrix[0][0] == brightness
+
+
+@pytest.mark.parametrize('method,coords,brightness', [
+    ('turn on', [(0, 0), (0, 0)], 1),
+    ('toggle', [(0, 0), (999, 999)], 2000000),
+])
+def test_DimmerGrid_total_brightness(method, coords, brightness):
+    """DimmerGrid correctly reports total brightness"""
+    grid = DimmerGrid()
+    grid.apply_instruction(method, *coords)
+    assert grid.total_brightness() == brightness
 
 
 def parse_instruction(input_line):
