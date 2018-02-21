@@ -58,15 +58,15 @@ class LightGrid:
         self._manipulate(lambda state: not state, start_coord, end_coord)
 
     def apply_instruction(self, mode, start_coord, end_coord):
-        """Switch on string instruction to turn on, off or toggle lights"""
-        if mode == 'turn off':
-            self.turn_off(start_coord, end_coord)
-        elif mode == 'turn on':
-            self.turn_on(start_coord, end_coord)
-        elif mode == 'toggle':
-            self.toggle(start_coord, end_coord)
-        else:
-            raise ValueError('Mode was not understood')
+        """Switch on string instruction to change lights
+
+        Valid arguments for mode are: 'turn on', 'turn off', 'toggle'
+        """
+        try:
+            method = getattr(self, mode.replace(' ', '_'))
+            method(start_coord, end_coord)
+        except AttributeError:
+            raise ValueError(f'"{mode}" is not a valid grid method')
 
     def count_lights_on(self):
         """Total number of lights that are enabled"""
