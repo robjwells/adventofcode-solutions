@@ -132,11 +132,25 @@ def calculate_player_wins_fight(player, boss):
 
     Player always attacks first.
     """
-    pass
+    player_total_damage = player.damage - boss.armor
+    if player_total_damage <= 0:
+        player_total_damage = 1
+
+    boss_total_damage = boss.damage - player.armor
+    if boss_total_damage <= 0:
+        boss_total_damage = 1
+
+    player_rounds = boss.hit_points // player_total_damage
+    boss_rounds = player.hit_points // boss_total_damage
+
+    # Player wins if it takes the same number or fewer attacks to
+    # deplete the boss's hit points (as the player starts)
+    return player_rounds <= boss_rounds
 
 
 @pytest.mark.parametrize('fight_function', [
     simulate_player_wins_fight,
+    calculate_player_wins_fight,
 ])
 def test_player_boss_fight(fight_function):
     """Player should win when known stronger than boss
