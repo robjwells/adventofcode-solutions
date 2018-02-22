@@ -4,6 +4,7 @@
 from collections import namedtuple
 from functools import reduce
 import itertools
+import math
 
 import pytest
 
@@ -142,8 +143,8 @@ def calculate_player_wins_fight(player, boss):
     if boss_total_damage <= 0:
         boss_total_damage = 1
 
-    player_rounds = boss.hit_points // player_total_damage
-    boss_rounds = player.hit_points // boss_total_damage
+    player_rounds = math.ceil(boss.hit_points / player_total_damage)
+    boss_rounds = math.ceil(player.hit_points / boss_total_damage)
 
     # Player wins if it takes the same number or fewer attacks to
     # deplete the boss's hit points (as the player starts)
