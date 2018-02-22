@@ -186,8 +186,17 @@ def summarise_equipment(equipment):
     return EquipmentSummary(*totals)
 
 
-def main(enemy, weapons, armor, rings):
-    pass
+def main(boss_stats, weapons, armor, rings):
+    gear_choices = equipment_combinations(weapons, armor, rings)
+    gear_summaries = [summarise_equipment(g) for g in gear_choices]
+    gear_by_cost = sorted(gear_summaries, key=lambda s: s.cost)
+
+    for gear in gear_by_cost:
+        boss = Fighter(*boss_stats)
+        player = Fighter(hit_points=100, damage=gear.damage, armor=gear.armor)
+        if simulate_player_wins_fight(player, boss):
+            print(f'Part one, least spent to win: {gear.cost}')
+            break
 
 
 if __name__ == '__main__':
