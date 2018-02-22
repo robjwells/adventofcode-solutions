@@ -68,6 +68,37 @@ def test_combos_disallows_negative():
             item_combinations([], r)
 
 
+class Fighter:
+    def __init__(self, hit_points, damage, armor):
+        self.hit_points = hit_points
+        self.damage = damage
+        self.armor = armor
+
+    def attack(self, enemy):
+        """Deal damage to the enemy"""
+        damage_dealt = self.damage - enemy.armor
+        if damage_dealt < 1:
+            damage_dealt = 1
+        enemy.hit_points -= damage_dealt
+
+
+@pytest.mark.parametrize('fighter,enemy,expected_damage', [
+    (Fighter(hit_points=8, damage=5, armor=5),
+     Fighter(0, 0, 2), 3),
+    (Fighter(hit_points=8, damage=7, armor=2),
+     Fighter(0, 0, 5), 2),
+])
+def test_Fighter_attack(fighter, enemy, expected_damage):
+    """Fighter.attack does damage to the enemy
+
+    Damage should be calculated based on the damage score of the fighter
+    and the armor score of the enemy, doing at least 1 damage and reducing
+    the hit points of the enemy appropriately.
+    """
+    fighter.attack(enemy)
+    assert -enemy.hit_points == expected_damage
+
+
 def main(enemy, weapons, armor, rings):
     pass
 
