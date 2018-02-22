@@ -112,7 +112,7 @@ def test_Fighter_attack(fighter, enemy, expected_damage):
     assert -enemy.hit_points == expected_damage
 
 
-def player_wins_fight(player, boss):
+def simulate_player_wins_fight(player, boss):
     """Simulate a fight between player and boss and report if player won
 
     Returns True if player wins and False if boss wins.
@@ -125,11 +125,28 @@ def player_wins_fight(player, boss):
     return boss.hit_points <= 0
 
 
-def test_simulation():
-    """Player should win when known stronger than boss"""
+def calculate_player_wins_fight(player, boss):
+    """Calculate whether player would win a fight against boss
+
+    Returns True if player wins and False if boss wins.
+
+    Player always attacks first.
+    """
+    pass
+
+
+@pytest.mark.parametrize('fight_function', [
+    simulate_player_wins_fight,
+])
+def test_player_boss_fight(fight_function):
+    """Player should win when known stronger than boss
+
+    fight_function allows us to test two different ways
+    of deciding the fight.
+    """
     player = Fighter(hit_points=8, damage=5, armor=5)
     boss = Fighter(hit_points=12, damage=7, armor=2)
-    assert player_wins_fight(player, boss)
+    assert fight_function(player, boss)
 
 
 def main(enemy, weapons, armor, rings):
