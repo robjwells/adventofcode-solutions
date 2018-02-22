@@ -87,6 +87,8 @@ class Fighter:
      Fighter(0, 0, 2), 3),
     (Fighter(hit_points=8, damage=7, armor=2),
      Fighter(0, 0, 5), 2),
+    (Fighter(hit_points=0, damage=0, armor=0),
+     Fighter(0, 0, 10), 1)
 ])
 def test_Fighter_attack(fighter, enemy, expected_damage):
     """Fighter.attack does damage to the enemy
