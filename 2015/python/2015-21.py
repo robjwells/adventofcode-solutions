@@ -2,16 +2,18 @@
 """Advent of Code 2015, Day 21: RPG Simulator 20XX"""
 
 from collections import namedtuple
+from functools import reduce
 import itertools
 
 import pytest
 
 
 Item = namedtuple('Item', ['name', 'cost', 'damage', 'armor'])
+EquipmentSummary = namedtuple('EquipmentSummary', ['cost', 'damage', 'armor'])
 
 
 def item_combinations(items, combo_range):
-    """Return a set of item combinations, allowing no item to be chosen
+    """Return item combinations, allowing for no item to be chosen
 
     `combo_range` is the acceptable lengths of the combinations, with None
     inserted so the length of the combination is always the upper
@@ -161,6 +163,27 @@ def test_player_boss_fight(fight_function):
     player = Fighter(hit_points=8, damage=5, armor=5)
     boss = Fighter(hit_points=12, damage=7, armor=2)
     assert fight_function(player, boss)
+
+
+def equipment_combinations(weapons, armor, rings):
+    """Return a list of equipment combinations"""
+    weapon_choices = item_combinations(weapons, range(1, 2))
+    armor_choices = item_combinations(armor, range(2))
+    ring_choices = item_combinations(rings, range(3))
+    complete_choices = itertools.product(
+        weapon_choices, armor_choices, ring_choices)
+    return complete_choices
+
+
+def summarise_equipment(equipment):
+    """Sum the cost, damage and armor attributes of items in equipment"""
+    totals = reduce(
+        lambda total, gear: (total[0] + gear.cost,
+                             total[1] + gear.damage,
+                             total[2] + gear.armor),
+        filter(lambda x: x is not None, itertools.chain(*equipment)),
+        (0, 0, 0))
+    return EquipmentSummary(*totals)
 
 
 def main(enemy, weapons, armor, rings):
