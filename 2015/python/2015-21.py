@@ -112,6 +112,26 @@ def test_Fighter_attack(fighter, enemy, expected_damage):
     assert -enemy.hit_points == expected_damage
 
 
+def player_wins_fight(player, boss):
+    """Simulate a fight between player and boss and report if player won
+
+    Returns True if player wins and False if boss wins.
+
+    Player always attacks first.
+    """
+    while all(f.hit_points > 0 for f in [player, boss]):
+        for a, b in [(player, boss), (boss, player)]:
+            a.attack(b)
+    return boss.hit_points <= 0
+
+
+def test_simulation():
+    """Player should win when known stronger than boss"""
+    player = Fighter(hit_points=8, damage=5, armor=5)
+    boss = Fighter(hit_points=12, damage=7, armor=2)
+    assert player_wins_fight(player, boss)
+
+
 def main(enemy, weapons, armor, rings):
     pass
 
