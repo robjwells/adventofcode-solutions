@@ -74,8 +74,19 @@ class Fighter:
         self.damage = damage
         self.armor = armor
 
+    def __str__(self):
+        return 'Fighter(hit_points={}, damage={}, armor={})'.format(
+            self.hit_points, self.damage, self.armor)
+
+    def __repr__(self):
+        return self.__str__()
+
     def attack(self, enemy):
-        """Deal damage to the enemy"""
+        """Deal damage to the enemy
+
+        Damage is mitigated by any enemy armor, but at least
+        1 damage is dealt on each attack.
+        """
         damage_dealt = self.damage - enemy.armor
         if damage_dealt < 1:
             damage_dealt = 1
