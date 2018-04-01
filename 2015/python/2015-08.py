@@ -29,6 +29,15 @@ def test_parse_for_length():
     assert parse_for_length(r'"\\"') == 1
 
 
+def extra_chars_to_encode(string):
+    """Return the additional chars needed to escape string"""
+    pass
+
+
+def test_extra_chars_to_encode():
+    pass
+
+
 def main(puzzle_input):
     # Part one
     total_symbols = sum(len(s) for s in strings)
