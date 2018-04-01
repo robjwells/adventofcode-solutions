@@ -36,12 +36,32 @@ def test_parse_for_length():
 
 
 def extra_chars_to_encode(string):
-    """Return the additional chars needed to escape string"""
-    pass
+    """Return the additional chars needed to escape string
+
+    For example:
+        ""      becomes     "\"\""  ie two escaped quotes with
+                                    additional surrounding quotes
+
+        "abc"               "\"abc\""
+        "aaa\"aaa"          "\"abc\\\"aaa\""
+        "\x27"              "\"\\x27\""
+    """
+    # Start with the additional enclosing quotes
+    total_extra = 2
+    # Then backlashes needed for existing quotes
+    total_extra += string.count('"')
+    # Then backlashes for backslashes
+    total_extra += string.count('\\')
+    return total_extra
 
 
 def test_extra_chars_to_encode():
-    pass
+    """extra_chars… returns expected additional characters"""
+    assert extra_chars_to_encode(r'""') == 4
+    assert extra_chars_to_encode(r'"abc"') == 4
+    assert extra_chars_to_encode(r'"aaa\"aaa"') == 6
+    assert extra_chars_to_encode(r'"\x27"') == 5
+    assert extra_chars_to_encode(r'"\\"') == 6
 
 
 def main(puzzle_input):
