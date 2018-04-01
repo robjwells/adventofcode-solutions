@@ -2,6 +2,8 @@
 
 import re
 
+import pytest
+
 
 def parse_for_length(string):
     """Return the length of string once escapes and quotes are parsed
@@ -27,13 +29,16 @@ def parse_for_length(string):
     return length
 
 
-def test_parse_for_length():
+@pytest.mark.parametrize('string,length', [
+    (r'""', 0),
+    (r'"abc"', 3),
+    (r'"aaa\"aaa"', 7),
+    (r'"\x27"', 1),
+    (r'"\\"', 1),
+    ])
+def test_parse_for_length(string, length):
     """parse_for_length returns expected lengths for known strings"""
-    assert parse_for_length(r'""') == 0
-    assert parse_for_length(r'"abc"') == 3
-    assert parse_for_length(r'"aaa\"aaa"') == 7
-    assert parse_for_length(r'"\x27"') == 1
-    assert parse_for_length(r'"\\"') == 1
+    assert parse_for_length(string) == length
 
 
 def extra_chars_to_encode(string):
@@ -56,13 +61,16 @@ def extra_chars_to_encode(string):
     return total_extra
 
 
-def test_extra_chars_to_encode():
+@pytest.mark.parametrize('string,extra_chars', [
+    (r'""', 4),
+    (r'"abc"', 4),
+    (r'"aaa\"aaa"', 6),
+    (r'"\x27"', 5),
+    (r'"\\"', 6),
+])
+def test_extra_chars_to_encode(string, extra_chars):
     """extra_chars… returns expected additional characters"""
-    assert extra_chars_to_encode(r'""') == 4
-    assert extra_chars_to_encode(r'"abc"') == 4
-    assert extra_chars_to_encode(r'"aaa\"aaa"') == 6
-    assert extra_chars_to_encode(r'"\x27"') == 5
-    assert extra_chars_to_encode(r'"\\"') == 6
+    assert extra_chars_to_encode(string) == extra_chars
 
 
 def main(puzzle_input):
