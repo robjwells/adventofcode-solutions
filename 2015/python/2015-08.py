@@ -67,7 +67,7 @@ def extra_chars_to_encode(string):
     (r'"aaa\"aaa"', 6),
     (r'"\x27"', 5),
     (r'"\\"', 6),
-])
+    ])
 def test_extra_chars_to_encode(string, extra_chars):
     """extra_chars… returns expected additional characters"""
     assert extra_chars_to_encode(string) == extra_chars
