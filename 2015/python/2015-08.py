@@ -4,7 +4,13 @@ import re
 
 
 def parse_for_length(string):
-    """Return the length of string once escapes are parsed"""
+    """Return the length of string once escapes and quotes are parsed
+
+    Recognised escapes are the following:
+        \\      Escaped backslash
+        \"      Escaped quote
+        \x27    Hex character escape
+    """
     literal_length = len(string)
     # Account for and trim surrounding double quotes
     length = literal_length - 2
