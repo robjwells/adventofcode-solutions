@@ -13,6 +13,7 @@ def parse_for_length(string):
     """
     literal_length = len(string)
     # Account for and trim surrounding double quotes
+    # (Trimming allows for counting \" sequences accurately.)
     length = literal_length - 2
     string = string[1:-1]
     # Escaped backslashes
