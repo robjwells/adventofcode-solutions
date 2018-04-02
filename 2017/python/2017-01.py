@@ -48,7 +48,7 @@ def main(puzzle_input):
     seq = int_to_sequence(puzzle_input)
     pairs = circ_pairs(seq)
     matching = matching_pairs(pairs)
-    return sum_matching_digits(matching)
+    print('Part one:', sum_matching_digits(matching))
 
 
 def test_full():
@@ -59,5 +59,6 @@ def test_full():
 
 
 if __name__ == '__main__':
-    puzzle_input = 91212129  # This is example input
-    print(main(puzzle_input))
+    with open('../input/2017-01.txt') as f:
+        puzzle_input = int(f.read())
+    main(puzzle_input)
