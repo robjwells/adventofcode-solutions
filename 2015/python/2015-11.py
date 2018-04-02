@@ -48,22 +48,23 @@ def increment_letter(letter):
     return ok_letters[new_index]
 
 
-def increment_password(pw_list, pw_index=None):
+def increment_password(current_pw, pw_index=None):
+    pw_list = list(current_pw)
     if pw_index is None:
         pw_index = len(pw_list) - 1
     new_letter = increment_letter(pw_list[pw_index])
     pw_list[pw_index] = new_letter
     if new_letter == 'a' and pw_index > 0:
         pw_list = increment_password(pw_list, pw_index=pw_index - 1)
-    return pw_list
+    return ''.join(pw_list)
 
 
 def new_password(current_password):
     candidate = clean_bad_letters(current_password)
     if candidate == current_password:
-        candidate = increment_password(list(candidate))
+        candidate = increment_password(candidate)
     while not validate_password(candidate):
-        candidate = ''.join(increment_password(list(candidate)))
+        candidate = increment_password(candidate)
     return candidate
 
 
