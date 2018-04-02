@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+
+import pytest
+
+
 def total_presents(house_number, presents_per_elf, elf_limit=None):
     """Calculate how many presents house_number should receive
 
@@ -62,43 +67,32 @@ def first_house_with_n_presents(
     return house_number
 
 
-def test_house_total_presents():
-    test_input = [
-        (1, 10),
-        (2, 30),
-        (3, 40),
-        (4, 70),
-        (5, 60),
-        (6, 120),
-        (7, 80),
-        (8, 150),
-        (9, 130),
-        ]
-    for house_number, expected_presents in test_input:
-        assert total_presents(house_number) == expected_presents
+@pytest.mark.parametrize('house_number,expected_presents', [
+    (1, 10),
+    (2, 30),
+    (3, 40),
+    (4, 70),
+    (5, 60),
+    (6, 120),
+    (7, 80),
+    (8, 150),
+    (9, 130),
+    ])
+def test_house_total_presents(house_number, expected_presents):
+    result = total_presents(house_number, presents_per_elf=10)
+    assert result == expected_presents
 
 
-def test_first_house_with_n_presents():
-    test_input = [
-        (10, 1),
-        (20, 2),
-        (30, 2),
-        (40, 3),
-        (50, 4),
-        (60, 4),
-        (70, 4),
-        (80, 6),
-        (90, 6),
-        (100, 6),
-        (110, 6),
-        (120, 6),
-        (130, 8),
-        (140, 8),
-        (150, 8),
-        ]
-
-    for presents, house_number in test_input:
-        assert first_house_with_n_presents(presents) == house_number
+@pytest.mark.parametrize('presents,house_number', [
+    (10, 1),
+    (20, 2), (30, 2),
+    (40, 3),
+    (50, 4), (60, 4), (70, 4),
+    (80, 6), (90, 6), (100, 6), (110, 6), (120, 6),
+    (130, 8), (140, 8), (150, 8),
+    ])
+def test_first_house_with_n_presents(presents, house_number):
+    assert first_house_with_n_presents(presents) == house_number
 
 
 def main(puzzle_input):

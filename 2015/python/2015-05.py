@@ -3,6 +3,8 @@
 
 import re
 
+import pytest
+
 
 def is_nice(candidate):
     """Check if candidate string passes nice rules
@@ -27,7 +29,11 @@ def is_nice(candidate):
     return enough_vowels and has_double_char and no_bad_strings
 
 
-def test_nice_strings():
+@pytest.mark.parametrize('nice_string', [
+    'ugknbfddgicrmopn',
+    'aaa',
+    ])
+def test_nice_strings(nice_string):
     """is_nice validates 'nice' strings matching certain rules
 
     A 'nice' string has the following properties:
@@ -37,22 +43,19 @@ def test_nice_strings():
 
     Nice strings must have all of these properties.
     """
-    known_nice_strings = [
-        'ugknbfddgicrmopn',
-        'aaa']
-    assert all(is_nice(s) for s in known_nice_strings)
+    assert is_nice(nice_string)
 
 
-def test_naughty_strings():
+@pytest.mark.parametrize('naughty_string', [
+    'jchzalrnumimnmhp',  # no double letter
+    'haegwjzuvuyypxyu',  # contains 'xy'
+    'dvszwmarrgswjxmb',  # only one vowel
+    ])
+def test_naughty_strings(naughty_string):
     """is_nice rejects strings that are known to be invalid"""
-    known_naughty_strings = [
-        'jchzalrnumimnmhp',     # no double letter
-        'haegwjzuvuyypxyu',     # contains 'xy'
-        'dvszwmarrgswjxmb']     # only one vowel
-    for naughty_string in known_naughty_strings:
-        # Can't shortcut with all because `not None` returns True
-        assert is_nice(naughty_string) is not None
-        assert not is_nice(naughty_string)
+    # Explicit `is not None` check because `not (None)` returns True
+    assert is_nice(naughty_string) is not None
+    assert not is_nice(naughty_string)
 
 
 def is_new_nice(candidate):
@@ -69,27 +72,29 @@ def is_new_nice(candidate):
     return has_repeated_pair and has_repeat_one_apart
 
 
-def test_new_nice():
+@pytest.mark.parametrize('nice_string', [
+    'qjhvhtzxzqqjkmpb',
+    'xxyxx',
+    ])
+def test_new_nice(nice_string):
     """is_new_nice validates according to second set of rules
 
     New nice strings match the following rules:
       *  Contain a pair of letters that repeats without overlapping
       *  Contains one letter that repeats after exactly one letter
     """
-    known_nice_strings = [
-        'qjhvhtzxzqqjkmpb',
-        'xxyxx']
-    assert all(is_new_nice(s) for s in known_nice_strings)
+    assert is_new_nice(nice_string)
 
 
-def test_new_nice_naughty_strings():
+@pytest.mark.parametrize('naughty_string', [
+    'uurcxstgmygtbstg',
+    'ieodomkazucvgmuy',
+    ])
+def test_new_nice_naughty_strings(naughty_string):
     """Strings that don't match the new nice rules return False"""
-    known_naughty_strings = [
-        'uurcxstgmygtbstg',
-        'ieodomkazucvgmuy']
-    for naughty_string in known_naughty_strings:
-        assert is_new_nice(naughty_string) is not None
-        assert not is_new_nice(naughty_string)
+    # Explicit `is not None` check because `not (None)` returns True
+    assert is_new_nice(naughty_string) is not None
+    assert not is_new_nice(naughty_string)
 
 
 def main(puzzle_input):

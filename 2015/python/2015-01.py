@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 1: Not Quite Lisp"""
 
+import pytest
+
 
 def final_floor(instructions):
     """Calculate the final floor for a given set of instructions
@@ -34,31 +36,29 @@ def main(puzzle_input):
     print(f'Part two, first basement instruction: {basement_instruction}')
 
 
-def test_final_floor():
+@pytest.mark.parametrize('instructions,expected', [
+    ('(())', 0),
+    ('()()', 0),
+    ('(((', 3),
+    ('(()(()(', 3),
+    ('))(((((', 3),
+    ('())', -1),
+    ('))(', -1),
+    (')))', -3),
+    (')())())', -3),
+    ])
+def test_final_floor(instructions, expected):
     """final_floor calculates correct final floor from instructions"""
-    test_cases = [
-        ['(())', 0],
-        ['()()', 0],
-        ['(((', 3],
-        ['(()(()(', 3],
-        ['))(((((', 3],
-        ['())', -1],
-        ['))(', -1],
-        [')))', -3],
-        [')())())', -3],
-        ]
-    for instructions, expected in test_cases:
-        assert final_floor(instructions) == expected
+    assert final_floor(instructions) == expected
 
 
-def test_first_basement_level():
+@pytest.mark.parametrize('instructions,expected', [
+    (')', 1),
+    ('()())', 5),
+    ])
+def test_first_basement_level(instructions, expected):
     """first_basement_char returns position of first sub-zero instruction"""
-    test_cases = [
-        [')', 1],
-        ['()())', 5]
-        ]
-    for instructions, expected in test_cases:
-        assert first_basement_char(instructions) == expected
+    assert first_basement_char(instructions) == expected
 
 
 if __name__ == '__main__':

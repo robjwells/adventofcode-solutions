@@ -65,10 +65,13 @@ def test_combos(items, combo_range, expected):
     assert item_combinations(items, combo_range) == expected
 
 
-def test_combos_disallows_negative():
-    for r in [range(-2, 2), range(2, -2)]:
-        with pytest.raises(ValueError):
-            item_combinations([], r)
+@pytest.mark.parametrize('negative_range', [
+    range(-2, 2),
+    range(2, -2),
+    ])
+def test_combos_disallows_negative(negative_range):
+    with pytest.raises(ValueError):
+        item_combinations([], negative_range)
 
 
 class Fighter:

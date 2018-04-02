@@ -3,6 +3,8 @@
 
 import hashlib
 
+import pytest
+
 
 def suffix_for_md5_prefix(secret_key, char='0', length=5, starting_integer=1):
     """Return the first integer suffix to secret_key that produces wanted hash
@@ -26,12 +28,12 @@ def suffix_for_md5_prefix(secret_key, char='0', length=5, starting_integer=1):
         int_suffix += 1
 
 
-def test_md5_prefix():
-    test_cases = [
-        ('abcdef', 609043),
-        ('pqrstuv', 1048970)]
-    for key, int_suffix in test_cases:
-        assert suffix_for_md5_prefix(secret_key=key) == int_suffix
+@pytest.mark.parametrize('key,int_suffix', [
+    ('abcdef', 609043),
+    ('pqrstuv', 1048970),
+    ])
+def test_md5_prefix(key, int_suffix):
+    assert suffix_for_md5_prefix(secret_key=key) == int_suffix
 
 
 def main(secret_key):

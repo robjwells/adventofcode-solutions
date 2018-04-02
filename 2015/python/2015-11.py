@@ -3,6 +3,8 @@
 import re
 import string
 
+import pytest
+
 
 def validate_password(password):
     windowed = (''.join(t) for t in zip(password, password[1:], password[2:]))
@@ -65,12 +67,21 @@ def new_password(current_password):
     return candidate
 
 
-def test_validate_password():
-    assert not validate_password('hijklmmn')
-    assert not validate_password('abbceffg')
-    assert not validate_password('abbcegjk')
-    assert validate_password('abcdffaa')
-    assert validate_password('ghjaabcc')
+@pytest.mark.parametrize('invalid_pass', [
+    'hijklmmn',
+    'abbceffg',
+    'abbcegjk',
+    ])
+def test_invalid_password(invalid_pass):
+    assert not validate_password(invalid_pass)
+
+
+@pytest.mark.parametrize('valid_pass', [
+    'abcdffaa',
+    'ghjaabcc',
+    ])
+def test_valid_password(valid_pass):
+    assert validate_password(valid_pass)
 
 
 def test_new_password():
