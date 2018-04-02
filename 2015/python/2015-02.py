@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 2: I Was Told There Would Be No Math"""
 
+import pytest
+
 
 def parse_input(text):
     """Parse a file containing box dimensions LxWxH
@@ -40,19 +42,27 @@ def ribbon(dimensions):
     return (2 * s1) + (2 * s2) + (s1 * s2 * s3)
 
 
+def test_parse():
+    dimensions = '''\
+2x3x4
+1x1x10
+'''
+    assert parse_input(dimensions) == [[2, 3, 4], [1, 1, 10]]
+
+
 # Dimensions, wrapping total, ribbon total
 TEST_BOXES = [([2, 3, 4], 58, 34),
               ([1, 1, 10], 43, 14)]
 
 
-def test_wrapping_paper():
-    for dimensions, expected, _ in TEST_BOXES:
-        assert wrapping_paper(dimensions) == expected
+@pytest.mark.parametrize('dimensions,wrapping_tot,_', TEST_BOXES)
+def test_wrapping_paper(dimensions, wrapping_tot, _):
+    assert wrapping_paper(dimensions) == wrapping_tot
 
 
-def test_ribbon():
-    for dimensions, _, expected in TEST_BOXES:
-        assert ribbon(dimensions) == expected
+@pytest.mark.parametrize('dimensions,_,ribbon_tot', TEST_BOXES)
+def test_ribbon(dimensions, _, ribbon_tot):
+    assert ribbon(dimensions) == ribbon_tot
 
 
 def main(puzzle_input):
