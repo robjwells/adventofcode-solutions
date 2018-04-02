@@ -17,9 +17,7 @@ def parse_number_string(number_string):
             output += str(count) + char
             char = new_char
             count = 1
-    else:
-        # This is needed to ensure final digit is accounted for
-        output += str(count) + char
+    output += str(count) + char     # Account for final digit
     return output
 
 
