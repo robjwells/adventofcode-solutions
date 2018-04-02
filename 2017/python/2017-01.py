@@ -4,7 +4,7 @@ import pytest
 
 
 def circ_pairs(sequence, distance=1):
-    """Zip consequtive elements in sequence and wrap round at the end
+    """Zip elements some distance apart in sequence and wrap around
 
     For example:
 
