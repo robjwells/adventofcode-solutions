@@ -3,8 +3,8 @@
 puzzle_input = 1113122113
 
 
-def parse_input(sequence):
-    char, *text = str(sequence)
+def parse_input(number):
+    char, *text = str(number)
     count = 1
     output = ''
     for new_char in text:
@@ -17,7 +17,7 @@ def parse_input(sequence):
     else:
         # This is needed to ensure final digit is accounted for
         output += str(count) + char
-    return output
+    return int(output)
 
 
 def test_parse_input():
