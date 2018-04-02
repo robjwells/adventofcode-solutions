@@ -85,9 +85,12 @@ def test_valid_password(valid_pass):
     assert validate_password(valid_pass)
 
 
-def test_new_password():
-    assert new_password('abcdefgh') == 'abcdffaa'
-    assert new_password('ghijklmn') == 'ghjaabcc'
+@pytest.mark.parametrize('old,new', [
+    ('abcdefgh', 'abcdffaa'),
+    ('ghijklmn', 'ghjaabcc'),
+    ])
+def test_new_password(old, new):
+    assert new_password(old) == new
 
 
 if __name__ == '__main__':
