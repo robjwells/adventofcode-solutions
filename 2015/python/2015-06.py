@@ -114,53 +114,54 @@ def test_LightGrid_setup():
     assert grid.count_lights_on() == 0
 
 
-def test_LightGrid_turn_on():
+TEST_COORD_RANGES = [
+    ((0, 0), (999, 999)),
+    ((0, 0), (999, 0)),
+    ((499, 499), (500, 500)),
+    ]
+
+
+@pytest.mark.parametrize('start_coord,end_coord', TEST_COORD_RANGES)
+def test_LightGrid_turn_on(start_coord, end_coord):
     """LightGrid can turn on light ranges"""
-    ranges = [
-        ((0, 0), (999, 999)),
-        ((0, 0), (999, 0)),
-        ((499, 499), (500, 500))
-        ]
-    for start_coord, end_coord in ranges:
-        grid = LightGrid()
-        grid.turn_on(start_coord, end_coord)
-        assert grid.matrix[start_coord[0]][start_coord[1]] == 1
-        assert grid.matrix[end_coord[0]][end_coord[1]] == 1
+    grid = LightGrid()
+    grid.turn_on(start_coord, end_coord)
+    assert grid.matrix[start_coord[0]][start_coord[1]] == 1
+    assert grid.matrix[end_coord[0]][end_coord[1]] == 1
 
-        # Calculate how many lights should be on and compare
-        # against a sum of the light grid
-        row_range = range(start_coord[0], end_coord[0] + 1)
-        col_range = range(start_coord[1], end_coord[1] + 1)
-        total_on = len(row_range) * len(col_range)
-        assert grid.count_lights_on() == total_on
+    # Calculate how many lights should be on and compare
+    # against a sum of the light grid
+    row_range = range(start_coord[0], end_coord[0] + 1)
+    col_range = range(start_coord[1], end_coord[1] + 1)
+    total_on = len(row_range) * len(col_range)
+    assert grid.count_lights_on() == total_on
 
 
-def test_LightGrid_turn_off():
+@pytest.mark.parametrize('start_coord,end_coord', TEST_COORD_RANGES)
+def test_LightGrid_turn_off(start_coord, end_coord):
     """LightGrid can turn off light ranges"""
-    ranges = [
-        ((0, 0), (999, 999)),
-        ((0, 0), (999, 0)),
-        ((499, 499), (500, 500))
-        ]
-    for start_coord, end_coord in ranges:
-        grid = LightGrid()
-        # First turn on all the lights
-        grid.turn_on((0, 0), (999, 999))
+    grid = LightGrid()
+    # First turn on all the lights
+    grid.turn_on((0, 0), (999, 999))
 
-        grid.turn_off(start_coord, end_coord)
-        assert grid.matrix[start_coord[0]][start_coord[1]] == 0
-        assert grid.matrix[end_coord[0]][end_coord[1]] == 0
+    grid.turn_off(start_coord, end_coord)
+    assert grid.matrix[start_coord[0]][start_coord[1]] == 0
+    assert grid.matrix[end_coord[0]][end_coord[1]] == 0
 
-        # Calculate how many lights should be turned off and
-        # compare against a sum of the light grid
-        row_range = range(start_coord[0], end_coord[0] + 1)
-        col_range = range(start_coord[1], end_coord[1] + 1)
-        total_off = len(row_range) * len(col_range)
-        assert grid.count_lights_on() == 1000 * 1000 - total_off
+    # Calculate how many lights should be turned off and
+    # compare against a sum of the light grid
+    row_range = range(start_coord[0], end_coord[0] + 1)
+    col_range = range(start_coord[1], end_coord[1] + 1)
+    total_off = len(row_range) * len(col_range)
+    assert grid.count_lights_on() == 1000 * 1000 - total_off
 
 
 def test_LightGrid_toggle():
-    """LightGrid can toggle light ranges"""
+    """LightGrid can toggle light ranges
+
+    This test is not parametrized as the toggles are applied in sequence,
+    with the second and third building on the previous toggle actions.
+    """
     ranges_and_expected = [
         ((0, 0), (999, 999), 1_000_000),
         ((0, 0), (999, 0), 1_000_000 - 1_000),
@@ -176,7 +177,7 @@ def test_DimmerGrid_turn_on():
     """DimmerGrid.turn_on increases light brightness by 1"""
     grid = DimmerGrid()
     expected = [1, 2]
-    for _, brightness in zip(range(2), expected):
+    for brightness in expected:
         grid.turn_on((0, 0), (0, 0))
         assert grid.matrix[0][0] == brightness
 
@@ -193,7 +194,7 @@ def test_DimmerGrid_turn_off():
 
     # Start turning down to hit floor of 0
     expected = [1, 0, 0]
-    for _, brightness in zip(range(3), expected):
+    for brightness in expected:
         grid.turn_off(*coords)
         assert grid.matrix[0][0] == brightness
 
@@ -202,7 +203,7 @@ def test_DimmerGrid_toggle():
     """DimmerGrid.toggle increases brightness by 2"""
     grid = DimmerGrid()
     expected = [2, 4]
-    for _, brightness in zip(range(2), expected):
+    for brightness in expected:
         grid.toggle((0, 0), (0, 0))
         assert grid.matrix[0][0] == brightness
 
@@ -218,6 +219,18 @@ def test_DimmerGrid_total_brightness(method, coords, brightness):
     assert grid.total_brightness() == brightness
 
 
+def test_apply_instruction_raises_for_unknown_mode():
+    """Grid.apply_instruction raises ValueError for an unknown mode
+
+    apply_instruction is internal but that doesn’t let us off
+    the hook as far as testing goes.
+    """
+    with pytest.raises(ValueError):
+        LightGrid().apply_instruction(mode='totally fake mode',
+                                      start_coord=range(0, 0),
+                                      end_coord=range(1, 1))
+
+
 def parse_instruction(input_line):
     """Parse a line of puzzle input into an action and two coordinates"""
 
@@ -231,18 +244,17 @@ def parse_instruction(input_line):
             parse_coord_str(end_coord_str))
 
 
-def test_parse_instruction():
+@pytest.mark.parametrize('input_line,parsed', [
+    ('turn on 0,0 through 999,999',
+        ('turn on', (0, 0), (999, 999))),
+    ('toggle 0,0 through 999,0',
+        ('toggle', (0, 0), (999, 0))),
+    ('turn off 499,499 through 500,500',
+        ('turn off', (499, 499), (500, 500))),
+    ])
+def test_parse_instruction(input_line, parsed):
     """parse_instruction correctly interprets a single line of puzzle input"""
-    puzzle_input_lines = [
-        'turn on 0,0 through 999,999',
-        'toggle 0,0 through 999,0',
-        'turn off 499,499 through 500,500']
-    expected = [
-        ('turn on', (0, 0), (999, 999)),
-        ('toggle', (0, 0), (999, 0)),
-        ('turn off', (499, 499), (500, 500))]
-    for input_line, expected_result in zip(puzzle_input_lines, expected):
-        assert parse_instruction(input_line) == expected_result
+    assert parse_instruction(input_line) == parsed
 
 
 def main(puzzle_input):
