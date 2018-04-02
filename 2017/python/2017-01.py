@@ -3,14 +3,14 @@
 import pytest
 
 
-def circ_pairs(sequence):
+def circ_pairs(sequence, distance=1):
     """Zip consequtive elements in sequence and wrap round at the end
 
     For example:
 
     [4, 5, 1] -> [(4, 5), (5, 1), (1, 4)]
     """
-    return zip(sequence, sequence[1:] + [sequence[0]])
+    return zip(sequence, sequence[distance:] + sequence[:distance])
 
 
 def int_to_sequence(integer):
@@ -46,16 +46,44 @@ def sum_matching_digits(pairs):
     return sum(a for a, b in pairs)
 
 
-def sum_matching_neighbours(circular_number):
-    """Sums all digits that match the next digit in the sequence"""
+def total_nearby_digits_in_sequence(circular_number, digit_distance):
+    """Sums all digits that match a digit a specified distance away
+
+    The sequence of digits (the circular_number) is considered to
+    be circular, so the comparison wraps around the rear to the
+    front of the sequence.
+    """
     seq = int_to_sequence(circular_number)
-    pairs = circ_pairs(seq)
+    pairs = circ_pairs(seq, distance=digit_distance)
     matching = matching_pairs(pairs)
     return sum_matching_digits(matching)
 
 
-def main(puzzle_input):
-    print('Part one:', sum_matching_neighbours(puzzle_input))
+def total_matching_neighbours(circular_number):
+    """Sums all digits that match the next digit in the sequence"""
+    return total_nearby_digits_in_sequence(circular_number, digit_distance=1)
+
+
+def total_half_distant(circular_number):
+    """Sums all digits that match the digit halfway distant in the sequence"""
+    return total_nearby_digits_in_sequence(
+        circular_number,
+        digit_distance=len(str(circular_number)) // 2)
+
+
+@pytest.mark.parametrize('number,digit_distance,pairs', [
+    (451,  1, [(4, 5), (5, 1), (1, 4)]),
+    (1122, 1, [(1, 1), (1, 2), (2, 2), (2, 1)]),
+    (1122, 2, [(1, 2), (1, 2), (2, 1), (2, 1)]),
+    (1212, 1, [(1, 2), (2, 1), (1, 2), (2, 1)]),
+    (1212, 2, [(1, 1), (2, 2), (1, 1), (2, 2)]),
+    (123123, 1, [(1, 2), (2, 3), (3, 1), (1, 2), (2, 3), (3, 1)]),
+    (123123, 3, [(1, 1), (2, 2), (3, 3), (1, 1), (2, 2), (3, 3)]),
+    ])
+def test_circ_pairs(number, digit_distance, pairs):
+    """circ_pairs pairs digits in number with digit specified distance away"""
+    sequence = int_to_sequence(number)
+    assert list(circ_pairs(sequence, distance=digit_distance)) == pairs
 
 
 @pytest.mark.parametrize('circ_number,total', [
@@ -65,7 +93,25 @@ def main(puzzle_input):
     (91212129, 9),
     ])
 def test_next(circ_number, total):
-    assert sum_matching_neighbours(circ_number) == total
+    """Test total_matching_neighbours against known input and output"""
+    assert total_matching_neighbours(circ_number) == total
+
+
+@pytest.mark.parametrize('circ_number,total', [
+    (1212, 6),
+    (1221, 0),
+    (123425, 4),
+    (123123, 12),
+    (12131415, 4),
+    ])
+def test_half_distant(circ_number, total):
+    """Test total_half_distant against known input and output"""
+    assert total_half_distant(circ_number) == total
+
+
+def main(puzzle_input):
+    print('Part one:', total_matching_neighbours(puzzle_input))
+    print('Part two:', total_half_distant(puzzle_input))
 
 
 if __name__ == '__main__':
