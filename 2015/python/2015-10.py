@@ -1,5 +1,8 @@
 #!/usr/local/bin/python3
 
+import pytest
+
+
 puzzle_input = 1113122113
 
 
@@ -20,8 +23,16 @@ def parse_input(number):
     return int(output)
 
 
-def test_parse_input():
-    assert parse_input('211') == '1221'
+@pytest.mark.parametrize('start,finish', [
+    (1, 11),
+    (11, 21),
+    (21, 1211),
+    (211, 1221),
+    (1211, 111221),
+    (111221, 312211),
+    ])
+def test_parse_input(start, finish):
+    assert parse_input(start) == finish
 
 
 if __name__ == '__main__':
