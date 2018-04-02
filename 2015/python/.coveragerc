@@ -1,0 +1,9 @@
+[run]
+branch = True
+omit =
+    */.pyenv/*
+
+[report]
+exclude_lines =
+    def main\(
+    if __name__ == .__main__.:
