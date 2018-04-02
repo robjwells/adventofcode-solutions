@@ -27,9 +27,10 @@ def int_to_sequence(integer):
 def matching_pairs(sequence):
     """Filter sequence so only pairs that are equal are returned
 
-    For example
-    [(1, 2), (2, 3), (3, 1) (1, 1)] -> [(1, 1)]
-    [(4, 5), (5, 1), (1, 4)] -> []
+    For example:
+
+    [(1, 2), (2, 3), (3, 1), (1, 1)] -> [(1, 1)]
+    [(4, 5), (5, 1), (1, 4)]         -> []
     """
     return filter(lambda t: t[0] == t[1], sequence)
 
@@ -40,6 +41,7 @@ def sum_matching_digits(pairs):
     Note that matching digits are single counted, not double.
 
     For example:
+
     [(1, 1)]         -> 1
     [(1, 1), (2, 2)] -> 3
     """
