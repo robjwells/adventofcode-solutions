@@ -98,12 +98,12 @@ def combinations(length, total):
 
 # This is about twice as fast as the general recursive version above
 def combo_four(total):
-    """Return a tuple of four integers totalling 100"""
-    for i in range(total + 1):
-        for j in range(total + 1 - i):
-            for k in range(total + 1 - i - j):
-                l = total - i - j - k
-                yield (i, j, k, l)
+    """Yield tuples of four integers that sum to total"""
+    for a in range(total + 1):
+        for b in range(total + 1 - a):
+            for c in range(total + 1 - a - b):
+                d = total - a - b - c
+                yield (a, b, c, d)
 
 
 def brute_force_cookie(ingredients, teaspoons):
