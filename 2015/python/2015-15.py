@@ -54,7 +54,8 @@ def test_score():
         Cinnamon=dict(
             capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
     recipe = [('Butterscotch', 44), ('Cinnamon', 56)]
-    assert cookie_score(recipe, sample_data) == 62842880
+    score, _ = cookie_score(recipe, sample_data)
+    assert score == 62842880
 
 
 def test_score_zero():
@@ -65,7 +66,8 @@ def test_score_zero():
         Cinnamon=dict(
             capacity=2, durability=3, flavor=-2, texture=-1, calories=3))
     recipe = [('Butterscotch', 100)]
-    assert cookie_score(recipe, sample_data) == 0
+    score, _ = cookie_score(recipe, sample_data)
+    assert score == 0
 
 
 def add_lists(*lists):
