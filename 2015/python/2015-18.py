@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Advent of Code 2015, Day 18: Like a GIF For Your Yard"""
 
 import pathlib
 

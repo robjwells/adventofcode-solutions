@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Advent of Code 2015, Day 17: No Such Thing as Too Much"""
 
 from itertools import combinations
 

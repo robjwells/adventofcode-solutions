@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 11: Corporate Policy"""
 
 import re
 import string

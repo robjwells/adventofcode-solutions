@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Advent of Code 2015, Day 19: Medicine for Rudolph"""
 
 import pathlib
 import re

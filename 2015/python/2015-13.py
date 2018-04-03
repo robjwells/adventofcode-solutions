@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 13: Knights of the Dinner Table"""
 
 from itertools import permutations
 import pathlib

@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 9: All in a Single Night"""
 
 from collections import defaultdict, deque, namedtuple
 import operator

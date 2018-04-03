@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Advent of Code 2015, Day 20: Infinite Elves and Infinite Houses"""
 
 import pytest
 

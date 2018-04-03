@@ -1,4 +1,5 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
+"""Advent of Code 2015, Day 14: Reindeer Olympics"""
 
 from collections import defaultdict
 import pathlib
