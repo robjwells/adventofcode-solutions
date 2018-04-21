@@ -40,12 +40,19 @@ def clean_bad_letters(password):
 
 
 def increment_letter(letter):
+    """Return the character after `letter` in a circular alphabet
+
+    This increments a single letter at a time: a becomes b,
+    z becomes a and so on.
+
+    i, o and l are excluded from the alphabet used as they are
+    not allowed to appear in valid passwords acccording to the
+    problem description.
+    """
     ok_letters = 'abcdefghjkmnpqrstuvwxyz'
-    cur_index = ok_letters.index(letter)
-    if cur_index == len(ok_letters) - 1:
-        new_index = 0
-    else:
-        new_index = cur_index + 1
+    current_index = ok_letters.index(letter)
+    is_final_index = current_index == len(ok_letters) - 1
+    new_index = 0 if is_final_index else current_index + 1
     return ok_letters[new_index]
 
 
