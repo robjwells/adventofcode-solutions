@@ -40,7 +40,7 @@ def clean_bad_letters(password):
 
 
 def increment_letter(letter):
-    """Return the character after `letter` in a circular alphabet
+    """Return the character after `letter` in a restricted circular alphabet
 
     This increments a single letter at a time: a becomes b,
     z becomes a and so on.
@@ -48,7 +48,14 @@ def increment_letter(letter):
     i, o and l are excluded from the alphabet used as they are
     not allowed to appear in valid passwords acccording to the
     problem description.
+
+    It is, however, safe to increment those restricted letters
+    using this function as a special case is made for them.
     """
+    restricted_dict = {'i': 'j', 'l': 'm', 'o': 'p'}
+    if letter in restricted_dict:
+        return restricted_dict[letter]
+
     ok_letters = 'abcdefghjkmnpqrstuvwxyz'
     current_index = ok_letters.index(letter)
     is_final_index = current_index == len(ok_letters) - 1
