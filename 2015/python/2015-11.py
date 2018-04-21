@@ -78,15 +78,24 @@ def increment_letter(letter):
     return ok_letters[new_index]
 
 
-def increment_password(current_pw, pw_index=None):
+def increment_password(current_pw, index=None):
+    """Create a new password by advancing letters in a circular fashion
+
+    Only the final letter is incremented (a -> b, z -> a), but earlier
+    letters will also be incremented if the final one wraps around
+    (from z to a). This is done by recursively calling increment_password,
+    with `index` the position to change.
+
+    See increment_letter for details on the (restricted) alphabet used.
+    """
     pw_list = list(current_pw)
-    if pw_index is None:
-        pw_index = len(pw_list) - 1
-    new_letter = increment_letter(pw_list[pw_index])
-    pw_list[pw_index] = new_letter
-    if new_letter == 'a' and pw_index > 0:
-        pw_list = increment_password(pw_list, pw_index=pw_index - 1)
-    return ''.join(pw_list)
+    increment_index = len(pw_list) - 1 if index is None else index
+    new_letter = increment_letter(pw_list[increment_index])
+    pw_list[increment_index] = new_letter
+    candidate = ''.join(pw_list)
+    if new_letter == 'a' and increment_index > 0:
+        candidate = increment_password(candidate, index=increment_index - 1)
+    return candidate
 
 
 def new_password(current_password):
