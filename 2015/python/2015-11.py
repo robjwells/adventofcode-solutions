@@ -99,6 +99,12 @@ def new_password(current_password):
         * may not contain the letters i, o, or l
         * must contain at least two different, non-overlapping
           pairs of letters, like aa, bb, or zz.
+
+    Passwords must also be exactly eight letters long, but the
+    clear assumption in the problem is that existing passwords
+    are only ever that length, so there is no specific check
+    to maintain the eight-character limit (as there is no
+    specified response).
     """
     candidate = clean_bad_letters(current_password)
     if candidate == current_password:
