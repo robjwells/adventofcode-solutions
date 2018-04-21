@@ -30,13 +30,28 @@ def validate_password(password):
 
 
 def clean_bad_letters(password):
-    if re.match(r'^[^iol]+$', password):
+    """Return a candidate password after checking for invalid characters
+
+    If password doesn't contain the characters i, o, or l it is returned
+    immediately.
+
+    If it does, the string returned is the next potentially valid password
+    after short-circuiting and skipping passwords containing the invalid
+    letter in that particular position.
+
+    For example:
+        xi      ->   xj
+        xix     ->   xja
+        xixyz   ->   xjaaa
+    """
+    first_invalid_char = re.search(r'([iol])', password)
+    if first_invalid_char is None:
         return password
-    cut_pos = re.search(r'[iol]', password).start()
-    letter = password[cut_pos]
-    new_letter = {'i': 'j', 'l': 'm', 'o': 'p'}[letter]
-    extra_as = len(password[cut_pos:]) - 1
-    return password[:cut_pos] + new_letter + 'a' * extra_as
+
+    cut_pos = first_invalid_char.start()
+    new_letter = increment_letter(first_invalid_char.group())
+    letter_a_to_add = len(password[cut_pos:]) - 1
+    return password[:cut_pos] + new_letter + 'a' * letter_a_to_add
 
 
 def increment_letter(letter):
