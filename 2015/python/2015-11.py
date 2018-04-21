@@ -90,6 +90,16 @@ def increment_password(current_pw, pw_index=None):
 
 
 def new_password(current_password):
+    """Find the next new password starting at current_password
+
+    Only valid passwords are returned, with the requirements being:
+        * must include one increasing straight of at least three
+          letters, like abc, bcd, cde, and so on, up to xyz.
+          They cannot skip letters; abd doesn't count.
+        * may not contain the letters i, o, or l
+        * must contain at least two different, non-overlapping
+          pairs of letters, like aa, bb, or zz.
+    """
     candidate = clean_bad_letters(current_password)
     if candidate == current_password:
         candidate = increment_password(candidate)
