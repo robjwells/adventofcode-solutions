@@ -3,9 +3,6 @@
 
 from collections import defaultdict, deque, namedtuple
 import operator
-import pathlib
-
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day9_input.txt')
 
 
 def parse_input(text):
@@ -78,7 +75,7 @@ class Graph:
 def create_graph(parsed_lines):
     """Create a graph from lines parsed from the input file"""
     graph = Graph()
-    for src, dst, weight in lines:
+    for src, dst, weight in parsed_lines:
         graph.add_edge(src, dst, weight)
     return graph
 
@@ -158,10 +155,14 @@ def search_all_max(graph):
     return max(results, key=lambda x: x[1])
 
 
-if __name__ == '__main__':
-    with open(input_file) as f:
-        lines = parse_input(f.read())
-    graph = create_graph(lines)
+def main(puzzle_input):
+        instructions = parse_input(puzzle_input)
+        graph = create_graph(instructions)
 
-    print('Shortest:', search_all_min(graph))
-    print('Longest:', search_all_max(graph))
+        print('Shortest:', search_all_min(graph))
+        print('Longest:', search_all_max(graph))
+
+
+if __name__ == '__main__':
+    with open('../input/2015-09.txt') as f:
+        puzzle_input = f.read()
