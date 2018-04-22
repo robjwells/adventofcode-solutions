@@ -40,7 +40,6 @@ Dublin to Belfast = 141'''
 
 
 Edge = namedtuple('Edge', ('src', 'dst', 'weight'))
-# Node = namedtuple('Node', ('value')) # Might just be able to use strings
 
 
 class Graph:
@@ -103,6 +102,11 @@ def breadth_first_search(graph: Graph, start: str, mode: str):
         for edge in edge_list
         ]) / total_edges
 
+    # FIXME: Switching on strings like this is super-gross.
+    #        The design needs improving so that either objective
+    #        functions are passed into the search, or the search
+    #        function is called by something else which does its
+    #        own bookkeeping, or the search is specialised for either.
     if mode == 'min':
         minimise = True
         check_func = operator.__lt__
@@ -141,6 +145,7 @@ def breadth_first_search(graph: Graph, start: str, mode: str):
     return best_path, best_weight
 
 
+# FIXME: Duplicated code in the search_all_* functions
 def search_all_min(graph):
     results = []
     for start_node in list(graph.connections.keys()):
@@ -148,6 +153,7 @@ def search_all_min(graph):
     return min(results, key=lambda x: x[1])
 
 
+# FIXME: Duplicated code in the search_all_* functions
 def search_all_max(graph):
     results = []
     for start_node in list(graph.connections.keys()):
