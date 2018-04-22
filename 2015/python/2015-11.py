@@ -8,6 +8,22 @@ import pytest
 
 
 def validate_password(password):
+    """Check password against the puzzle’s requirements
+
+    Passwords:
+        * must include one increasing straight of at least three
+          letters, like abc, bcd, cde, and so on, up to xyz.
+          They cannot skip letters; abd doesn't count.
+        * may not contain the letters i, o, or l
+        * must contain at least two different, non-overlapping
+          pairs of letters, like aa, bb, or zz.
+
+    Args:
+        password (str): The password to validate
+
+    Returns:
+        bool: True if the password satisfies all requirements
+    """
     windowed = (''.join(t) for t in zip(password, password[1:], password[2:]))
     for straight in windowed:
         if straight in string.ascii_lowercase:
