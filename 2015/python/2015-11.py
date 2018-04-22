@@ -25,24 +25,14 @@ def validate_password(password):
         bool: True if the password satisfies all requirements
     """
     windowed = (''.join(t) for t in zip(password, password[1:], password[2:]))
-    for straight in windowed:
-        if straight in string.ascii_lowercase:
-            break
-    else:
-        return False
+    contains_straight = any(w in string.ascii_lowercase for w in windowed)
 
-    exclude_letters = re.compile(r'^[^iol]+$')
-    if not exclude_letters.match(password):
-        return False
+    no_invalid_chars = not any(char in password for char in 'iol')
 
-    two_doubles = re.compile(
-        r'^ \w* (\w)\1 \w* (\w)\2 \w* $',
-        flags=re.VERBOSE)
-    double_match = two_doubles.match(password)
-    if not double_match or double_match[1] == double_match[2]:
-        return False
+    pair_chars = {a for a, b in zip(password, password[1:]) if a == b}
+    enough_unique_pairs = len(pair_chars) >= 2
 
-    return True
+    return contains_straight and no_invalid_chars and enough_unique_pairs
 
 
 def clean_bad_letters(password):
