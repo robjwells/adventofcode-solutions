@@ -186,3 +186,4 @@ def main(puzzle_input):
 if __name__ == '__main__':
     with open('../input/2015-09.txt') as f:
         puzzle_input = f.read()
+    main(puzzle_input)
