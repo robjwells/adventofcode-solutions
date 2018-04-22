@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 11: Corporate Policy"""
 
-import re
 import string
 
 import pytest
@@ -50,14 +49,14 @@ def clean_bad_letters(password):
         xix     ->   xja
         xixyz   ->   xjaaa
     """
-    first_invalid_char = re.search(r'([iol])', password)
-    if first_invalid_char is None:
+    searches = [password.find(char) for char in 'iol']
+    if max(searches) == -1:
         return password
 
-    cut_pos = first_invalid_char.start()
-    new_letter = increment_letter(first_invalid_char.group())
-    letter_a_to_add = len(password[cut_pos:]) - 1
-    return password[:cut_pos] + new_letter + 'a' * letter_a_to_add
+    cut_pos = min(x for x in searches if x != -1)
+    new_letter = increment_letter(password[cut_pos])
+    count_a_to_add = len(password[cut_pos:]) - 1
+    return password[:cut_pos] + new_letter + 'a' * count_a_to_add
 
 
 def increment_letter(letter):
