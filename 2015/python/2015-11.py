@@ -49,11 +49,12 @@ def clean_bad_letters(password):
         xix     ->   xja
         xixyz   ->   xjaaa
     """
-    searches = [password.find(char) for char in 'iol']
-    if max(searches) == -1:
+    search_results = (password.find(char) for char in 'iol')
+    bad_chars = [x for x in search_results if x != -1]
+    if not bad_chars:
         return password
 
-    cut_pos = min(x for x in searches if x != -1)
+    cut_pos = min(bad_chars)
     new_letter = increment_letter(password[cut_pos])
     count_a_to_add = len(password[cut_pos:]) - 1
     return password[:cut_pos] + new_letter + 'a' * count_a_to_add
