@@ -5,6 +5,12 @@ from collections import defaultdict, deque, namedtuple
 import operator
 
 
+TEST_PARSED_INSTRUCTIONS = [
+    ('London', 'Dublin', 464),
+    ('London', 'Belfast', 518),
+    ('Dublin', 'Belfast', 141)]
+
+
 def parse_input(text):
     """Parse a list of destinations and weights
 
@@ -32,11 +38,7 @@ London to Dublin = 464
 London to Belfast = 518
 Dublin to Belfast = 141'''
     result = parse_input(puzzle_input)
-    assert result == [
-        ('London', 'Dublin', 464),
-        ('London', 'Belfast', 518),
-        ('Dublin', 'Belfast', 141)
-        ]
+    assert result == TEST_PARSED_INSTRUCTIONS
 
 
 Edge = namedtuple('Edge', ('src', 'dst', 'weight'))
@@ -159,6 +161,18 @@ def search_all_max(graph):
     for start_node in list(graph.connections.keys()):
         results.append(breadth_first_search(graph, start_node, mode='max'))
     return max(results, key=lambda x: x[1])
+
+
+def test_shortest():
+    """search_all_min returns the known shortest distance"""
+    graph = create_graph(TEST_PARSED_INSTRUCTIONS)
+    assert search_all_min(graph)[1] == 605
+
+
+def test_longest():
+    """search_all_max returns the known longest distance"""
+    graph = create_graph(TEST_PARSED_INSTRUCTIONS)
+    assert search_all_max(graph)[1] == 982
 
 
 def main(puzzle_input):
