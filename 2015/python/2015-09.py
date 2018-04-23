@@ -2,7 +2,6 @@
 """Advent of Code 2015, Day 9: All in a Single Night"""
 
 from collections import defaultdict, deque, namedtuple
-import operator
 
 
 TEST_PARSED_INSTRUCTIONS = [
@@ -81,86 +80,76 @@ def create_graph(parsed_lines):
     return graph
 
 
-def breadth_first_search(graph: Graph, start: str, mode: str):
-    """Search the graph for the best path that visits all nodes
+def breadth_first_search(graph: Graph, start: str):
+    """Yield paths in graph from node start that visit all nodes once
 
-    Returns the path that is best according to the mode: either min or
-    max.
+    Args:
+        graph (Graph): The graph to be traversed
+        start (str): The starting node for paths
 
-    The string mode is a bit of a hack, and removes the ability to
-    have a generic checking function. But it also allows me to optimise
-    the minimisation case by skipping paths that are too long despite
-    not visiting all nodes.
+    Yields:
+        list: A list of strings representing nodes in graph, of
+            a length equal to the number of nodes in graph
     """
-    def total_weight(path):
-        pairs = zip(path, path[1:])
-        weight = sum(graph.weight(*p) for p in pairs)
-        return weight
-
     total_nodes = len(graph.connections)
-    total_edges = len([e for l in graph.connections.values() for e in l])
-    average_edge_weight = sum([
-        edge.weight for edge_list in graph.connections.values()
-        for edge in edge_list
-        ]) / total_edges
-
-    # FIXME: Switching on strings like this is super-gross.
-    #        The design needs improving so that either objective
-    #        functions are passed into the search, or the search
-    #        function is called by something else which does its
-    #        own bookkeeping, or the search is specialised for either.
-    if mode == 'min':
-        minimise = True
-        check_func = operator.__lt__
-    else:
-        minimise = False
-        check_func = operator.__gt__
-        best_weight = 0
-
     queue = deque([[start]])
-    all_nodes = graph.connections.keys()
-    best_path = None
-    best_weight = (total_nodes - 1) * average_edge_weight
 
     while queue:
         temp_path = queue.pop()
-        temp_weight = total_weight(temp_path)
-        if minimise and check_func(best_weight, temp_weight):
-            # Bail if path is too long already when minimising length
-            continue
-        elif check_func((len(temp_path) - 1) * average_edge_weight,
-                        temp_weight):
-            # If the path is below average, move on to the next
-            continue
-        if all_nodes - set(temp_path):
-            # Not visited all nodes yet
-            for edge in graph.edges(temp_path[0]):
+
+        if len(temp_path) != total_nodes:
+            # Not visited all nodes, so append new paths to queue that include
+            # unvisited nodes, considering nodes that are reachable from
+            # the last node in the path.
+            for edge in graph.edges(temp_path[-1]):
                 if edge.dst not in temp_path:
-                    new_path = temp_path + [edge.dst]
-                    queue.append(new_path)
+                    queue.append(temp_path + [edge.dst])
         else:
-            # Visited all nodes
-            if check_func(temp_weight, best_weight):
-                best_weight = temp_weight
-                best_path = temp_path
-
-    return best_path, best_weight
+            yield temp_path
 
 
-# FIXME: Duplicated code in the search_all_* functions
+def total_weight(graph, path):
+    """Sum the weights of the edges between nodes in path
+
+    Args:
+        graph (Graph): A graph containing nodes and edges between them
+        path (list of str): A list of strings representing nodes in graph
+
+    Returns:
+        int: The total weight of all the implied edges in path
+    """
+    pairs = zip(path, path[1:])
+    weight = sum(graph.weight(*p) for p in pairs)
+    return weight
+
+
+def search_all(graph):
+    """Find every Hamiltonian path in graph and its weight
+
+    A Hamiltonian path is a route traversing graph that visits each
+    node exactly once.
+
+    Args:
+        graph (Graph): A graph containing nodes and edges between them
+
+    Returns:
+        list of ([str], int) tuples: Hamiltonian paths with their weights
+    """
+    paths = []
+    for start_node in graph.connections:
+        for path in breadth_first_search(graph, start_node):
+            paths.append((path, total_weight(graph, path)))
+    return paths
+
+
 def search_all_min(graph):
-    results = []
-    for start_node in list(graph.connections.keys()):
-        results.append(breadth_first_search(graph, start_node, mode='min'))
-    return min(results, key=lambda x: x[1])
+    """Find the shortest Hamiltonian path in graph."""
+    return min(search_all(graph), key=lambda t: t[1])
 
 
-# FIXME: Duplicated code in the search_all_* functions
 def search_all_max(graph):
-    results = []
-    for start_node in list(graph.connections.keys()):
-        results.append(breadth_first_search(graph, start_node, mode='max'))
-    return max(results, key=lambda x: x[1])
+    """Find the longest Hamiltonian path in graph."""
+    return max(search_all(graph), key=lambda t: t[1])
 
 
 def test_shortest():
