@@ -4,12 +4,6 @@
 from collections import defaultdict, deque, namedtuple
 
 
-TEST_PARSED_INSTRUCTIONS = [
-    ('London', 'Dublin', 464),
-    ('London', 'Belfast', 518),
-    ('Dublin', 'Belfast', 141)]
-
-
 def parse_input(text):
     """Parse a list of destinations and weights
 
@@ -28,16 +22,6 @@ def parse_input(text):
         return (parts[0], parts[2], int(parts[4]))
 
     return [parse_line(line) for line in text.splitlines()]
-
-
-def test_parse():
-    """Test parsing of a list of destinations and weights"""
-    puzzle_input = '''\
-London to Dublin = 464
-London to Belfast = 518
-Dublin to Belfast = 141'''
-    result = parse_input(puzzle_input)
-    assert result == TEST_PARSED_INSTRUCTIONS
 
 
 Edge = namedtuple('Edge', ('src', 'dst', 'weight'))
@@ -150,6 +134,22 @@ def search_all_min(graph):
 def search_all_max(graph):
     """Find the longest Hamiltonian path in graph."""
     return max(search_all(graph), key=lambda t: t[1])
+
+
+TEST_PARSED_INSTRUCTIONS = [
+    ('London', 'Dublin', 464),
+    ('London', 'Belfast', 518),
+    ('Dublin', 'Belfast', 141)]
+
+
+def test_parse():
+    """Test parsing of a list of destinations and weights"""
+    puzzle_input = '''\
+London to Dublin = 464
+London to Belfast = 518
+Dublin to Belfast = 141'''
+    result = parse_input(puzzle_input)
+    assert result == TEST_PARSED_INSTRUCTIONS
 
 
 def test_shortest():
