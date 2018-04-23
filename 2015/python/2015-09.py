@@ -176,11 +176,11 @@ def test_longest():
 
 
 def main(puzzle_input):
-        instructions = parse_input(puzzle_input)
-        graph = create_graph(instructions)
+    instructions = parse_input(puzzle_input)
+    graph = create_graph(instructions)
 
-        print('Shortest:', search_all_min(graph))
-        print('Longest:', search_all_max(graph))
+    print('Shortest:', search_all_min(graph))
+    print('Longest:', search_all_max(graph))
 
 
 if __name__ == '__main__':
