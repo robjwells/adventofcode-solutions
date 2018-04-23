@@ -9,7 +9,7 @@ def parse_input(text):
 
     Returns a list of tuples (source, dest, weight).
 
-    Edges in this graph and undirected.
+    Edges in this graph are undirected.
 
     The input contains multiple rows appearing like so:
         A to B = W
