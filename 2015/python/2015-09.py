@@ -3,6 +3,8 @@
 
 from collections import defaultdict, deque, namedtuple
 
+import pytest
+
 
 def parse_input(text):
     """Parse a list of destinations and weights
@@ -152,16 +154,50 @@ Dublin to Belfast = 141'''
     assert result == TEST_PARSED_INSTRUCTIONS
 
 
-def test_shortest():
+@pytest.fixture
+def sample_graph():
+    """Return a graph of the sample instructions"""
+    return create_graph(TEST_PARSED_INSTRUCTIONS)
+
+
+def test_shortest(sample_graph):
     """search_all_min returns the known shortest distance"""
-    graph = create_graph(TEST_PARSED_INSTRUCTIONS)
-    assert search_all_min(graph)[1] == 605
+    assert search_all_min(sample_graph)[1] == 605
 
 
-def test_longest():
+def test_longest(sample_graph):
     """search_all_max returns the known longest distance"""
-    graph = create_graph(TEST_PARSED_INSTRUCTIONS)
-    assert search_all_max(graph)[1] == 982
+    assert search_all_max(sample_graph)[1] == 982
+
+
+@pytest.fixture
+def real_input_graph():
+    """Return a graph created from the real puzzle input"""
+    with open('../input/2015-09.txt') as f:
+        puzzle_input = f.read()
+
+    instructions = parse_input(puzzle_input)
+    return create_graph(instructions)
+
+
+def test_longest_gives_expected_result_with_real_input(real_input_graph):
+    """search_all_max returns known good result when given real day's input
+
+    This is mostly to check that refactoring doesn't change the
+    'real' output from that which has already been accepted by
+    the Advent of Code website.
+    """
+    assert search_all_max(real_input_graph)[1] == 804
+
+
+def test_shortest_gives_expected_result_with_real_input(real_input_graph):
+    """search_all_min returns known good result when given real day's input
+
+    This is mostly to check that refactoring doesn't change the
+    'real' output from that which has already been accepted by
+    the Advent of Code website.
+    """
+    assert search_all_min(real_input_graph)[1] == 207
 
 
 def main(puzzle_input):
