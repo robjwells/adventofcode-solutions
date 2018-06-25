@@ -8,25 +8,25 @@ import pathlib
 input_file = pathlib.Path(__file__).parent.parent.joinpath('day12_input.txt')
 
 
-def sum_data(d):
+def sum_data(d, ignore_red=False):
     total = 0
     if isinstance(d, dict):
         d = d.values()
-        if 'red' in d:
+        if ignore_red and 'red' in d:
             return 0
     for item in d:
         if isinstance(item, int):
             total += item
         elif isinstance(item, (list, dict)):
-            total += sum_data(item)
+            total += sum_data(item, ignore_red)
         else:
             continue    # Some other type we’re not interested in
     return total
 
 
-def sum_json(raw_json):
+def sum_json(raw_json, ignore_red=False):
     parsed = json.loads(raw_json)
-    return sum_data(parsed)
+    return sum_data(parsed, ignore_red=ignore_red)
 
 
 def test_simple():
