@@ -45,6 +45,11 @@ def test_empty():
     assert sum_json('{}') == 0
 
 
+def test_ignored_types():
+    """sum_json ignores non-{int,list,dict} types"""
+    assert sum_json('["string",4,{"a":null,"b":4}]') == 8
+
+
 def main(puzzle_input):
     print('Part one:', sum_json(puzzle_input))
     print('Part two:', sum_json(puzzle_input, ignore_red=True))
