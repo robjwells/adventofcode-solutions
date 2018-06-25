@@ -3,6 +3,8 @@
 
 import json
 
+import pytest
+
 
 def sum_data(d, ignore_red=False):
     total = 0
@@ -48,6 +50,17 @@ def test_empty():
 def test_ignored_types():
     """sum_json ignores non-{int,list,dict} types"""
     assert sum_json('["string",4,{"a":null,"b":4}]') == 8
+
+
+@pytest.mark.parametrize('data,total', [
+    ('[1,2,3]', 6),
+    ('[1,{"c":"red","b":2},3]', 4),
+    ('{"d":"red","e":[1,2,3,4],"f":5}', 0),
+    ('[1,"red",5]', 6),
+])
+def test_ignore_red_in_dicts(data, total):
+    """The string 'red' causes sum_json to ignore the object"""
+    assert sum_json(data, ignore_red=True) == total
 
 
 def main(puzzle_input):
