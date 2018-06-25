@@ -3,10 +3,6 @@
 
 import json
 
-import pathlib
-
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day12_input.txt')
-
 
 def sum_data(d, ignore_red=False):
     total = 0
@@ -49,7 +45,12 @@ def test_empty():
     assert sum_json('{}') == 0
 
 
+def main(puzzle_input):
+    print('Part one:', sum_json(puzzle_input))
+    print('Part two:', sum_json(puzzle_input, ignore_red=True))
+
+
 if __name__ == '__main__':
-    with open(input_file) as json_file:
+    with open('../input/2015-12.txt') as json_file:
         json_data = json_file.read()
-    print(sum_json(json_data))
+    main(json_data)
