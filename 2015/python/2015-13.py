@@ -2,10 +2,8 @@
 """Advent of Code 2015, Day 13: Knights of the Dinner Table"""
 
 from itertools import permutations
-import pathlib
 import re
 
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day13_input.txt')
 
 SAMPLE_INPUT = '''\
 Alice would gain 54 happiness units by sitting next to Bob.
@@ -104,9 +102,8 @@ def test_sum_happiness():
     assert sum_happiness(happiness_dict, 'ABCD') == 330
 
 
-if __name__ == '__main__':
-    with open(input_file) as f:
-        happiness_dict = parse_happiness(f.read())
+def main(puzzle_input):
+    happiness_dict = parse_happiness(puzzle_input)
 
     # Part one
     p1_change, p1_plan = find_best_plan(happiness_dict)
@@ -122,3 +119,9 @@ if __name__ == '__main__':
 
     p2_change, p2_plan = find_best_plan(happiness_dict)
     print(f'Part two: {p2_change}, {"".join(p2_plan)}')
+
+
+if __name__ == '__main__':
+    with open('../input/2015-13.txt') as f:
+        puzzle_input = f.read()
+    main(puzzle_input)
