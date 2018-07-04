@@ -24,18 +24,23 @@ David would gain 41 happiness units by sitting next to Carol.
 
 
 def unique_seating_permutations(guests):
-    """Return a list of all permutations of guests with reversals removed
+    """Yield unique circular permutations of guests """
+    if len(guests) < 3:
+        # Only one plan for groups of three or less
+        yield guests
+        return
 
-    Comparing the first and last elements works because at the point
-    this starts to fail, the reverse permutation is already stored in
-    the list.
+    def pair(*args):
+        return tuple(sorted(args))
 
-    You can verify this by building a set and only storing elements whose
-    reversals aren’t already present in the set. That set contains the
-    same elements as building one in this manner.
-    """
     perms = permutations(guests)
-    return [p for p in perms if p[0] < p[-1]]
+    seen_uniques = set()
+    for p in perms:
+        char_pairs = {pair(c1, c2) for c1, c2 in zip(p, p[1:])}
+        char_pairs.add(pair(p[0], p[-1]))
+        if char_pairs not in seen_uniques:
+            yield p
+            seen_uniques.add(frozenset(char_pairs))
 
 
 def neighbours(guest, plan):
@@ -107,7 +112,7 @@ def test_sum_happiness():
 @pytest.mark.parametrize('guests', ['A', 'AB', 'ABC'])
 def test_unique_seat_plans_only_one_plan(guests):
     """unique_seating_permutations gives expected number of plans """
-    assert len(unique_seating_permutations(guests)) == 1
+    assert len(list(unique_seating_permutations(guests))) == 1
 
 
 @pytest.mark.parametrize('plan', ['ABCD', 'ABCDE', 'ABCDEF'])
