@@ -4,6 +4,10 @@
 from itertools import permutations
 import re
 
+from hypothesis import given
+import hypothesis.strategies as st
+import pytest
+
 
 SAMPLE_INPUT = '''\
 Alice would gain 54 happiness units by sitting next to Bob.
@@ -100,6 +104,27 @@ def test_parse():
 def test_sum_happiness():
     happiness_dict = parse_happiness(SAMPLE_INPUT)
     assert sum_happiness(happiness_dict, 'ABCD') == 330
+
+
+@pytest.mark.parametrize('guests', ['A', 'AB', 'ABC'])
+def test_unique_seat_plans_only_one_plan(guests):
+    """unique_seating_permutations gives expected number of plans """
+    assert len(unique_seating_permutations(guests)) == 1
+
+
+@given(
+    plan=st.sets(
+        elements=st.characters(min_codepoint=65, max_codepoint=90),
+        min_size=3, max_size=6))
+def test_unique_plans_are_unique(plan):
+    """unique_seating_permutations returns only unique plans"""
+    plan_pairs_set = set()
+    for char_tuple in unique_seating_permutations(plan):
+        pair_set = {''.join(sorted([c1, c2]))
+                    for c1, c2 in zip(char_tuple, char_tuple[1:])}
+        pair_set.add(''.join(sorted([char_tuple[0], char_tuple[-1]])))
+        assert pair_set not in plan_pairs_set
+        plan_pairs_set.add(frozenset(pair_set))
 
 
 def main(puzzle_input):
