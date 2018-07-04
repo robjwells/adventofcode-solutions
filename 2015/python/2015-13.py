@@ -109,6 +109,13 @@ def test_sum_happiness():
     assert sum_happiness(happiness_dict, 'ABCD') == 330
 
 
+def test_find_known_best_plan_for_example():
+    """find_best_plan returns ABCD for the sample scenario"""
+    happiness_dict = parse_happiness(SAMPLE_INPUT)
+    expected = (330, tuple('ABCD'))
+    assert find_best_plan(happiness_dict) == expected
+
+
 @pytest.mark.parametrize('guests', ['A', 'AB', 'ABC'])
 def test_unique_seat_plans_only_one_plan(guests):
     """unique_seating_permutations gives expected number of plans """
