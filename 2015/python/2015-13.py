@@ -4,8 +4,6 @@
 from itertools import permutations
 import re
 
-from hypothesis import given
-import hypothesis.strategies as st
 import pytest
 
 
@@ -112,10 +110,7 @@ def test_unique_seat_plans_only_one_plan(guests):
     assert len(unique_seating_permutations(guests)) == 1
 
 
-@given(
-    plan=st.sets(
-        elements=st.characters(min_codepoint=65, max_codepoint=90),
-        min_size=3, max_size=6))
+@pytest.mark.parametrize('plan', ['ABCD', 'ABCDE', 'ABCDEF'])
 def test_unique_plans_are_unique(plan):
     """unique_seating_permutations returns only unique plans"""
     plan_pairs_set = set()
