@@ -68,5 +68,9 @@ def solve_part_two(puzzle_input):
 
 if __name__ == '__main__':
     puzzle_input = aoc_common.load_puzzle_input(DAY)
+
     part_one_solution = solve_part_one(puzzle_input)
     print('Part one:', part_one_solution)
+
+    part_two_solution = solve_part_two(puzzle_input)
+    print('Part two:', part_two_solution)
