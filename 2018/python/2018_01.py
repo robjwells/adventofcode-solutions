@@ -1,7 +1,9 @@
 """Advent of Code 2018 Day 1: Chronal Calibration"""
 
+import aoc_common
 import pytest
 
+DAY = 1
 
 PART_ONE_CASES = [
     ('+1\n+1\n+1', 3),
@@ -35,7 +37,6 @@ def solve(puzzle_input):
 
 
 if __name__ == '__main__':
-    with open('../input/2018-01.txt') as input_file:
-        puzzle_input = input_file.read()
+    puzzle_input = aoc_common.load_puzzle_input(DAY)
     part_one_solution = solve(puzzle_input)
     print('Part one:', part_one_solution)
