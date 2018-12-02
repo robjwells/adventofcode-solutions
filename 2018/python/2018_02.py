@@ -18,6 +18,12 @@ def test_solve_part_one():
     assert solve_part_one(puzzle_input) == expected
 
 
+def test_known_part_one_solution():
+    part_one_solution = 9633
+    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    assert solve_part_one(puzzle_input) == part_one_solution
+
+
 def solve_part_one(puzzle_input):
     """Return checksum of box ids provided in puzzle input"""
     return checksum(puzzle_input.split('\n'))
