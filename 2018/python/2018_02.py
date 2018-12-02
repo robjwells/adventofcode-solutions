@@ -65,11 +65,25 @@ def some_element_appers_n_times(iterable, count):
 
 
 def solve_part_two(puzzle_input):
-    """Return common letters between two almost-matching box ids
+    """Return matching characters of two almost-identical box ids
 
-    The box ids differ at only one character position.
+    The box ids differ at only one character position, and the string
+    returned is the common box id absent the differing position.
     """
-    pass
+    first, second = first_almost_matching_pair(puzzle_input.split('\n'))
+    matching_letters = ''.join(a for a, b in zip(first, second) if a == b)
+    return matching_letters
+
+
+def first_almost_matching_pair(strings):
+    """Return the first two strings that differ by only one position"""
+    for x in strings:
+        for y in strings:
+            number_of_differing_positions = sum(
+                char_x != char_y for char_x, char_y in zip(x, y))
+
+            if number_of_differing_positions == 1:
+                return x, y
 
 
 if __name__ == '__main__':
@@ -77,3 +91,6 @@ if __name__ == '__main__':
 
     part_one_solution = solve_part_one(puzzle_input)
     print('Part one:', part_one_solution)
+
+    part_two_solution = solve_part_two(puzzle_input)
+    print('Part two:', part_two_solution)
