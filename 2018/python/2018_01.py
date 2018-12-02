@@ -1,5 +1,7 @@
 """Advent of Code 2018 Day 1: Chronal Calibration"""
 
+import itertools
+
 import aoc_common
 import pytest
 
@@ -53,7 +55,15 @@ def solve_part_one(puzzle_input):
 
 
 def solve_part_two(puzzle_input):
-    pass
+    """Return the first repeated frequency"""
+    frequency_changes = parse(puzzle_input)
+    frequency = 0
+    seen = {frequency}
+    for change in itertools.cycle(frequency_changes):
+        frequency += change
+        if frequency in seen:
+            return frequency
+        seen.add(frequency)
 
 
 if __name__ == '__main__':
