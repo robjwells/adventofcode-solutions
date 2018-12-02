@@ -9,7 +9,7 @@ DAY = 2
 
 
 def test_solve_part_one():
-    """solve_part_one produces correct results on known input"""
+    """solve_part_one produces correct checksum for box ids"""
     puzzle_input = '\n'.join([
         'abcdef', 'bababc', 'abbcde', 'abcccd',
         'aabcdd', 'abcdee', 'ababab',
@@ -22,6 +22,19 @@ def test_known_part_one_solution():
     part_one_solution = 9633
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     assert solve_part_one(puzzle_input) == part_one_solution
+
+
+def test_solve_part_two():
+    """solve_part_two returns common letters between almost-matching ids
+
+    Almost-matching is defined as differing at one position in the string.
+    """
+    puzzle_input = '\n'.join([
+        'abcde', 'fghij', 'klmno', 'pqrst',
+        'fguij', 'axcye', 'wvxyz',
+    ])
+    expected = 'fgij'
+    assert solve_part_two(puzzle_input) == expected
 
 
 def solve_part_one(puzzle_input):
@@ -49,6 +62,14 @@ def boxes_with_n_of_any_letter(boxes, count):
 def some_element_appers_n_times(iterable, count):
     """Returns whether any element of string appears exactly `count` times"""
     return count in Counter(iterable).values()
+
+
+def solve_part_two(puzzle_input):
+    """Return common letters between two almost-matching box ids
+
+    The box ids differ at only one character position.
+    """
+    pass
 
 
 if __name__ == '__main__':
