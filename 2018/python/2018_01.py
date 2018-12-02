@@ -17,6 +17,16 @@ def test_solve_part_one(puzzle_input, expected):
     assert solve_part_one(puzzle_input) == expected
 
 
+@pytest.mark.parametrize('puzzle_input,expected', [
+    ('+1\n-1', 0),
+    ('+3\n+3\n+4\n-2\n-4', 10),
+    ('-6\n+3\n+8\n+5\n-6', 5),
+    ('+7\n+7\n-2\n-7\n-4', 14),
+])
+def test_solve_part_two(puzzle_input, expected):
+    assert solve_part_two(puzzle_input) == expected
+
+
 @pytest.mark.parametrize('puzzle_input,parsed', zip(
     (case_input for case_input, expected in PART_ONE_CASES),
     ([1, 1, 1], [1, 1, -2], [-1, -2, -3])
@@ -40,6 +50,10 @@ def solve_part_one(puzzle_input):
     """Return the sum of the frequency changes listed in input"""
     frequency_changes = parse(puzzle_input)
     return sum(frequency_changes)
+
+
+def solve_part_two(puzzle_input):
+    pass
 
 
 if __name__ == '__main__':
