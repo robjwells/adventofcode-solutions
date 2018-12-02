@@ -4,9 +4,9 @@ import pytest
 
 
 PART_ONE_CASES = [
-    (['+1', '+1', '+1'], 3),
-    (['+1', '+1', '-2'], 0),
-    (['-1', '-2', '-3'], -6),
+    ('+1\n+1\n+1', 3),
+    ('+1\n+1\n-2', 0),
+    ('-1\n-2\n-3', -6),
 ]
 
 
@@ -25,7 +25,7 @@ def test_parse(puzzle_input, parsed):
 
 def parse(puzzle_input):
     """Parses puzzle input into a list of ints"""
-    pass
+    return [int(n) for n in puzzle_input.splitlines()]
 
 
 def solve(puzzle_input):
