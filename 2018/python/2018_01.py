@@ -13,8 +13,8 @@ PART_ONE_CASES = [
 
 
 @pytest.mark.parametrize('puzzle_input,expected', PART_ONE_CASES)
-def test_solve(puzzle_input, expected):
-    assert solve(puzzle_input) == expected
+def test_solve_part_one(puzzle_input, expected):
+    assert solve_part_one(puzzle_input) == expected
 
 
 @pytest.mark.parametrize('puzzle_input,parsed', zip(
@@ -28,7 +28,7 @@ def test_parse(puzzle_input, parsed):
 def test_known_part_one_solution():
     part_one_solution = 400
     puzzle_input = aoc_common.load_puzzle_input(DAY)
-    assert solve(puzzle_input) == part_one_solution
+    assert solve_part_one(puzzle_input) == part_one_solution
 
 
 def parse(puzzle_input):
@@ -36,7 +36,7 @@ def parse(puzzle_input):
     return [int(n) for n in puzzle_input.splitlines()]
 
 
-def solve(puzzle_input):
+def solve_part_one(puzzle_input):
     """Return the sum of the frequency changes listed in input"""
     frequency_changes = parse(puzzle_input)
     return sum(frequency_changes)
@@ -44,5 +44,5 @@ def solve(puzzle_input):
 
 if __name__ == '__main__':
     puzzle_input = aoc_common.load_puzzle_input(DAY)
-    part_one_solution = solve(puzzle_input)
+    part_one_solution = solve_part_one(puzzle_input)
     print('Part one:', part_one_solution)
