@@ -30,4 +30,5 @@ def parse(puzzle_input):
 
 def solve(puzzle_input):
     """Return the sum of the frequency changes listed in input"""
-    pass
+    frequency_changes = parse(puzzle_input)
+    return sum(frequency_changes)
