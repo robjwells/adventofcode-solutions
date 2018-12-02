@@ -32,3 +32,10 @@ def solve(puzzle_input):
     """Return the sum of the frequency changes listed in input"""
     frequency_changes = parse(puzzle_input)
     return sum(frequency_changes)
+
+
+if __name__ == '__main__':
+    with open('../input/2018-01.txt') as input_file:
+        puzzle_input = input_file.read()
+    part_one_solution = solve(puzzle_input)
+    print('Part one:', part_one_solution)
