@@ -25,6 +25,12 @@ def test_parse(puzzle_input, parsed):
     assert parse(puzzle_input) == parsed
 
 
+def test_known_part_one_solution():
+    part_one_solution = 400
+    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    assert solve(puzzle_input) == part_one_solution
+
+
 def parse(puzzle_input):
     """Parses puzzle input into a list of ints"""
     return [int(n) for n in puzzle_input.splitlines()]
