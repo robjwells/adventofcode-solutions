@@ -94,6 +94,8 @@ def first_almost_matching_pair(strings):
 if __name__ == '__main__':
     puzzle_input = aoc_common.load_puzzle_input(DAY)
 
+    print(__doc__)
+
     part_one_solution = solve_part_one(puzzle_input)
     print('Part one:', part_one_solution)
 
