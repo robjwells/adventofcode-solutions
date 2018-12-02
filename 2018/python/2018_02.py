@@ -3,7 +3,6 @@
 from collections import Counter
 
 import aoc_common
-import pytest
 
 DAY = 2
 
