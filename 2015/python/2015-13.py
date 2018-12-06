@@ -58,7 +58,7 @@ def neighbours(guest, plan):
 def parse_happiness(text):
     """Parse the instructions and return a dict of happiness relations"""
     regex = re.compile(
-        '^(\w)\w+ \w+ (gain|lose) (\d+)[ a-z]+([A-Z])[a-z]+\.$'
+        r'^(\w)\w+ \w+ (gain|lose) (\d+)[ a-z]+([A-Z])[a-z]+\.$'
     )
     happiness_dict = dict()
     for line in text.splitlines():
