@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Day01 {
+public class AoC_2018_01 {
     public static void main(String[] args) {
         Path inputFilePath = Path.of("../input/2018-01.txt");
         try {
