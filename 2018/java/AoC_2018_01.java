@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 public class AoC_2018_01 {
     public static void main(String[] args) {
+        System.out.println("Advent of Code 2018 Day 1: Chronal Calibration");
         Path inputFilePath = Path.of("../input/2018-01.txt");
         try {
             int[] deltas = Files.lines(inputFilePath).mapToInt(Integer::parseInt).toArray();
