@@ -9,12 +9,27 @@ class AoC_2018_03 extends Solution {
     public static void main(String[] args) {
         // Tests
         Test_2018_03.testClaimParses();
-        Test_2018_03.testOverlapMatrix();
+        Test_2018_03.testOverlapMap();
+    }
+    
+    static String pairToString(int x, int y) {
+        return String.format("\d,\d", x, y);
     }
 
-    static int[][] makeOverlapMatrix(String[] claims, int sideLength) {
-        int[][] overlapMatrix = new int[sideLength][sideLength];
-        return overlapMatrix;
+    static HashMap<String, Integer> makeOverlapMap(String[] claims) {
+        HashMap<String, Integer> overlap = new HashMap<>();
+        for (Claim claim : claims) {
+            for (int x = claim.fromLeft; x < claim.fromLeft + claim.width; x++) {
+                for (int y = claim.fromTop; y < claim.fromTop + claim.height; y++) {
+                    String key = pairToString(x, y);
+                    overlap.set(
+                        key,
+                        overlap.getOrDefault(key, 0) + 1
+                    );
+                }
+            }
+        }
+        return overlap;
     }
 
 }
@@ -62,25 +77,15 @@ class Test_2018_03 {
         assert claim.height == 4;
     }
 
-    static void testOverlapMatrix() {
+    static void testOverlapMap() {
         String[] claims = new String[] {
             "#1 @ 1,3: 4x4",
             "#2 @ 3,1: 4x4",
             "#3 @ 5,5: 2x2",
         };
-        int sideLength = 8;
-        int[][] result = AoC_2018_03.makeOverlapMatrix(claims, sideLength);
+        HashMap<String, Integer> result = AoC_2018_03.makeOverlapMap(claims);
 
-        int[][] expected = new int[][] {
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 2, 2, 0, 0, 0},
-            {0, 0, 0, 2, 2, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0},
-        };
+        
 
         assert result.length == sideLength : "Number of rows incorrect";
         for (int[] row : result) {
