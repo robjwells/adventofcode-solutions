@@ -7,9 +7,42 @@ class AoC_2018_03 extends Solution {
 
     public static void main(String[] args) {
         // Tests
-        testClaimParses();
+        Test_2018_03.testClaimParses();
     }
 
+class Claim {
+    private static Pattern claimPattern = Pattern.compile(
+        "^#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)$"
+    );
+
+    int id;
+    int fromLeft;
+    int fromTop;
+    int width;
+    int height;
+
+    Claim(int id, int fromLeft, int fromTop, int width, int height) {
+        this.id = id;
+        this.fromLeft = fromLeft;
+        this.fromTop = fromTop;
+        this.width = width;
+        this.height = height;
+    }
+
+    Claim(String claimString) {
+        Matcher claimMatcher = claimPattern.matcher(claimString);
+        if (!claimMatcher.matches()) {
+            throw new IllegalArgumentException("Invalid claim string.");
+        }
+        this.id = Integer.parseInt(claimMatcher.group(1));
+        this.fromLeft = Integer.parseInt(claimMatcher.group(2));
+        this.fromTop = Integer.parseInt(claimMatcher.group(3));
+        this.width = Integer.parseInt(claimMatcher.group(4));
+        this.height = Integer.parseInt(claimMatcher.group(5));
+    }
+}
+
+class Test_2018_03 {
     static void testClaimParses() {
         String input = "#123 @ 3,2: 5x4";
         Claim claim = new Claim(input);
@@ -20,35 +53,7 @@ class AoC_2018_03 extends Solution {
         assert claim.height == 4;
     }
 
-    static class Claim {
-        private static Pattern claimPattern = Pattern.compile(
-            "^#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)$"
-        );
 
-        int id;
-        int fromLeft;
-        int fromTop;
-        int width;
-        int height;
-
-        Claim(int id, int fromLeft, int fromTop, int width, int height) {
-            this.id = id;
-            this.fromLeft = fromLeft;
-            this.fromTop = fromTop;
-            this.width = width;
-            this.height = height;
-        }
-
-        Claim(String claimString) {
-            Matcher claimMatcher = claimPattern.matcher(claimString);
-            if (!claimMatcher.matches()) {
-                throw new IllegalArgumentException("Invalid claim string.");
-            }
-            this.id = Integer.parseInt(claimMatcher.group(1));
-            this.fromLeft = Integer.parseInt(claimMatcher.group(2));
-            this.fromTop = Integer.parseInt(claimMatcher.group(3));
-            this.width = Integer.parseInt(claimMatcher.group(4));
-            this.height = Integer.parseInt(claimMatcher.group(5));
         }
     }
 }
