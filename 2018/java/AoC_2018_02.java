@@ -12,7 +12,7 @@ public class AoC_2018_02 extends Solution {
 
         int partOneResult = solvePartOne(boxIDs);
         assert partOneResult == 9633 : partOneResult;
-        String partTwoResult = solvePartTwo(boxIDs).orElseThrow();
+        String partTwoResult = solvePartTwo(boxIDs);
         assert partTwoResult.equals("lujnogabetpmsydyfcovzixaw") : partTwoResult;
 
         System.out.printf("Part one: %d\n", partOneResult);
@@ -34,7 +34,7 @@ public class AoC_2018_02 extends Solution {
         return countTwo * countThree;
     }
 
-    static Optional<String> solvePartTwo(String[] boxIDs) {
+    static String solvePartTwo(String[] boxIDs) {
         int idLength = boxIDs[0].length();
         for (String first : boxIDs) {
             for (String second : boxIDs) {
@@ -49,11 +49,11 @@ public class AoC_2018_02 extends Solution {
                             common.append(first.charAt(idx));
                         }
                     }
-                    return Optional.of(common.toString());
+                    return common.toString();
                 }
             }
         }
-        return null;
+        return "";  // Failure case to keep the compiler happy
     }
 
     static HashMap<String, Integer> countLetters(String candidate) {
