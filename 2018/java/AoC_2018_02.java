@@ -36,8 +36,10 @@ public class AoC_2018_02 extends Solution {
 
     static String solvePartTwo(String[] boxIDs) {
         int idLength = boxIDs[0].length();
-        for (String first : boxIDs) {
-            for (String second : boxIDs) {
+        for (int fIdx = 0; fIdx < boxIDs.length; fIdx++) {
+            String first = boxIDs[fIdx];
+            for (int sIdx = fIdx + 1; sIdx < boxIDs.length; sIdx++) {
+                String second = boxIDs[sIdx];
                 int[] mismatched = IntStream.range(0, idLength)
                         .filter(idx -> first.charAt(idx) != second.charAt(idx))
                         .toArray();
