@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class AoC_2018_02 extends Solution {
