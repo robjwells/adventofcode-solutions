@@ -3,20 +3,111 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class AoC_2018_04 extends Solution {
     static int DAY = 4;
     static String TITLE = "Advent of Code 2018 Day 4: Repose Record";
 
     public static void main(String[] args) {
+        System.out.println(TITLE);
+
         // Tests
         Test_2018_04.testEventConstructorShiftStart();
         Test_2018_04.testEventConstructorSleepWake();
         Test_2018_04.testEventConstructorStoresDate();
+        Test_2018_04.testMode();
+
+        // Solution
+        List<String> logLines = loadPuzzleInputLines(DAY)
+            .sorted()
+            .collect(Collectors.toList());
+        HashMap<Integer, ArrayList<Integer>> sleepMap = makeSleepMap(logLines);
+
+        int partOneResult = solvePartOne(sleepMap);
+        assert partOneResult == 38813 : "Result does not match known result.";
+        System.out.printf("Part one: %d\n", partOneResult);
+    }
+
+    static int solvePartOne(HashMap<Integer, ArrayList<Integer>> sleepTracker) {
+        Entry<Integer, ArrayList<Integer>> e = sleepTracker.entrySet().stream()
+            .max(Comparator.comparing(entry -> entry.getValue().size()))
+            .get(); // Unwrap the optional
+        int guardNumber = e.getKey();
+        ArrayList<Integer> sleepList = e.getValue();
+        Collections.sort(sleepList);
+        int modalSleepMinute = getMode(sleepList);
+        return guardNumber * modalSleepMinute;
+    }
+
+    static HashMap<Integer, ArrayList<Integer>> makeSleepMap(List<String> logLines) {
+        ArrayList<Event> events = new ArrayList<Event>(logLines.size());
+        int currentGuardNumber = -1;
+        for (String line : logLines) {
+            Event e;
+            if (line.contains("#")) {
+                e = new Event(line);
+                currentGuardNumber = e.guardNumber;
+            } else {
+                e = new Event(line, currentGuardNumber);
+            }
+            events.add(e);
+        }
+
+        HashMap<Integer, ArrayList<Integer>> sleepTracker = new HashMap<>();
+        for (int idx = 0; idx < events.size() - 1; idx++) {
+            Event currentEvent = events.get(idx);
+            if (currentEvent.type == EventType.START) {
+                if (!sleepTracker.containsKey(currentEvent.guardNumber)) {
+                    sleepTracker.put(currentEvent.guardNumber, new ArrayList<Integer>());
+                }
+                continue;
+            }
+            if (currentEvent.type == EventType.SLEEP) {
+                Event wakeEvent = events.get(idx + 1);
+                int sleepTime = currentEvent.datetime.getMinute();
+                int wakeTime = wakeEvent.datetime.getMinute();
+                ArrayList<Integer> sleepList = sleepTracker.get(currentEvent.guardNumber);
+                IntStream.range(sleepTime, wakeTime).forEach(sleepList::add);
+            }
+        }
+
+        return sleepTracker;
+    }
+
+    static <E> E getMode(List<E> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        E modalValue = list.get(0);
+        int modalCount = 1;
+        E currentValue = modalValue;
+        int currentCount = 0;
+        for (E value : list) {
+            if (currentValue.equals(value)) {
+                currentCount += 1;
+            } else {
+                if (currentCount > modalCount) {
+                    modalCount = currentCount;
+                    modalValue = currentValue;
+                }
+                currentValue = value;
+                currentCount = 1;
+            }
+        }
+        if (currentCount > modalCount) {
+            return currentValue;
+        } else {
+            return modalValue;
+        }
     }
 
 }
@@ -153,5 +244,11 @@ class Test_2018_04 {
             Event e = new Event(logLine, 1);
             assert e.datetime.format(formatter).equals(logLine.substring(1, 17));
         }
+    }
+
+    static void testMode() {
+        List<Integer> list = List.of(1, 2, 3, 3, 4, 5);
+        Integer result = AoC_2018_04.getMode(list);
+        assert result.equals(3) : result;
     }
 }
