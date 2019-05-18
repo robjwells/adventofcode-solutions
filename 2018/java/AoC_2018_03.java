@@ -19,6 +19,7 @@ class AoC_2018_03 extends Solution {
         // Tests
         Test_2018_03.testClaimParses();
         Test_2018_03.testOverlapMap();
+        Test_2018_03.testFindUncontested();
 
         // Solutions
         String[] claimStrings = loadPuzzleInputLines(DAY).toArray(String[]::new);
@@ -43,15 +44,9 @@ class AoC_2018_03 extends Solution {
     }
 
     static int solvePartTwo(Claim[] claims, HashMap<String, HashSet<Integer>> overlapMap) {
-        Set<Integer> claimIds = Arrays.stream(claims)
-            .map(claim -> claim.id)
-            .collect(Collectors.toSet());
-        overlapMap
-            .values()
-            .stream()
-            .filter(claimSet -> claimSet.size() > 1)
-            .forEach(claimSet -> claimSet.forEach(claimIds::remove));
-        return claimIds.toArray(Integer[]::new)[0];
+        int[] uncontested = findUncontestedClaims(claims, overlapMap);
+        assert uncontested.length == 1;
+        return uncontested[0];
     }
 
     static String pairToString(int x, int y) {
@@ -77,6 +72,18 @@ class AoC_2018_03 extends Solution {
             }
         }
         return overlap;
+    }
+
+    static int[] findUncontestedClaims(Claim[] claims, HashMap<String, HashSet<Integer>> overlapMap) {
+        Set<Integer> claimIds = Arrays.stream(claims)
+            .map(claim -> claim.id)
+            .collect(Collectors.toSet());
+        overlapMap
+            .values()
+            .stream()
+            .filter(claimSet -> claimSet.size() > 1)
+            .forEach(claimSet -> claimSet.forEach(claimIds::remove));
+        return claimIds.stream().mapToInt(i -> i).toArray();
     }
 
 }
@@ -160,5 +167,17 @@ class Test_2018_03 {
             entry("6,1", 1), entry("6,2", 1), entry("6,3", 1), entry("6,4", 1), entry("6,5", 1), entry("6,6", 1)
         );
         assert counted.equals(expected.entrySet());
+    }
+
+    static void testFindUncontested() {
+        String[] claimStrings = new String[] {
+            "#1 @ 1,3: 4x4",
+            "#2 @ 3,1: 4x4",
+            "#3 @ 5,5: 2x2",
+        };
+        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
+        HashMap<String, HashSet<Integer>> overlapMap = AoC_2018_03.makeOverlapMap(claims);
+        int[] result = AoC_2018_03.findUncontestedClaims(claims, overlapMap);
+        assert Arrays.equals(result, new int[] {3});
     }
 }
