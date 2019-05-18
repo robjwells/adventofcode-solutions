@@ -1,8 +1,12 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.Set;
+
 import static java.util.Map.entry;
 
 class AoC_2018_03 extends Solution {
@@ -15,17 +19,18 @@ class AoC_2018_03 extends Solution {
         Test_2018_03.testOverlapMap();
 
         String[] claimStrings = loadPuzzleInputLines(DAY).toArray(String[]::new);
+        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
 
-        // Solutions
-        System.out.println(TITLE);
-        System.out.printf("Part one: %d\n", solvePartOne(claimStrings));
+        long partOneResult = solvePartOne(claims);
+        assert partOneResult == 100261;
+        System.out.printf("Part one: %d\n", partOneResult);
     }
 
-    static long solvePartOne(String[] claimStrings) {
-        return makeOverlapMap(claimStrings)
+    static long solvePartOne(Claim[] claims) {
+        return makeOverlapMap(claims)
             .values()
             .stream()
-            .filter(count -> count >= 2)
+            .filter(claimSet -> claimSet.size() > 1)
             .count();
     }
 
@@ -33,19 +38,21 @@ class AoC_2018_03 extends Solution {
         return String.format("%d,%d", x, y);
     }
 
-    static HashMap<String, Integer> makeOverlapMap(String[] claimStrings) {
-        HashMap<String, Integer> overlap = new HashMap<>();
-        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
+    static HashMap<String, HashSet<Integer>> makeOverlapMap(Claim[] claims) {
+        HashMap<String, HashSet<Integer>> overlap = new HashMap<>();
         for (Claim claim : claims) {
             int rightLimit = claim.fromLeft + claim.width;
             int bottomLimit = claim.fromTop + claim.height;
             for (int x = claim.fromLeft; x < rightLimit; x++) {
                 for (int y = claim.fromTop; y < bottomLimit; y++) {
                     String key = pairToString(x, y);
-                    overlap.put(
-                        key,
-                        overlap.getOrDefault(key, 0) + 1
-                    );
+                    if (overlap.containsKey(key)) {
+                        overlap.get(key).add(claim.id);
+                    } else {
+                        HashSet<Integer> newSet = new HashSet<Integer>();
+                        newSet.add(claim.id);
+                        overlap.put(key, newSet);
+                    }
                 }
             }
         }
@@ -111,12 +118,19 @@ class Test_2018_03 {
      * </pre>
      */
     static void testOverlapMap() {
-        String[] claims = new String[] {
+        String[] claimStrings = new String[] {
             "#1 @ 1,3: 4x4",
             "#2 @ 3,1: 4x4",
             "#3 @ 5,5: 2x2",
         };
-        HashMap<String, Integer> result = AoC_2018_03.makeOverlapMap(claims);
+        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
+        HashMap<String, HashSet<Integer>> result = AoC_2018_03.makeOverlapMap(claims);
+        Set<Map.Entry<String, HashSet<Integer>>> resultEntries = result.entrySet();
+        Set<Map.Entry<String, Integer>> counted = resultEntries
+            .stream()
+            .map(resultEntry -> entry(resultEntry.getKey(), resultEntry.getValue().size()))
+            .collect(Collectors.toSet());
+
         Map<String, Integer> expected = Map.ofEntries(
             entry("1,3", 1), entry("1,4", 1), entry("1,5", 1), entry("1,6", 1),
             entry("2,3", 1), entry("2,4", 1), entry("2,5", 1), entry("2,6", 1),
@@ -125,6 +139,6 @@ class Test_2018_03 {
             entry("5,1", 1), entry("5,2", 1), entry("5,3", 1), entry("5,4", 1), entry("5,5", 1), entry("5,6", 1),
             entry("6,1", 1), entry("6,2", 1), entry("6,3", 1), entry("6,4", 1), entry("6,5", 1), entry("6,6", 1)
         );
-        assert expected.equals(result);
+        assert counted.equals(expected.entrySet());
     }
 }
