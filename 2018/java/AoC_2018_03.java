@@ -23,29 +23,30 @@ class AoC_2018_03 extends Solution {
         // Solutions
         String[] claimStrings = loadPuzzleInputLines(DAY).toArray(String[]::new);
         Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
+        HashMap<String, HashSet<Integer>> overlapMap = makeOverlapMap(claims);
 
-        long partOneResult = solvePartOne(claims);
+        long partOneResult = solvePartOne(overlapMap);
         assert partOneResult == 100261;
         System.out.printf("Part one: %d\n", partOneResult);
 
-        int partTwoResult = solvePartTwo(claims);
+        int partTwoResult = solvePartTwo(claims, overlapMap);
         assert partTwoResult == 251;
         System.out.printf("Part two: %d\n", partTwoResult);
     }
 
-    static long solvePartOne(Claim[] claims) {
-        return makeOverlapMap(claims)
+    static long solvePartOne(HashMap<String, HashSet<Integer>> overlapMap) {
+        return overlapMap
             .values()
             .stream()
             .filter(claimSet -> claimSet.size() > 1)
             .count();
     }
 
-    static int solvePartTwo(Claim[] claims) {
+    static int solvePartTwo(Claim[] claims, HashMap<String, HashSet<Integer>> overlapMap) {
         Set<Integer> claimIds = Arrays.stream(claims)
             .map(claim -> claim.id)
             .collect(Collectors.toSet());
-        makeOverlapMap(claims)
+        overlapMap
             .values()
             .stream()
             .filter(claimSet -> claimSet.size() > 1)
