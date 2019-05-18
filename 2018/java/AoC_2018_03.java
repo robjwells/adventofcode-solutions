@@ -78,7 +78,7 @@ class AoC_2018_03 extends Solution {
         overlapMap.values().stream()
             .filter(claimSet -> claimSet.size() > 1)
             .forEach(claimSet -> claimSet.forEach(claimIds::remove));
-        return claimIds.stream().mapToInt(i -> i).toArray();
+        return claimIds.stream().mapToInt(i -> i).toArray(); // Unbox Integers
     }
 
 }
