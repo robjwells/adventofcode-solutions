@@ -36,9 +36,7 @@ class AoC_2018_03 extends Solution {
     }
 
     static long solvePartOne(HashMap<String, HashSet<Integer>> overlapMap) {
-        return overlapMap
-            .values()
-            .stream()
+        return overlapMap.values().stream()
             .filter(claimSet -> claimSet.size() > 1)
             .count();
     }
@@ -78,9 +76,7 @@ class AoC_2018_03 extends Solution {
         Set<Integer> claimIds = Arrays.stream(claims)
             .map(claim -> claim.id)
             .collect(Collectors.toSet());
-        overlapMap
-            .values()
-            .stream()
+        overlapMap.values().stream()
             .filter(claimSet -> claimSet.size() > 1)
             .forEach(claimSet -> claimSet.forEach(claimIds::remove));
         return claimIds.stream().mapToInt(i -> i).toArray();
@@ -98,14 +94,6 @@ class Claim {
     int fromTop;
     int width;
     int height;
-
-    Claim(int id, int fromLeft, int fromTop, int width, int height) {
-        this.id = id;
-        this.fromLeft = fromLeft;
-        this.fromTop = fromTop;
-        this.width = width;
-        this.height = height;
-    }
 
     Claim(String claimString) {
         Matcher claimMatcher = claimPattern.matcher(claimString);
@@ -154,8 +142,7 @@ class Test_2018_03 {
         Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
         HashMap<String, HashSet<Integer>> result = AoC_2018_03.makeOverlapMap(claims);
         Set<Map.Entry<String, HashSet<Integer>>> resultEntries = result.entrySet();
-        Set<Map.Entry<String, Integer>> counted = resultEntries
-            .stream()
+        Set<Map.Entry<String, Integer>> counted = resultEntries.stream()
             .map(resultEntry -> entry(resultEntry.getKey(), resultEntry.getValue().size()))
             .collect(Collectors.toSet());
 
