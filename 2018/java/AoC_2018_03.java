@@ -1,13 +1,13 @@
+import static java.util.Map.entry;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Map.entry;
 
 class AoC_2018_03 extends Solution {
     static int DAY = 3;
@@ -133,6 +133,7 @@ class Test_2018_03 {
 
     /**
      * Check provided test case, where the overlap grid is as follows:
+     *
      * <pre>
      * ........
      * ...2222.
@@ -178,6 +179,6 @@ class Test_2018_03 {
         Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
         HashMap<String, HashSet<Integer>> overlapMap = AoC_2018_03.makeOverlapMap(claims);
         int[] result = AoC_2018_03.findUncontestedClaims(claims, overlapMap);
-        assert Arrays.equals(result, new int[] {3});
+        assert Arrays.equals(result, new int[] { 3 });
     }
 }
