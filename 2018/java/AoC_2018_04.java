@@ -1,3 +1,5 @@
+import static java.util.Map.entry;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -25,6 +27,8 @@ class AoC_2018_04 extends Solution {
         Test_2018_04.testEventConstructorSleepWake();
         Test_2018_04.testEventConstructorStoresDate();
         Test_2018_04.testMode();
+        Test_2018_04.testGetSameMinuteSleeperMode();
+        Test_2018_04.testGetGuardWithMostMinutesAsleep();
 
         // Solution
         List<String> logLines = loadPuzzleInputLines(DAY)
@@ -36,18 +40,20 @@ class AoC_2018_04 extends Solution {
         assert partOneResult == 38813 : "Result does not match known result.";
         System.out.printf("Part one: %d\n", partOneResult);
 
-        // int partTwoResult = solvePartTwo(sleepMap);
+        int partTwoResult = solvePartTwo(sleepMap);
+        assert partTwoResult == 141071 : "Result does not match known result.";
+        System.out.printf("Part two: %d\n", partTwoResult);
     }
 
     static int solvePartOne(HashMap<Integer, ArrayList<Integer>> sleepTracker) {
-        Entry<Integer, ArrayList<Integer>> e = sleepTracker.entrySet().stream()
-            .max(Comparator.comparing(entry -> entry.getValue().size()))
-            .get(); // Unwrap the optional
-        int guardNumber = e.getKey();
-        ArrayList<Integer> sleepList = e.getValue();
-        Collections.sort(sleepList);
-        int modalSleepMinute = Mode.of(sleepList).value;
-        return guardNumber * modalSleepMinute;
+        int guard = getGuardWithMostMinutesAsleep(sleepTracker);
+        int modalSleepMinute = getMostCommonSleepingMinuteForGuard(guard, sleepTracker);
+        return guard * modalSleepMinute;
+    }
+
+    static int solvePartTwo(HashMap<Integer, ArrayList<Integer>> sleepTracker) {
+        Entry<Integer, Mode<Integer>> result = getSameMinuteSleeper(sleepTracker);
+        return result.getKey() * result.getValue().value;
     }
 
     static HashMap<Integer, ArrayList<Integer>> makeSleepMap(List<String> logLines) {
@@ -83,6 +89,26 @@ class AoC_2018_04 extends Solution {
         }
 
         return sleepTracker;
+    }
+
+    static int getGuardWithMostMinutesAsleep(HashMap<Integer, ArrayList<Integer>> sleepMap) {
+        Entry<Integer, ArrayList<Integer>> e = sleepMap.entrySet().stream()
+            .max(Comparator.comparing(ent -> ent.getValue().size()))
+            .get(); // Unwrap the optional
+        int guardNumber = e.getKey();
+        return guardNumber;
+    }
+
+    static int getMostCommonSleepingMinuteForGuard(int guard, HashMap<Integer, ArrayList<Integer>> sleepMap) {
+        return Mode.of(sleepMap.get(guard)).value;
+    }
+
+    static Entry<Integer, Mode<Integer>> getSameMinuteSleeper(HashMap<Integer, ArrayList<Integer>> sleepMap) {
+        return sleepMap.entrySet().stream()
+            .filter(e -> e.getValue().size() > 0)
+            .map(e -> entry(e.getKey(), Mode.of(e.getValue())))
+            .max(Comparator.comparing(e -> e.getValue().count))
+            .get();
     }
 
 }
@@ -165,7 +191,10 @@ class Mode<E> {
         this.count = count;
     }
 
-    static <E> Mode<E> of(List<E> list) {
+    static <E extends Comparable<E>> Mode<E> of(List<E> originalList) {
+        ArrayList<E> list = new ArrayList<E>(originalList);
+        Collections.sort(list);
+
         if (list.size() == 0) {
             return null;
         }
@@ -190,6 +219,11 @@ class Mode<E> {
         } else {
             return new Mode<E>(modalValue, modalCount);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Mode(value=%s, count=%d)", value, count);
     }
 }
 
@@ -259,9 +293,34 @@ class Test_2018_04 {
     }
 
     static void testMode() {
-        List<Integer> list = List.of(1, 2, 3, 3, 4, 5);
+        List<Integer> list = List.of(1, 2, 3, 0, 3, 4, 5);
         Mode<Integer> result = Mode.of(list);
         assert result.value.equals(3) : result.value;
         assert result.count == 2 : result.count;
+    }
+
+    static void testGetGuardWithMostMinutesAsleep() {
+        ArrayList<String> allLines = new ArrayList<String>(shiftStartLines.size() + sleepWakeLines.size());
+        allLines.addAll(shiftStartLines);
+        allLines.addAll(sleepWakeLines);
+        Collections.sort(allLines);
+
+        HashMap<Integer, ArrayList<Integer>> sleepMap = AoC_2018_04.makeSleepMap(allLines);
+        int guard = AoC_2018_04.getGuardWithMostMinutesAsleep(sleepMap);
+        int sleepingMinute = AoC_2018_04.getMostCommonSleepingMinuteForGuard(guard, sleepMap);
+        assert guard == 10 : guard;
+        assert sleepingMinute == 24 : sleepingMinute;
+    }
+
+    static void testGetSameMinuteSleeperMode() {
+        ArrayList<String> allLines = new ArrayList<String>(shiftStartLines.size() + sleepWakeLines.size());
+        allLines.addAll(shiftStartLines);
+        allLines.addAll(sleepWakeLines);
+        Collections.sort(allLines);
+        HashMap<Integer, ArrayList<Integer>> sleepMap = AoC_2018_04.makeSleepMap(allLines);
+        Entry<Integer, Mode<Integer>> result = AoC_2018_04.getSameMinuteSleeper(sleepMap);
+        assert result.getKey() == 99 : result.getKey();
+        assert result.getValue().value == 45 : result.getValue();
+        assert result.getKey() * result.getValue().value == 4455;
     }
 }
