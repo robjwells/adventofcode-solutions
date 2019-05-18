@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,9 +12,9 @@ class AoC_2018_03 extends Solution {
         Test_2018_03.testClaimParses();
         Test_2018_03.testOverlapMap();
     }
-    
+
     static String pairToString(int x, int y) {
-        return String.format("\d,\d", x, y);
+        return String.format("%d,%d", x, y);
     }
 
     static HashMap<String, Integer> makeOverlapMap(String[] claims) {
@@ -85,7 +86,7 @@ class Test_2018_03 {
         };
         HashMap<String, Integer> result = AoC_2018_03.makeOverlapMap(claims);
 
-        
+
 
         assert result.length == sideLength : "Number of rows incorrect";
         for (int[] row : result) {
