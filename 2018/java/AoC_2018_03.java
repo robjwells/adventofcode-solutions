@@ -7,12 +7,26 @@ import static java.util.Map.entry;
 
 class AoC_2018_03 extends Solution {
     static int DAY = 3;
-    static String TITLE = "Day 3: No Matter How You Slice It";
+    static String TITLE = "Advent of Code 2018 Day 3: No Matter How You Slice It";
 
     public static void main(String[] args) {
         // Tests
         Test_2018_03.testClaimParses();
         Test_2018_03.testOverlapMap();
+
+        String[] claimStrings = loadPuzzleInputLines(DAY).toArray(String[]::new);
+
+        // Solutions
+        System.out.println(TITLE);
+        System.out.printf("Part one: %d\n", solvePartOne(claimStrings));
+    }
+
+    static long solvePartOne(String[] claimStrings) {
+        return makeOverlapMap(claimStrings)
+            .values()
+            .stream()
+            .filter(count -> count >= 2)
+            .count();
     }
 
     static String pairToString(int x, int y) {
