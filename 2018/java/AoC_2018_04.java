@@ -1,3 +1,7 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,9 +28,13 @@ enum EventType {
 }
 
 class Event {
-    String datetime;
+    LocalDateTime datetime;
     int guardNumber;
     EventType type;
+
+    private static DateTimeFormatter dateParser = (
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    );
 
     private static String datePatternPart = (
         "^\\[(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2})\\] "
@@ -37,7 +45,6 @@ class Event {
     private static String sleepWakePatternPart = (
         "(wakes up|falls asleep)"
     );
-
     private static Pattern guardStartPattern = Pattern.compile(
         datePatternPart + guardStartPatternPart + "$"
     );
@@ -50,7 +57,7 @@ class Event {
         if (!logMatcher.matches()) {
             throw new IllegalArgumentException("Invalid log line.");
         }
-        this.datetime = logMatcher.group(1);
+        this.datetime = parseDate(logMatcher.group(1));
         this.guardNumber = Integer.parseInt(logMatcher.group(2));
         this.type = EventType.START;
     }
@@ -61,11 +68,19 @@ class Event {
         if (!logMatcher.matches()) {
             throw new IllegalArgumentException("Invalid log line.");
         }
-        this.datetime = logMatcher.group(1);
+        this.datetime = parseDate(logMatcher.group(1));
         if (logMatcher.group(2).equals("falls asleep")) {
             this.type = EventType.SLEEP;
         } else {
             this.type = EventType.WAKE;
+        }
+    }
+
+    private static LocalDateTime parseDate(String dateString) {
+        try {
+            return dateParser.parse(dateString, LocalDateTime::from);
+        } catch (DateTimeParseException exc) {
+            throw new IllegalArgumentException("Invalid date format", exc);
         }
     }
 
@@ -109,7 +124,6 @@ class Test_2018_04 {
         assert events.size() == shiftStartLines.size();
         assert events.stream()
             .allMatch(event -> event.guardNumber == 10 || event.guardNumber == 99);
-        System.out.println(events);
         assert events.stream().allMatch(event -> event.type.equals(EventType.START));
     }
 
@@ -120,7 +134,6 @@ class Test_2018_04 {
         List<Event> events = sleepWakeLines.stream()
             .map(logLine -> new Event(logLine, 1))
             .collect(Collectors.toList());
-        System.out.println(events);
         assert events.size() == sleepWakeLines.size();
         assert events.stream().allMatch(event -> event.guardNumber == 1);
         assert events.stream()
@@ -131,13 +144,14 @@ class Test_2018_04 {
      * Event stores the date as a string.
      */
     static void testEventConstructorStoresDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         for (String logLine : shiftStartLines) {
             Event e = new Event(logLine);
-            assert e.datetime.equals(logLine.substring(1, 17));
+            assert e.datetime.format(formatter).equals(logLine.substring(1, 17));
         }
         for (String logLine : sleepWakeLines) {
             Event e = new Event(logLine, 1);
-            assert e.datetime.equals(logLine.substring(1, 17));
+            assert e.datetime.format(formatter).equals(logLine.substring(1, 17));
         }
     }
 }
