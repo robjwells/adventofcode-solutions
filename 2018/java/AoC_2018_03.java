@@ -17,13 +17,16 @@ class AoC_2018_03 extends Solution {
         return String.format("%d,%d", x, y);
     }
 
-    static HashMap<String, Integer> makeOverlapMap(String[] claims) {
+    static HashMap<String, Integer> makeOverlapMap(String[] claimStrings) {
         HashMap<String, Integer> overlap = new HashMap<>();
+        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
         for (Claim claim : claims) {
-            for (int x = claim.fromLeft; x < claim.fromLeft + claim.width; x++) {
-                for (int y = claim.fromTop; y < claim.fromTop + claim.height; y++) {
+            int rightLimit = claim.fromLeft + claim.width;
+            int bottomLimit = claim.fromTop + claim.height;
+            for (int x = claim.fromLeft; x < rightLimit; x++) {
+                for (int y = claim.fromTop; y < bottomLimit; y++) {
                     String key = pairToString(x, y);
-                    overlap.set(
+                    overlap.put(
                         key,
                         overlap.getOrDefault(key, 0) + 1
                     );
