@@ -22,8 +22,7 @@ class AoC_2018_03 extends Solution {
         Test_2018_03.testFindUncontested();
 
         // Solutions
-        String[] claimStrings = loadPuzzleInputLines(DAY).toArray(String[]::new);
-        Claim[] claims = Arrays.stream(claimStrings).map(Claim::new).toArray(Claim[]::new);
+        Claim[] claims = loadPuzzleInputLines(DAY).map(Claim::new).toArray(Claim[]::new);
         HashMap<String, HashSet<Integer>> overlapMap = makeOverlapMap(claims);
 
         long partOneResult = solvePartOne(overlapMap);
