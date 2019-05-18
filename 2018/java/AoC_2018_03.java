@@ -2,6 +2,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import static java.util.Map.entry;
 
 class AoC_2018_03 extends Solution {
     static int DAY = 3;
@@ -81,6 +83,19 @@ class Test_2018_03 {
         assert claim.height == 4;
     }
 
+    /**
+     * Check provided test case, where the overlap grid is as follows:
+     * <pre>
+     * ........
+     * ...2222.
+     * ...2222.
+     * .11XX22.
+     * .11XX22.
+     * .111133.
+     * .111133.
+     * ........
+     * </pre>
+     */
     static void testOverlapMap() {
         String[] claims = new String[] {
             "#1 @ 1,3: 4x4",
@@ -88,13 +103,14 @@ class Test_2018_03 {
             "#3 @ 5,5: 2x2",
         };
         HashMap<String, Integer> result = AoC_2018_03.makeOverlapMap(claims);
-
-
-
-        assert result.length == sideLength : "Number of rows incorrect";
-        for (int[] row : result) {
-            assert row.length == sideLength : "Number of columns incorrect.";
-        }
-        assert Arrays.deepEquals(expected, result) : "Matrices unequal.";
+        Map<String, Integer> expected = Map.ofEntries(
+            entry("1,3", 1), entry("1,4", 1), entry("1,5", 1), entry("1,6", 1),
+            entry("2,3", 1), entry("2,4", 1), entry("2,5", 1), entry("2,6", 1),
+            entry("3,1", 1), entry("3,2", 1), entry("3,3", 2), entry("3,4", 2), entry("3,5", 1), entry("3,6", 1),
+            entry("4,1", 1), entry("4,2", 1), entry("4,3", 2), entry("4,4", 2), entry("4,5", 1), entry("4,6", 1),
+            entry("5,1", 1), entry("5,2", 1), entry("5,3", 1), entry("5,4", 1), entry("5,5", 1), entry("5,6", 1),
+            entry("6,1", 1), entry("6,2", 1), entry("6,3", 1), entry("6,4", 1), entry("6,5", 1), entry("6,6", 1)
+        );
+        assert expected.equals(result);
     }
 }
