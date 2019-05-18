@@ -35,6 +35,8 @@ class AoC_2018_04 extends Solution {
         int partOneResult = solvePartOne(sleepMap);
         assert partOneResult == 38813 : "Result does not match known result.";
         System.out.printf("Part one: %d\n", partOneResult);
+
+        // int partTwoResult = solvePartTwo(sleepMap);
     }
 
     static int solvePartOne(HashMap<Integer, ArrayList<Integer>> sleepTracker) {
@@ -44,7 +46,7 @@ class AoC_2018_04 extends Solution {
         int guardNumber = e.getKey();
         ArrayList<Integer> sleepList = e.getValue();
         Collections.sort(sleepList);
-        int modalSleepMinute = getMode(sleepList);
+        int modalSleepMinute = Mode.of(sleepList).value;
         return guardNumber * modalSleepMinute;
     }
 
@@ -81,33 +83,6 @@ class AoC_2018_04 extends Solution {
         }
 
         return sleepTracker;
-    }
-
-    static <E> E getMode(List<E> list) {
-        if (list.size() == 0) {
-            return null;
-        }
-        E modalValue = list.get(0);
-        int modalCount = 1;
-        E currentValue = modalValue;
-        int currentCount = 0;
-        for (E value : list) {
-            if (currentValue.equals(value)) {
-                currentCount += 1;
-            } else {
-                if (currentCount > modalCount) {
-                    modalCount = currentCount;
-                    modalValue = currentValue;
-                }
-                currentValue = value;
-                currentCount = 1;
-            }
-        }
-        if (currentCount > modalCount) {
-            return currentValue;
-        } else {
-            return modalValue;
-        }
     }
 
 }
@@ -181,6 +156,43 @@ class Event {
     }
 }
 
+class Mode<E> {
+    E value;
+    int count;
+
+    Mode(E value, int count) {
+        this.value = value;
+        this.count = count;
+    }
+
+    static <E> Mode<E> of(List<E> list) {
+        if (list.size() == 0) {
+            return null;
+        }
+        E modalValue = list.get(0);
+        int modalCount = 1;
+        E currentValue = modalValue;
+        int currentCount = 0;
+        for (E value : list) {
+            if (currentValue.equals(value)) {
+                currentCount += 1;
+            } else {
+                if (currentCount > modalCount) {
+                    modalCount = currentCount;
+                    modalValue = currentValue;
+                }
+                currentValue = value;
+                currentCount = 1;
+            }
+        }
+        if (currentCount > modalCount) {
+            return new Mode<E>(currentValue, currentCount);
+        } else {
+            return new Mode<E>(modalValue, modalCount);
+        }
+    }
+}
+
 class Test_2018_04 {
     static List<String> shiftStartLines = Arrays.asList(
         "[1518-11-01 00:00] Guard #10 begins shift",
@@ -248,7 +260,8 @@ class Test_2018_04 {
 
     static void testMode() {
         List<Integer> list = List.of(1, 2, 3, 3, 4, 5);
-        Integer result = AoC_2018_04.getMode(list);
-        assert result.equals(3) : result;
+        Mode<Integer> result = Mode.of(list);
+        assert result.value.equals(3) : result.value;
+        assert result.count == 2 : result.count;
     }
 }
