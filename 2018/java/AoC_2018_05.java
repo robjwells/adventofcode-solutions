@@ -53,7 +53,7 @@ public class AoC_2018_05 extends Solution {
 
     static Stream<String> uniqueCharacters(String input) {
         return Arrays.stream(input.split(""))
-            .map(s -> s.toLowerCase())
+            .map(String::toLowerCase)
             .distinct();
     }
 
