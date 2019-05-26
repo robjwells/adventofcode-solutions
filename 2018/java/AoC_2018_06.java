@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,31 +37,21 @@ public class AoC_2018_06 extends Solution {
         return new Coordinate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
     }
 
-    static Iterable<Integer> xRangeIterator(List<Coordinate> coords) {
-        int[] bounds = getBounds(coords);
-        return () -> IntStream.rangeClosed(bounds[0], bounds[2]).iterator();
+    static Iterable<Integer> xRangeIterator(Bounds bounds) {
+        return () -> IntStream.rangeClosed(bounds.xMin, bounds.xMax).iterator();
     }
 
-    static Iterable<Integer> yRangeIterator(List<Coordinate> coords) {
-        int[] bounds = getBounds(coords);
-        return () -> IntStream.rangeClosed(bounds[1], bounds[3]).iterator();
-    }
-
-    static int[] getBounds(List<Coordinate> coords) {
-        int minY = coords.stream().map(Coordinate::getY).min(Comparator.naturalOrder()).get();
-        int minX = coords.stream().map(Coordinate::getX).min(Comparator.naturalOrder()).get();
-        int maxX = coords.stream().map(Coordinate::getX).max(Comparator.naturalOrder()).get();
-        int maxY = coords.stream().map(Coordinate::getY).max(Comparator.naturalOrder()).get();
-        return new int[] {minX, minY, maxX, maxY};
+    static Iterable<Integer> yRangeIterator(Bounds bounds) {
+        return () -> IntStream.rangeClosed(bounds.yMin, bounds.yMax).iterator();
     }
 
     static int largestArea(List<Coordinate> coords) {
         HashSet<Coordinate> infinite = new HashSet<Coordinate>();
         Counter<Coordinate> closestCounter = new Counter<Coordinate>();
-        int[] bounds = getBounds(coords);
+        Bounds bounds = new Bounds(coords);
 
-        for (int x : xRangeIterator(coords)) {
-            for (int y : yRangeIterator(coords)) {
+        for (int x : xRangeIterator(bounds)) {
+            for (int y : yRangeIterator(bounds)) {
                 Coordinate current = new Coordinate(x, y);
                 Coordinate[] closest = coords.stream()
                     .sorted(Comparator.comparing(other -> current.distance(other)))
@@ -82,8 +73,9 @@ public class AoC_2018_06 extends Solution {
 
     static int safeRegionSize(List<Coordinate> coords, int limit) {
         int totalSafe = 0;
-        for (int x : xRangeIterator(coords)) {
-            for (int y : yRangeIterator(coords)) {
+        Bounds bounds = new Bounds(coords);
+        for (int x : xRangeIterator(bounds)) {
+            for (int y : yRangeIterator(bounds)) {
                 Coordinate current = new Coordinate(x, y);
                 if (coords.stream().mapToInt(current::distance).sum() < limit) {
                     totalSafe += 1;
@@ -134,6 +126,22 @@ public class AoC_2018_06 extends Solution {
 
 }
 
+class Bounds {
+    int xMin;
+    int yMin;
+    int xMax;
+    int yMax;
+
+    Bounds(List<Coordinate> coordinates) {
+        int[] xValues = coordinates.stream().mapToInt(Coordinate::getX).toArray();
+        int[] yValues = coordinates.stream().mapToInt(Coordinate::getY).toArray();
+        xMin = Arrays.stream(xValues).min().getAsInt();
+        yMin = Arrays.stream(yValues).min().getAsInt();
+        xMax = Arrays.stream(xValues).max().getAsInt();
+        yMax = Arrays.stream(yValues).max().getAsInt();
+    }
+}
+
 class Coordinate {
     int x;
     int y;
@@ -165,12 +173,8 @@ class Coordinate {
         return y;
     }
 
-    boolean isEdge(int[] bounds) {
-        int xMin = bounds[0];
-        int yMin = bounds[1];
-        int xMax = bounds[2];
-        int yMax = bounds[3];
-        return x == xMin || x == xMax || y == yMin || y == yMax;
+    boolean isEdge(Bounds bounds) {
+        return x == bounds.xMin || x == bounds.xMax || y == bounds.yMin || y == bounds.yMax;
     }
 }
 
