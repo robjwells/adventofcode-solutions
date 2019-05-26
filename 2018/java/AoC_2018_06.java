@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class AoC_2018_06 extends Solution {
     static final int DAY = 6;
-    static final String TITLE  = "Day 6: Chronal Coordinates";
+    static final String TITLE = "Day 6: Chronal Coordinates";
 
     public static void main(String[] args) {
         System.out.println(TITLE);
@@ -79,7 +79,7 @@ public class AoC_2018_06 extends Solution {
                 Coordinate current = new Coordinate(x, y);
                 if (coords.stream().mapToInt(current::distance).sum() < limit) {
                     totalSafe += 1;
-                };
+                }
             }
         }
         return totalSafe;
@@ -178,7 +178,7 @@ class Coordinate {
     }
 }
 
-class Counter<K>{
+class Counter<K> {
     HashMap<K, Integer> storage;
 
     Counter() {
