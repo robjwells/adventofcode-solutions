@@ -1,10 +1,12 @@
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.Test;
@@ -16,9 +18,17 @@ public class AoC_2018_06 extends Solution {
     public static void main(String[] args) {
         System.out.println(TITLE);
 
-        Stream<String> puzzleInput = loadPuzzleInputLines(DAY);
+        List<Coordinate> puzzleInput = loadPuzzleInputLines(DAY)
+            .map(AoC_2018_06::parseInputLine)
+            .collect(Collectors.toList());
+
         int partOneResult = largestArea(puzzleInput);
+        assert partOneResult == 3604;
         System.out.printf("Part one: %d\n", partOneResult);
+
+        int partTwoResult = safeRegionSize(puzzleInput, 10000);
+        assert partTwoResult == 46563;
+        System.out.printf("Part two: %d\n", partTwoResult);
     }
 
     static Coordinate parseInputLine(String inputLine) {
@@ -26,27 +36,37 @@ public class AoC_2018_06 extends Solution {
         return new Coordinate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
     }
 
-    static int largestArea(Stream<String> input) {
-        ArrayList<Coordinate> coords = new ArrayList<>();
-        input.map(AoC_2018_06::parseInputLine).forEach(coords::add);
-        HashSet<Coordinate> infinite = new HashSet<Coordinate>();
+    static Iterable<Integer> xRangeIterator(List<Coordinate> coords) {
+        int[] bounds = getBounds(coords);
+        return () -> IntStream.rangeClosed(bounds[0], bounds[2]).iterator();
+    }
 
+    static Iterable<Integer> yRangeIterator(List<Coordinate> coords) {
+        int[] bounds = getBounds(coords);
+        return () -> IntStream.rangeClosed(bounds[1], bounds[3]).iterator();
+    }
+
+    static int[] getBounds(List<Coordinate> coords) {
+        int minY = coords.stream().map(Coordinate::getY).min(Comparator.naturalOrder()).get();
         int minX = coords.stream().map(Coordinate::getX).min(Comparator.naturalOrder()).get();
         int maxX = coords.stream().map(Coordinate::getX).max(Comparator.naturalOrder()).get();
-        int minY = coords.stream().map(Coordinate::getY).min(Comparator.naturalOrder()).get();
         int maxY = coords.stream().map(Coordinate::getY).max(Comparator.naturalOrder()).get();
+        return new int[] {minX, minY, maxX, maxY};
+    }
 
+    static int largestArea(List<Coordinate> coords) {
+        HashSet<Coordinate> infinite = new HashSet<Coordinate>();
         Counter<Coordinate> closestCounter = new Counter<Coordinate>();
+        int[] bounds = getBounds(coords);
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
+        for (int x : xRangeIterator(coords)) {
+            for (int y : yRangeIterator(coords)) {
                 Coordinate current = new Coordinate(x, y);
                 Coordinate[] closest = coords.stream()
                     .sorted(Comparator.comparing(other -> current.distance(other)))
                     .limit(2)
                     .toArray(Coordinate[]::new);
-
-                if (closest[0].isEdge(minX, maxX, minY, maxY)) {
+                if (closest[0].isEdge(bounds)) {
                     infinite.add(closest[0]);
                 }
                 if (closest[0].distance(current) == closest[1].distance(current)) {
@@ -60,11 +80,37 @@ public class AoC_2018_06 extends Solution {
         return closestCounter.maxValue();
     }
 
+    static int safeRegionSize(List<Coordinate> coords, int limit) {
+        int totalSafe = 0;
+        for (int x : xRangeIterator(coords)) {
+            for (int y : yRangeIterator(coords)) {
+                Coordinate current = new Coordinate(x, y);
+                if (coords.stream().mapToInt(current::distance).sum() < limit) {
+                    totalSafe += 1;
+                };
+            }
+        }
+        return totalSafe;
+    }
+
     @Test
     public void testLargestArea() {
-        Stream<String> input = Stream.of("1, 1", "1, 6", "8, 3", "3, 4", "5, 5", "8, 9");
+        List<Coordinate> input = Stream.of("1, 1", "1, 6", "8, 3", "3, 4", "5, 5", "8, 9")
+            .map(AoC_2018_06::parseInputLine)
+            .collect(Collectors.toList());
         int expected = 17;
         int result = largestArea(input);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testSafeRegion() {
+        List<Coordinate> input = Stream.of("1, 1", "1, 6", "8, 3", "3, 4", "5, 5", "8, 9")
+            .map(AoC_2018_06::parseInputLine)
+            .collect(Collectors.toList());
+        int expected = 16;
+        int distanceLimit = 32;
+        int result = safeRegionSize(input, distanceLimit);
         assertEquals(expected, result);
     }
 
@@ -119,7 +165,11 @@ class Coordinate {
         return y;
     }
 
-    boolean isEdge(int xMin, int xMax, int yMin, int yMax) {
+    boolean isEdge(int[] bounds) {
+        int xMin = bounds[0];
+        int yMin = bounds[1];
+        int xMax = bounds[2];
+        int yMax = bounds[3];
         return x == xMin || x == xMax || y == yMin || y == yMax;
     }
 }
