@@ -1,5 +1,7 @@
 import java.util.ArrayDeque;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class AoC_2018_05 extends Solution {
@@ -12,16 +14,24 @@ class AoC_2018_05 extends Solution {
         // Tests
         testStringsShouldEliminate();
         testReducePolymer();
+        testUniqueCharacters();
+        testBestReduction();
 
         // Solve
         String puzzleInput = loadPuzzleInputLines(DAY).collect(Collectors.joining());
         int partOneResult = solvePartOne(puzzleInput);
         assert partOneResult == 11546;
         System.out.printf("Part one: %d\n", partOneResult);
+        int partTwoResult = solvePartTwo(puzzleInput);
+        System.out.printf("Part two: %d\n", partTwoResult);
     }
 
     static int solvePartOne(String puzzleInput) {
         return reducePolymer(puzzleInput).length();
+    }
+
+    static int solvePartTwo(String puzzleInput) {
+        return bestReduction(puzzleInput).length();
     }
 
     static String reducePolymer(String polymer) {
@@ -45,6 +55,21 @@ class AoC_2018_05 extends Solution {
         return first.equalsIgnoreCase(second) && !first.equals(second);
     }
 
+    static Set<String> uniqueCharacters(String input) {
+        return Arrays.stream(input.split(""))
+            .map(s -> s.toLowerCase())
+            .collect(Collectors.toSet());
+    }
+
+    static String bestReduction(String input) {
+        Set<String> characters = uniqueCharacters(input);
+        return characters.stream()
+            .map(character -> input.replaceAll(character, "").replaceAll(character.toUpperCase(), ""))
+            .map(AoC_2018_05::reducePolymer)
+            .min(Comparator.comparing(String::length))
+            .get();
+    }
+
     static void testReducePolymer() {
         String input = "dabAcCaCBAcCcaDA";
         String expected = "dabCBAcaDA";
@@ -57,6 +82,18 @@ class AoC_2018_05 extends Solution {
         assert !stringsShouldEliminate("a", "a");
         assert stringsShouldEliminate("C", "c");
         assert !stringsShouldEliminate("C", "C");
+    }
+
+    static void testUniqueCharacters() {
+        assert uniqueCharacters("abcABC").equals(Set.of("a", "b", "c"));
+        assert uniqueCharacters("A").equals(Set.of("a")); // lowercases
+        assert uniqueCharacters("BC").equals(Set.of("b", "c")); // lowercases
+    }
+
+    static void testBestReduction() {
+        String input = "dabAcCaCBAcCcaDA";
+        String expected = "daDA";
+        assert bestReduction(input).equals(expected);
     }
 
 }
