@@ -54,7 +54,7 @@ public class AoC_2018_06 extends Solution {
             for (int y : yRangeIterator(bounds)) {
                 Coordinate current = new Coordinate(x, y);
                 Coordinate[] closest = coords.stream()
-                    .sorted(Comparator.comparing(other -> current.distance(other)))
+                    .sorted(Comparator.comparing(current::distance))
                     .limit(2)
                     .toArray(Coordinate[]::new);
                 if (closest[0].isEdge(bounds)) {
