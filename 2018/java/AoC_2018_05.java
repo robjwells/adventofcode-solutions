@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class AoC_2018_05 extends Solution {
     static final int DAY = 5;
@@ -23,6 +24,7 @@ class AoC_2018_05 extends Solution {
         assert partOneResult == 11546;
         System.out.printf("Part one: %d\n", partOneResult);
         int partTwoResult = solvePartTwo(puzzleInput);
+        assert partTwoResult == 5124;
         System.out.printf("Part two: %d\n", partTwoResult);
     }
 
@@ -55,16 +57,15 @@ class AoC_2018_05 extends Solution {
         return first.equalsIgnoreCase(second) && !first.equals(second);
     }
 
-    static Set<String> uniqueCharacters(String input) {
+    static Stream<String> uniqueCharacters(String input) {
         return Arrays.stream(input.split(""))
             .map(s -> s.toLowerCase())
-            .collect(Collectors.toSet());
+            .distinct();
     }
 
     static String bestReduction(String input) {
-        Set<String> characters = uniqueCharacters(input);
-        return characters.stream()
-            .map(character -> input.replaceAll(character, "").replaceAll(character.toUpperCase(), ""))
+        return uniqueCharacters(input)
+            .map(character -> input.replaceAll(character + "|" + character.toUpperCase(), ""))
             .map(AoC_2018_05::reducePolymer)
             .min(Comparator.comparing(String::length))
             .get();
@@ -85,9 +86,15 @@ class AoC_2018_05 extends Solution {
     }
 
     static void testUniqueCharacters() {
-        assert uniqueCharacters("abcABC").equals(Set.of("a", "b", "c"));
-        assert uniqueCharacters("A").equals(Set.of("a")); // lowercases
-        assert uniqueCharacters("BC").equals(Set.of("b", "c")); // lowercases
+        assert uniqueCharacters("abcABC")
+            .collect(Collectors.toSet())
+            .equals(Set.of("a", "b", "c"));
+        assert uniqueCharacters("A")
+            .collect(Collectors.toSet())
+            .equals(Set.of("a")); // lowercases
+        assert uniqueCharacters("BC")
+            .collect(Collectors.toSet())
+            .equals(Set.of("b", "c")); // lowercases
     }
 
     static void testBestReduction() {
