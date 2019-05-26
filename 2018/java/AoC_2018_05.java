@@ -44,11 +44,7 @@ public class AoC_2018_05 extends Solution {
                 stack.addLast(c);
             }
         }
-        StringBuilder builder = new StringBuilder();
-        for (String c : stack) {
-            builder.append(c);
-        }
-        return builder.toString();
+        return stack.stream().collect(Collectors.joining());
     }
 
     static boolean stringsShouldEliminate(String first, String second) {
