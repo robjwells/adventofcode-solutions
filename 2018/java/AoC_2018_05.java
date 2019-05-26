@@ -41,7 +41,7 @@ public class AoC_2018_05 extends Solution {
             if (stackTop != null && stringsShouldEliminate(c, stackTop)) {
                 stack.removeLast();
             } else {
-                stack.add(c);
+                stack.addLast(c);
             }
         }
         StringBuilder builder = new StringBuilder();
