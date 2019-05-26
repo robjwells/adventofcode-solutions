@@ -1,5 +1,4 @@
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,7 +51,7 @@ public class AoC_2018_05 extends Solution {
     }
 
     static Stream<String> uniqueCharacters(String input) {
-        return Arrays.stream(input.split(""))
+        return Stream.of(input.split(""))
             .map(String::toLowerCase)
             .distinct();
     }
