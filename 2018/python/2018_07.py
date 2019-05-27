@@ -66,6 +66,11 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
         workers_tasks[idx] = task
         workers_times[idx] = task_time(task) + time_bias
 
+    def free_workers():
+        for idx, time in enumerate(workers_times):
+            if not time:
+                yield idx
+
     while sum(workers_times):
         total_time += 1
         workers_times = [max(0, t - 1) for t in workers_times]
@@ -74,19 +79,15 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
                 completed.add(task)
                 workers_tasks[idx] = None
 
-        for task, dependencies in sorted(unassigned.items()):
-            if not any(t == 0 for t in workers_times):
-                break  # No workers available
-
-            if not len(set(dependencies) - completed):
-                # Assign task to worker
-                time = task_time(task) + time_bias
-                for idx, t in enumerate(workers_times):
-                    if not t:
-                        workers_times[idx] = time
-                        workers_tasks[idx] = task
-                        break
-                del unassigned[task]
+        for worker_idx in free_workers():
+            for task, dependencies in sorted(unassigned.items()):
+                if not len(set(dependencies) - completed):
+                    # Assign task to worker
+                    time = task_time(task) + time_bias
+                    workers_times[worker_idx] = time
+                    workers_tasks[worker_idx] = task
+                    del unassigned[task]
+                    break
 
     return total_time
 
