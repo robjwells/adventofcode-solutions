@@ -57,16 +57,14 @@ def task_time(task):
 def timeParallelWork(pairs, workers=5, time_bias=60):
     order_completed, _, unassigned = create_dependency_structures(pairs)
     workers_times = [0] * workers
-    workers_tasks = list(order_completed)
-    if len(workers_tasks) > workers:
-        raise ValueError
+    workers_tasks = [None] * workers
     completed = set()
     total_time = 0
 
     # Set outstanding times for tasks with no dependencies
-    for idx, task in enumerate(workers_tasks):
+    for idx, task in enumerate(order_completed):
+        workers_tasks[idx] = task
         workers_times[idx] = task_time(task) + time_bias
-    workers_tasks.extend([None] * (workers - len(workers_tasks)))
 
     while sum(workers_times):
         total_time += 1
