@@ -30,9 +30,9 @@ def create_dependency_structures(pairs):
 
     order_finished = deque(sorted(must_finish - waiting))
     completed = must_finish - waiting
-    to_go = defaultdict(list)
+    to_go = defaultdict(set)
     for dependency, task in pairs:
-        to_go[task].append(dependency)
+        to_go[task].add(dependency)
     return (order_finished, completed, to_go)
 
 
@@ -41,7 +41,7 @@ def resolve_dependencies(pairs):
 
     while len(to_go):
         for task, dependencies in sorted(to_go.items()):
-            if not len(set(dependencies) - completed):
+            if not dependencies - completed:
                 order_finished.append(task)
                 completed.add(task)
                 del to_go[task]
@@ -81,7 +81,7 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
 
         for worker_idx in free_workers():
             for task, dependencies in sorted(unassigned.items()):
-                if not len(set(dependencies) - completed):
+                if not dependencies - completed:
                     # Assign task to worker
                     time = task_time(task) + time_bias
                     workers_times[worker_idx] = time
