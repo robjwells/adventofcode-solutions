@@ -45,7 +45,7 @@ def available_tasks(task_dict, completed):
 def resolve_dependencies(pairs):
     order_finished, completed, to_go = create_dependency_structures(pairs)
 
-    while len(to_go):
+    while to_go:
         for task in available_tasks(to_go, completed):
             order_finished.append(task)
             completed.add(task)
