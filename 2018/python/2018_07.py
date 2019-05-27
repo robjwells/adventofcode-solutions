@@ -72,15 +72,15 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
         workers_times[idx] = task_time(task) + time_bias
 
     def free_workers(times):
-        for idx, time in enumerate(times):
-            if not time:
+        for idx, time_left in enumerate(times):
+            if not time_left:
                 yield idx
 
     while sum(workers_times):
         total_time += 1
         workers_times = [max(0, t - 1) for t in workers_times]
-        for idx, (time, task) in enumerate(zip(workers_times, workers_tasks)):
-            if not time:
+        for idx, (time_left, task) in enumerate(zip(workers_times, workers_tasks)):
+            if not time_left:
                 completed.add(task)
                 workers_tasks[idx] = None
 
