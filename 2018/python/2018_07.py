@@ -76,7 +76,7 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
 
         for task, dependencies in sorted(unassigned.items()):
             if not any(t == 0 for t in workers_times):
-                break  # Important as earlier-letter tasks run first
+                break  # No workers available
 
             if not len(set(dependencies) - completed):
                 # Assign task to worker
