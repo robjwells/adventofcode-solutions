@@ -36,16 +36,21 @@ def create_dependency_structures(pairs):
     return (order_finished, completed, to_go)
 
 
+def available_tasks(task_dict, completed):
+    for task, dependencies in sorted(task_dict.items()):
+        if not dependencies - completed:
+            yield task
+
+
 def resolve_dependencies(pairs):
     order_finished, completed, to_go = create_dependency_structures(pairs)
 
     while len(to_go):
-        for task, dependencies in sorted(to_go.items()):
-            if not dependencies - completed:
-                order_finished.append(task)
-                completed.add(task)
-                del to_go[task]
-                break  # Important as earlier-letter tasks run first
+        for task in available_tasks(to_go, completed):
+            order_finished.append(task)
+            completed.add(task)
+            del to_go[task]
+            break  # Important as earlier-letter tasks run first
 
     return "".join(order_finished)
 
@@ -66,8 +71,8 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
         workers_tasks[idx] = task
         workers_times[idx] = task_time(task) + time_bias
 
-    def free_workers():
-        for idx, time in enumerate(workers_times):
+    def free_workers(times):
+        for idx, time in enumerate(times):
             if not time:
                 yield idx
 
@@ -79,15 +84,14 @@ def timeParallelWork(pairs, workers=5, time_bias=60):
                 completed.add(task)
                 workers_tasks[idx] = None
 
-        for worker_idx in free_workers():
-            for task, dependencies in sorted(unassigned.items()):
-                if not dependencies - completed:
-                    # Assign task to worker
-                    time = task_time(task) + time_bias
-                    workers_times[worker_idx] = time
-                    workers_tasks[worker_idx] = task
-                    del unassigned[task]
-                    break
+        for worker_idx in free_workers(workers_times):
+            for task in available_tasks(unassigned, completed):
+                # Assign task to worker
+                time = task_time(task) + time_bias
+                workers_times[worker_idx] = time
+                workers_tasks[worker_idx] = task
+                del unassigned[task]
+                break
 
     return total_time
 
