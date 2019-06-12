@@ -1,10 +1,9 @@
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -97,7 +96,7 @@ public class AoC_2016_01 extends Solution {
     }
 
     static class LoggingActor extends Actor {
-        private ArrayList<String> visited = new ArrayList<>();
+        private HashSet<String> visited = new HashSet<>();
 
         @Override
         void move(Instruction instruction) {
@@ -161,7 +160,7 @@ public class AoC_2016_01 extends Solution {
     private enum Direction {
         NORTH(0), EAST(1), SOUTH(2), WEST(3);
 
-        private static Map<Integer, Direction> map = new HashMap<>();
+        private static HashMap<Integer, Direction> map = new HashMap<>();
         static {
             map.put(0, NORTH);
             map.put(1, EAST);
