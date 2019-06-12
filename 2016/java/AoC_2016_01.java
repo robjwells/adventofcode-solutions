@@ -105,18 +105,14 @@ public class AoC_2016_01 extends Solution {
             while (steps > 0) {
                 move(1);
                 if (visited.contains(toString())) {
-                    throw new VisitedTwice(toString());
+                    throw new VisitedTwice();
                 }
                 visited.add(toString());
                 steps--;
             }
         }
 
-        static class VisitedTwice extends RuntimeException {
-            VisitedTwice(String message) {
-                super(message);
-            }
-        };
+        static class VisitedTwice extends RuntimeException {};
     }
 
     private static class Instruction {
@@ -160,7 +156,7 @@ public class AoC_2016_01 extends Solution {
     private enum Direction {
         NORTH(0), EAST(1), SOUTH(2), WEST(3);
 
-        private static HashMap<Integer, Direction> map = new HashMap<>();
+        private static final HashMap<Integer, Direction> map = new HashMap<>();
         static {
             map.put(0, NORTH);
             map.put(1, EAST);
