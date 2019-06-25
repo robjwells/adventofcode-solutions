@@ -8,17 +8,17 @@ import operator
 import pathlib
 import random
 
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day15_input.txt')
+input_file = pathlib.Path(__file__).resolve().parent.parent.joinpath('input', '2015-15.txt')
 
 
 def parse_input(text):
-    parsed = dict()
+    parsed = []
     for line in text.splitlines():
         ingredient, qualities = line.split(': ', maxsplit=1)
-        parsed[ingredient] = dict()
+        parsed.append([])
         for qual_pair in qualities.split(', '):
             quality, magnitude = qual_pair.split()
-            parsed[ingredient][quality] = int(magnitude)
+            parsed[-1].append(int(magnitude))
     return parsed
 
 
@@ -36,13 +36,13 @@ Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3'''
 
 def cookie_score(recipe, ingredient_dict):
     qual_scores = [
-        [amount * magnitude
-            for quality, magnitude in ingredient_dict[ingredient].items()]
-        for ingredient, amount in recipe]
+        [amount * magnitude for magnitude in mags]
+        for amount, mags in zip(recipe, ingredient_dict)
+    ]
 
     qual_totals = map(sum, zip(*qual_scores))
     # Set negative numbers to zero
-    qual_totals = list(map(lambda x: x if x > 0 else 0, qual_totals))
+    qual_totals = [x if x > 0 else 0 for x in qual_totals]
     calories = qual_totals.pop()
     cookie_score = reduce(operator.mul, qual_totals)
     return (cookie_score, calories)
@@ -109,7 +109,7 @@ def combo_four(total):
 
 def brute_force_cookie(ingredients, teaspoons):
     """Choose best from all possible recipes for number of teaspoons"""
-    all_scores = [cookie_score(zip(ingredients, amounts), ingredients)
+    all_scores = [cookie_score(amounts, ingredients)
                   for amounts in combo_four(teaspoons)]
     best_cookie = max(c[0] for c in all_scores)
     best_500_cal_cookie = max(c[0] for c in all_scores if c[1] == 500)
@@ -136,7 +136,7 @@ def search_for_best_cookie(starting_recipe, ingredients, teaspoons,
     recipes_tried.add(tuple(starting_recipe))
 
     def score_helper(recipe):
-        return cookie_score(zip(ingredients, recipe), ingredients)
+        return cookie_score(recipe, ingredients)
 
     def new_recipes(current_recipe):
         for c in single_change_permutations:
