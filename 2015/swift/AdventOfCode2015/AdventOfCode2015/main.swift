@@ -16,11 +16,6 @@ protocol AdventOfCodeSolution {
     static func solvePartTwo(input: String) -> String
 }
 
-
-func main() {
-    
-}
-
 func formatInputFileName(year: Int, day: Int) -> String {
     return String(format: "%4d-%02d.txt", year, day)
 }
@@ -43,8 +38,3 @@ func loadInputString(year: Int, day: Int) -> String {
         exit(1)
     }
 }
-
-let result = loadInputString(year: 2015, day: 01)
-print(result)
-
-main()
