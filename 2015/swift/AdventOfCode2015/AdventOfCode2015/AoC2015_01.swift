@@ -13,10 +13,20 @@ struct AoC2015_01: AdventOfCodeSolution {
     static var day: Int = 1
     
     static func solvePartOne(input: String) -> String {
-        return ""
+        let result = input.reduce(0) { floor, direction in
+            direction == "(" ? floor + 1 : floor - 1
+        }
+        return "\(result)"
     }
     
     static func solvePartTwo(input: String) -> String {
-        return ""
+        var floor = 0
+        for (index, character) in input.enumerated() {
+            floor += (character == "(" ? 1 : -1)
+            if floor == -1 {
+                return "\(index + 1)"  // Problem starts from position 1
+            }
+        }
+        return "Did not enter basement, reached floor \(floor)"
     }
 }
