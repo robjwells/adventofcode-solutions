@@ -12,6 +12,7 @@
 		B1DF1AAE2309B78700F701F8 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DF1A9B2309B6E400F701F8 /* main.swift */; };
 		B1DF1AB02309B7D500F701F8 /* TestAoC2015_01.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DF1AAF2309B7D500F701F8 /* TestAoC2015_01.swift */; };
 		B1DF1AB22309B88C00F701F8 /* AoC2015_01.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DF1AB12309B88C00F701F8 /* AoC2015_01.swift */; };
+		B1DF1AB32309C71400F701F8 /* AoC2015_01.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1DF1AB12309B88C00F701F8 /* AoC2015_01.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -190,6 +191,7 @@
 			files = (
 				B1DF1AB02309B7D500F701F8 /* TestAoC2015_01.swift in Sources */,
 				B1DF1AAE2309B78700F701F8 /* main.swift in Sources */,
+				B1DF1AB32309C71400F701F8 /* AoC2015_01.swift in Sources */,
 				B1DF1AA92309B72F00F701F8 /* AdventOfCode2015Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
