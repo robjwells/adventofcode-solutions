@@ -1,7 +1,11 @@
 mod aoc_2015_01;
+mod aoc_2015_02;
 
 fn main() {
-    let days = [aoc_2015_01::run];
+    let days = [
+        aoc_2015_01::run,
+        aoc_2015_02::run,
+    ];
     if let Some(day_arg) = std::env::args().nth(1) {
         // Try to run specific day's solution
         match day_arg.parse::<usize>() {
