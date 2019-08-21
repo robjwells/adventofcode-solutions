@@ -1,4 +1,5 @@
-namespace AdventOfCode2015.Core {
+namespace AdventOfCode2015.Core
+{
     public interface ISolution
     {
         int Year { get; }
