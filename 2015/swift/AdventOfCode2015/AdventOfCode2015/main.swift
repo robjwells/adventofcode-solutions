@@ -38,3 +38,21 @@ func loadInputString(year: Int, day: Int) -> String {
         exit(1)
     }
 }
+
+let solutions = [
+    AoC2015_01.self
+]
+
+func main(args: [String]) {
+    for solution in solutions {
+        let input = loadInputString(year: solution.year, day: solution.day)
+        print("""
+            AoC \(solution.year), Day \(solution.day)
+            Part one: \(solution.solvePartOne(input: input))
+            Part two: \(solution.solvePartTwo(input: input))
+            """
+        )
+    }
+}
+
+main(args: CommandLine.arguments)
