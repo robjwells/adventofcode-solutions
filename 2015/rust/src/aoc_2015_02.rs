@@ -21,14 +21,19 @@ struct Present {
     length: u32,
     width: u32,
     height: u32,
+    ordered: [u32; 3],
 }
 
 impl Present {
     fn new(length: u32, width: u32, height: u32) -> Present {
+        let mut ordered = [length, width, height];
+        ordered.sort();
+
         Present {
             length: length,
             width: width,
             height: height,
+            ordered: ordered,
         }
     }
 
@@ -39,13 +44,23 @@ impl Present {
     }
 
     fn slack(&self) -> u32 {
-        let mut sides = vec![self.length, self.width, self.height];
-        sides.sort();
-        sides[0] * sides[1]
+        self.ordered[0] * self.ordered[1]
     }
 
     fn total_paper(&self) -> u32 {
         self.surface_area() + self.slack()
+    }
+
+    fn volume(&self) -> u32 {
+        self.length * self.width * self.height
+    }
+
+    fn smallest_perimeter(&self) -> u32 {
+        self.ordered[0] * 2 + self.ordered[1] * 2
+    }
+
+    fn total_ribbon(&self) -> u32 {
+        self.volume() + self.smallest_perimeter()
     }
 }
 
@@ -68,7 +83,7 @@ fn solve_part_one(input: &Vec<Present>) -> u32 {
 }
 
 fn solve_part_two(input: &Vec<Present>) -> u32 {
-    42
+    input.iter().map(Present::total_ribbon).sum()
 }
 
 mod tests {
@@ -95,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn test_total() {
+    fn test_total_paper() {
         assert_eq!(Present::new(2, 3, 4).total_paper(), 58);
         assert_eq!(Present::new(1, 1, 10).total_paper(), 43);
     }
@@ -104,5 +119,29 @@ mod tests {
     fn test_known_part_one_result() {
         let parsed = parse_input(get_input());
         assert_eq!(solve_part_one(&parsed), 1588178);
+    }
+
+    #[test]
+    fn test_volume() {
+        assert_eq!(Present::new(2, 3, 4).volume(), 24);
+        assert_eq!(Present::new(1, 1, 10).volume(), 10);
+    }
+
+    #[test]
+    fn test_smallest_perimeter() {
+        assert_eq!(Present::new(2, 3, 4).smallest_perimeter(), 10);
+        assert_eq!(Present::new(1, 1, 10).smallest_perimeter(), 4);
+    }
+
+    #[test]
+    fn test_total_ribbon() {
+        assert_eq!(Present::new(2, 3, 4).total_ribbon(), 34);
+        assert_eq!(Present::new(1, 1, 10).total_ribbon(), 14);
+    }
+
+    #[test]
+    fn test_known_part_two_result() {
+        let parsed = parse_input(get_input());
+        assert_eq!(solve_part_two(&parsed), 3783758);
     }
 }
