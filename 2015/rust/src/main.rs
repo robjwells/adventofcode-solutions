@@ -29,6 +29,6 @@ fn main() {
         }
     } else {
         // Run all days
-        days.iter().for_each(|day| println!("{}", day()));
+        days.iter().for_each(|day| println!("{}\n", day()));
     }
 }
