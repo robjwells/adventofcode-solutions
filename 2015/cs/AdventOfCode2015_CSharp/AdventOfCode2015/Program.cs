@@ -9,8 +9,6 @@ namespace AdventOfCode2015
 {
     class Program
     {
-        static readonly int YEAR = 2015;
-
         public class Options
         {
             [Option('i', "input-dir", Required = true, HelpText = "Directory containing puzzle input files.")]
