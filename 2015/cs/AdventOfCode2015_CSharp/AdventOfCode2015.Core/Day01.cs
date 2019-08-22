@@ -6,6 +6,7 @@ namespace AdventOfCode2015.Core
     public class Day01 : Solution2015
     {
         public override int Day => 1;
+        public override string Title => "Not Quite Lisp";
 
         public override string Run(string input)
         {
