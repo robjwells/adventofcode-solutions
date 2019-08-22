@@ -13,7 +13,7 @@ namespace AdventOfCode2015.Core
             string inputFileName = string.Format("{0}-{1:00}.txt", year, day);
             return File.ReadAllText(
                 Path.Combine(inputDirectory, inputFileName)
-            );
+            ).Trim();
         }
 
         // See: https://stackoverflow.com/a/25573832/1845155
