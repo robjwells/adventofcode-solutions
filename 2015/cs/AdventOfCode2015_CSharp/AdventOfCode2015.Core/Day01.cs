@@ -10,7 +10,10 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            throw new NotImplementedException();
+            return string.Join("\n", new string[] {
+                base.TitleLine,
+                $"Part one:\t{SolvePartOne(input)}"
+            });
         }
 
         public int SolvePartOne(string input)
