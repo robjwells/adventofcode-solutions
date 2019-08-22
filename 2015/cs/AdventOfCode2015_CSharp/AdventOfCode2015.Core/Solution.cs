@@ -13,8 +13,25 @@ namespace AdventOfCode2015.Core
             {
                 string titleLine = $"Day {Day}: {Title}";
                 string underline = new string('=', titleLine.Length);
-                return $"{titleLine}\n{underline}\n";
+                return $"{titleLine}\n{underline}";
             }
+        }
+
+        protected string FormatReport(object partOneResult)
+        {
+            return string.Join("\n", new string[] {
+                TitleLine,
+                $"Part one: {partOneResult}",
+            });
+        }
+
+        protected string FormatReport(object partOneResult, object partTwoResult)
+        {
+            return string.Join("\n", new string[] {
+                TitleLine,
+                $"Part one: {partOneResult}",
+                $"Part two: {partTwoResult}"
+            });
         }
     }
 }
