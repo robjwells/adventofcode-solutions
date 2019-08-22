@@ -24,15 +24,15 @@ namespace AdventOfCode2015.Core
 
     public class Present
     {
-        private int length;
-        private int width;
-        private int height;
+        public readonly int Length;
+        public readonly int Width;
+        public readonly int Height;
 
         public Present(int length, int width, int height)
         {
-            this.length = length;
-            this.width = width;
-            this.height = height;
+            this.Length = length;
+            this.Width = width;
+            this.Height = height;
         }
 
         public static Present FromString(string dimensions)
