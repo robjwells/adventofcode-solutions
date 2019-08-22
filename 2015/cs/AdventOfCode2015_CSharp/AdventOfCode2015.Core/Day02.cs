@@ -15,7 +15,12 @@ namespace AdventOfCode2015.Core
             return FormatReport("");
         }
 
-        public List<Present> ParseInput(string input)
+        public static int SolvePartOne(List<Present> presents)
+        {
+            return presents.Select(p => p.TotalPaper).Sum();
+        }
+
+        public static List<Present> ParseInput(string input)
         {
             return input.Split('\n').Select(Present.FromString).ToList();
         }
@@ -25,12 +30,17 @@ namespace AdventOfCode2015.Core
             public readonly int Length;
             public readonly int Width;
             public readonly int Height;
+            private readonly int[] ordered;
 
             public Present(int length, int width, int height)
             {
                 this.Length = length;
                 this.Width = width;
                 this.Height = height;
+
+                int[] dimensions = new int[] { length, width, height };
+                Array.Sort(dimensions);
+                ordered = dimensions;
             }
 
             public static Present FromString(string dimensions)
@@ -42,6 +52,10 @@ namespace AdventOfCode2015.Core
                 }
                 return new Present(length: parsed[0], width: parsed[1], height: parsed[2]);
             }
+
+            public int TotalPaper => SurfaceArea + Slack;
+            public int SurfaceArea => 2 * Length * Width + 2 * Width * Height + 2 * Height * Length;
+            public int Slack => ordered[0] * ordered[1];
         }
 
     }
