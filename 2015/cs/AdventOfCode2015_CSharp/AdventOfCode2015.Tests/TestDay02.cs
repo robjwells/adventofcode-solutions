@@ -10,7 +10,7 @@ namespace Tests
         [TestCase("10x20x30", 10, 20, 30)]
         public void Day02_Present_CanConstructFromString(string input, int length, int width, int height)
         {
-            Present p = Present.FromString(input);
+            Day02.Present p = Day02.Present.FromString(input);
             Assert.AreEqual(
                 expected: (length, width, height),
                 actual: (p.Length, p.Width, p.Height)

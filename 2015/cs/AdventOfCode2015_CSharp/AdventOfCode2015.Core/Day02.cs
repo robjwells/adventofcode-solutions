@@ -19,30 +19,30 @@ namespace AdventOfCode2015.Core
         {
             return input.Split('\n').Select(Present.FromString).ToList();
         }
-
-    }
-
-    public class Present
-    {
-        public readonly int Length;
-        public readonly int Width;
-        public readonly int Height;
-
-        public Present(int length, int width, int height)
+        public class Present
         {
-            this.Length = length;
-            this.Width = width;
-            this.Height = height;
-        }
+            public readonly int Length;
+            public readonly int Width;
+            public readonly int Height;
 
-        public static Present FromString(string dimensions)
-        {
-            int[] parsed = dimensions.Split('x').Select(int.Parse).ToArray();
-            if (parsed.Length != 3)
+            public Present(int length, int width, int height)
             {
-                throw new ArgumentException("Dimensions string should be three elements long (l, w, h).");
+                this.Length = length;
+                this.Width = width;
+                this.Height = height;
             }
-            return new Present(length: parsed[0], width: parsed[1], height: parsed[2]);
+
+            public static Present FromString(string dimensions)
+            {
+                int[] parsed = dimensions.Split('x').Select(int.Parse).ToArray();
+                if (parsed.Length != 3)
+                {
+                    throw new ArgumentException("Dimensions string should be three elements long (l, w, h).");
+                }
+                return new Present(length: parsed[0], width: parsed[1], height: parsed[2]);
+            }
         }
+
     }
+
 }
