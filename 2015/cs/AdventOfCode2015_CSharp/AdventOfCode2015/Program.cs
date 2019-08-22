@@ -20,7 +20,7 @@ namespace AdventOfCode2015
             public int? Day { get; set; }
         }
 
-        static ISolution[] days = new ISolution[] {
+        static Solution[] days = new Solution[] {
             new Day01()
         };
 
@@ -53,7 +53,7 @@ namespace AdventOfCode2015
 
         static void RunSingleDay(int day, string inputDirectoryPath)
         {
-            ISolution instance = days[day - 1];
+            Solution instance = days[day - 1];
             string result = instance.Run(
                 LoadInputForDay(instance.Year, instance.Day, inputDirectoryPath)
             );
@@ -62,7 +62,7 @@ namespace AdventOfCode2015
 
         static void RunAllDays(string inputDirectoryPath)
         {
-            foreach (ISolution instance in days)
+            foreach (Solution instance in days)
             {
                 RunSingleDay(instance.Day, inputDirectoryPath);
             }
