@@ -3,12 +3,11 @@ using System.Linq;
 
 namespace AdventOfCode2015.Core
 {
-    public class Day01 : ISolution
+    public class Day01 : Solution2015
     {
-        public int Year => 2015;
-        public int Day => 1;
+        public override int Day => 1;
 
-        public string Run(string input)
+        public override string Run(string input)
         {
             throw new NotImplementedException();
         }
