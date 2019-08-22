@@ -22,9 +22,7 @@ namespace AdventOfCode2015.Core
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             List<string> pathParts = baseDirectory.Split(Path.DirectorySeparatorChar).ToList();
 
-            // Note that this’ll cause problems if you have the year repeated
-            // as a directory in the path to the Advent of Code repo.
-            int yearDirectoryIndex = pathParts.FindIndex(part => part == year.ToString());
+            int yearDirectoryIndex = pathParts.FindLastIndex(part => part == year.ToString());
 
             return Path.Combine(
                 Path.GetPathRoot(baseDirectory),
