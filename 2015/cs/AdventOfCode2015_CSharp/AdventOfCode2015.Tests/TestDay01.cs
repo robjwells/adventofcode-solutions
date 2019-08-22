@@ -36,5 +36,11 @@ namespace Tests
             Assert.AreEqual(expected, instance.SolvePartOne(input));
         }
 
+        [TestCase(")", 1)]
+        [TestCase("()())", 5)]
+        public void Day01_PartTwo_GivenCasesCorrect(string input, int expected) {
+            Assert.AreEqual(expected, instance.SolvePartTwo(input));
+        }
+
     }
 }
