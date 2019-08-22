@@ -43,19 +43,11 @@ namespace AdventOfCode2015
             }
         }
 
-        static string LoadInputForDay(int year, int day, string inputDirectoryPath)
-        {
-            string inputFileName = string.Format("{0}-{1:00}.txt", year, day);
-            return File.ReadAllText(
-                Path.Combine(inputDirectoryPath, inputFileName)
-            );
-        }
-
         static void RunSingleDay(int day, string inputDirectoryPath)
         {
             Solution instance = days[day - 1];
             string result = instance.Run(
-                LoadInputForDay(instance.Year, instance.Day, inputDirectoryPath)
+                Utils.LoadInput(inputDirectoryPath, instance.Year, instance.Day)
             );
             Console.WriteLine(result);
         }
