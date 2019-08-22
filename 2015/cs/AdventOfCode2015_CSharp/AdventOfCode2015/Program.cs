@@ -52,6 +52,7 @@ namespace AdventOfCode2015
             foreach (Solution instance in days)
             {
                 RunSingleDay(instance.Day);
+                Console.WriteLine();
             }
         }
     }
