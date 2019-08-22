@@ -16,7 +16,8 @@ namespace AdventOfCode2015
         }
 
         static Solution[] days = new Solution[] {
-            new Day01()
+            new Day01(),
+            new Day02(),
         };
 
         static void Main(string[] args)
