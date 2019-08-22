@@ -40,12 +40,14 @@ namespace Tests
 
         [TestCase(")", 1)]
         [TestCase("()())", 5)]
-        public void Day01_PartTwo_GivenCasesCorrect(string input, int expected) {
+        public void Day01_PartTwo_GivenCasesCorrect(string input, int expected)
+        {
             Assert.AreEqual(expected, instance.SolvePartTwo(input));
         }
 
         [Test]
-        public void Day01_PartOne_MatchesKnownCorrectAnswer() {
+        public void Day01_PartOne_MatchesKnownCorrectAnswer()
+        {
             Assert.AreEqual(
                 expected: 280,
                 actual: instance.SolvePartOne(puzzleInput)
@@ -53,7 +55,8 @@ namespace Tests
         }
 
         [Test]
-        public void Day01_PartTwo_MatchesKnownCorrectAnswer() {
+        public void Day01_PartTwo_MatchesKnownCorrectAnswer()
+        {
             Assert.AreEqual(
                 expected: 1797,
                 actual: instance.SolvePartTwo(puzzleInput)
