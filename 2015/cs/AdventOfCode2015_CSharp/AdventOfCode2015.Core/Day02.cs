@@ -19,6 +19,7 @@ namespace AdventOfCode2015.Core
         {
             return input.Split('\n').Select(Present.FromString).ToList();
         }
+
         public class Present
         {
             public readonly int Length;
