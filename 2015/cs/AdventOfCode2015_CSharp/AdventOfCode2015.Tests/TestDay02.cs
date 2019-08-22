@@ -45,5 +45,24 @@ namespace Tests
                 Day02.SolvePartOne(parsedInput)
             );
         }
+
+        [TestCase("2x3x4", 34)]
+        [TestCase("1x1x10", 14)]
+        public void Day02_Present_TotalRibbonMatchesGivenExamples(string input, int expected)
+        {
+            Assert.AreEqual(
+                expected,
+                Day02.Present.FromString(input).TotalRibbon
+            );
+        }
+
+        [Test]
+        public void Day02_PartTwo_MatchesKnownCorrectAnswer()
+        {
+            Assert.AreEqual(
+                3783758,
+                Day02.SolvePartTwo(parsedInput)
+            );
+        }
     }
 }
