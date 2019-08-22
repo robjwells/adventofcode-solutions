@@ -11,9 +11,6 @@ namespace AdventOfCode2015
     {
         public class Options
         {
-            [Option('i', "input-dir", Required = true, HelpText = "Directory containing puzzle input files.")]
-            public string InputDirectory { get; set; }
-
             [Value(0, MetaName = "day", HelpText = "Day for which to run solutions.")]
             public int? Day { get; set; }
         }
@@ -30,31 +27,30 @@ namespace AdventOfCode2015
 
         static void RunWithOptions(Options args)
         {
-            string inputDirectoryPath = Path.GetFullPath(args.InputDirectory);
             if (args.Day.HasValue)
             {
-                RunSingleDay(args.Day.Value, inputDirectoryPath);
+                RunSingleDay(args.Day.Value);
             }
             else
             {
-                RunAllDays(inputDirectoryPath);
+                RunAllDays();
             }
         }
 
-        static void RunSingleDay(int day, string inputDirectoryPath)
+        static void RunSingleDay(int day)
         {
             Solution instance = days[day - 1];
             string result = instance.Run(
-                Utils.LoadInput(inputDirectoryPath, instance.Year, instance.Day)
+                Utils.LoadInput(instance.Year, instance.Day)
             );
             Console.WriteLine(result);
         }
 
-        static void RunAllDays(string inputDirectoryPath)
+        static void RunAllDays()
         {
             foreach (Solution instance in days)
             {
-                RunSingleDay(instance.Day, inputDirectoryPath);
+                RunSingleDay(instance.Day);
             }
         }
     }
