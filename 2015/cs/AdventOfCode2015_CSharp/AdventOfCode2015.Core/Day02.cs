@@ -63,7 +63,8 @@ namespace AdventOfCode2015.Core
             private int Slack => ordered[0] * ordered[1];
 
             // Part two
-            public int TotalRibbon => 2 * ordered[0] + 2 * ordered[1] + Bow;
+            public int TotalRibbon => SmallestPerimeter + Bow;
+            private int SmallestPerimeter => 2 * ordered[0] + 2 * ordered[1];
             private int Bow => ordered.Aggregate((total, dim) => total * dim);
         }
 
