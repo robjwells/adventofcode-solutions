@@ -65,7 +65,7 @@ namespace AdventOfCode2015.Core
             // Part two
             public int TotalRibbon => SmallestPerimeter + Volume;
             private int SmallestPerimeter => 2 * ordered[0] + 2 * ordered[1];
-            private int Volume => ordered.Aggregate((total, dim) => total * dim);
+            private int Volume => ordered[0] * ordered[1] * ordered[2];
         }
 
     }
