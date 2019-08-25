@@ -11,7 +11,8 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            throw new NotImplementedException();
+            List<Point> parsed = ParseInput(input);
+            return FormatReport(SolvePartOne(parsed));
         }
 
         public static List<Point> ParseInput(string input)
@@ -32,6 +33,23 @@ namespace AdventOfCode2015.Core
                         throw new ArgumentException($"Invalid direction character: {c}");
                 }
             }).ToList();
+        }
+
+        public int SolvePartOne(List<Point> directions) {
+            HashSet<Point> visited = new HashSet<Point>();
+            Point origin = Point.Origin();
+            visited.Add(origin);
+
+            // We don’t use the result of the aggregate (reduce), which is the final location
+            // visited by Santa. However, the reduce procedure is a natural way to express the
+            // current location as a result of accumulating individual movement deltas.
+            directions.Aggregate(origin, (currentPosition, movementDelta) => {
+                Point newLocation = currentPosition + movementDelta;
+                visited.Add(newLocation);
+                return newLocation;
+            });
+
+            return visited.Count;
         }
     }
 }

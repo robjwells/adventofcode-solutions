@@ -34,5 +34,23 @@ namespace Tests
             );
         }
 
+        [TestCase(">", 2)]
+        [TestCase("^>v<", 4)]
+        [TestCase("^v^v^v^v^v", 2)]
+        public void Day03_PartOne_CorrectResultsForGivenDirections(string directions, int uniqueVisited) {
+            Assert.AreEqual(
+                uniqueVisited,
+                instance.SolvePartOne(Day03.ParseInput(directions))
+            );
+        }
+
+        [Test]
+        public void Day03_PartOne_MatchesKnownCorrectAnswer() {
+            Assert.AreEqual(
+                2081,
+                instance.SolvePartOne(parsedInput)
+            );
+        }
+
     }
 }
