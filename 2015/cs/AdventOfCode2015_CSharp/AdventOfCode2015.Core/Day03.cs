@@ -52,7 +52,7 @@ namespace AdventOfCode2015.Core
             // We don’t use the result of the aggregate (reduce), which is the final location
             // visited by Santa. However, the reduce procedure is a natural way to express the
             // current location as a result of accumulating individual movement deltas.
-            // (I have tried including the set in the Aggregate state, but it because quite complex.)
+            // (I have tried including the set in the Aggregate state, but it becomes quite complex.)
             directions.Aggregate(origin, (currentPosition, movementDelta) =>
             {
                 Point newLocation = currentPosition + movementDelta;
