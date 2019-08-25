@@ -35,7 +35,13 @@ namespace AdventOfCode2015.Core
             }).ToList();
         }
 
-        public int SolvePartOne(List<Point> directions) {
+        public int SolvePartOne(List<Point> directions)
+        {
+            return VisitedLocations(directions).Count;
+        }
+
+        HashSet<Point> VisitedLocations(List<Point> directions)
+        {
             HashSet<Point> visited = new HashSet<Point>();
             Point origin = Point.Origin();
             visited.Add(origin);
@@ -43,13 +49,32 @@ namespace AdventOfCode2015.Core
             // We don’t use the result of the aggregate (reduce), which is the final location
             // visited by Santa. However, the reduce procedure is a natural way to express the
             // current location as a result of accumulating individual movement deltas.
-            directions.Aggregate(origin, (currentPosition, movementDelta) => {
+            directions.Aggregate(origin, (currentPosition, movementDelta) =>
+            {
                 Point newLocation = currentPosition + movementDelta;
                 visited.Add(newLocation);
                 return newLocation;
             });
 
-            return visited.Count;
+            return visited;
+        }
+
+        public int SolvePartTwo(List<Point> directions)
+        {
+            return new int[] { 0, 1 }
+                .Select(remainder =>
+                    Utils.EnumerateSequence(directions)
+                        .Where(t => t.Index % 2 == remainder)
+                        .Select(t => t.Element)
+                        .ToList()
+                )
+                .Select(VisitedLocations)
+                .Aggregate((combined, locations) =>
+                {
+                    combined.UnionWith(locations);
+                    return combined;
+                })
+                .Count;
         }
     }
 }

@@ -52,5 +52,34 @@ namespace Tests
             );
         }
 
+        [TestCase("^v", 3)]
+        [TestCase("^>v<", 3)]
+        [TestCase("^v^v^v^v^v", 11)]
+        public void Day03_PartTwo_CorrectResultsForGivenDirections(string directions, int uniqueVisited) {
+            Assert.AreEqual(
+                uniqueVisited,
+                instance.SolvePartTwo(Day03.ParseInput(directions))
+            );
+        }
+
+        [TestCase("^vv^^vv^", 3)]
+        [TestCase("<<>>", 2)]
+        [TestCase("", 1)]
+        [TestCase("<>><><", 3)]
+        public void Day03_PartTwo_LocationsNotDoubleCounted(string directions, int uniqueVisited) {
+            Assert.AreEqual(
+                uniqueVisited,
+                instance.SolvePartTwo(Day03.ParseInput(directions))
+            );
+        }
+
+        [Test]
+        public void Day03_PartTwo_MatchesKnownCorrectAnswer() {
+            Assert.AreEqual(
+                2341,
+                instance.SolvePartTwo(parsedInput)
+            );
+        }
+
     }
 }
