@@ -12,7 +12,10 @@ namespace AdventOfCode2015.Core
         public override string Run(string input)
         {
             List<Point> parsed = ParseInput(input);
-            return FormatReport(SolvePartOne(parsed));
+            return FormatReport(
+                SolvePartOne(parsed),
+                SolvePartTwo(parsed)
+            );
         }
 
         public static List<Point> ParseInput(string input)
