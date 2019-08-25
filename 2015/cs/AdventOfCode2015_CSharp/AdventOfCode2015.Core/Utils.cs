@@ -30,5 +30,21 @@ namespace AdventOfCode2015.Core
                 "input"
             );
         }
+
+        // Yield a stream of tuples (index, element) where each element is taken from the
+        // sequence in order, and index is a counter starting from `from`.
+        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(IEnumerable<T> sequence, int from)
+        {
+            int index = from;
+            foreach (T element in sequence) {
+                yield return (Index: index, Element: element);
+                index += 1;
+            }
+        }
+
+        // Convenience wrapper around EnumerateSequence that starts from 0.
+        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(IEnumerable<T> sequence) {
+            return EnumerateSequence(sequence, from: 0);
+        }
     }
 }
