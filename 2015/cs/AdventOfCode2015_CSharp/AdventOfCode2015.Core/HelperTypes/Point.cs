@@ -13,6 +13,10 @@ namespace AdventOfCode2015.Core
             this.Y = y;
         }
 
+        public static Point Origin() {
+            return new Point(0, 0);
+        }
+
         public override string ToString() {
             return $"({X}, {Y})";
         }
