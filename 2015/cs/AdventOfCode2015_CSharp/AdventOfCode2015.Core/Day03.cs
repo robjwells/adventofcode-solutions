@@ -14,20 +14,20 @@ namespace AdventOfCode2015.Core
             throw new NotImplementedException();
         }
 
-        public static List<(int, int)> ParseInput(string input)
+        public static List<Point> ParseInput(string input)
         {
             return input.Select(c =>
             {
                 switch (c)
                 {
                     case '^':
-                        return (0, 1);
+                        return new Point(0, 1);
                     case 'v':
-                        return (0, -1);
+                        return new Point(0, -1);
                     case '<':
-                        return (-1, 0);
+                        return new Point(-1, 0);
                     case '>':
-                        return (1, 0);
+                        return new Point(1, 0);
                     default:
                         throw new ArgumentException($"Invalid direction character: {c}");
                 }

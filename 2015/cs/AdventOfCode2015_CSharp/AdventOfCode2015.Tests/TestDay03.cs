@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 using NUnit.Framework;
 using AdventOfCode2015.Core;
@@ -9,7 +10,7 @@ namespace Tests
     {
         Day03 instance;
         string input;
-        List<(int, int)> parsedInput;
+        List<Point> parsedInput;
 
         [SetUp]
         public void Setup()
@@ -20,11 +21,15 @@ namespace Tests
         }
 
         [Test]
-        public void Day03_ParseInput_AllFourCases() {
+        public void Day03_ParseInput_AllFourCases()
+        {
+            List<Point> expected = new (int, int)[] {
+                (0, 1), (0, -1), (-1, 0), (1, 0)
+            }.Select(
+                p => new Point(p.Item1, p.Item2)
+            ).ToList();
             Assert.AreEqual(
-                new List<(int, int)>(new (int, int)[] {
-                    (0, 1), (0, -1), (-1, 0), (1, 0)
-                }),
+                expected,
                 Day03.ParseInput("^v<>")
             );
         }
