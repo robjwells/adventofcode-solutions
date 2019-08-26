@@ -42,13 +42,14 @@ namespace Tests
             );
         }
 
-        [Test]
-        public void Day04_PartTwo_MatchesKnownCorrectResult()
-        {
-            Assert.AreEqual(
-                3938038,
-                instance.SolvePartTwo(secretKey, 0)
-            );
-        }
+        // Disable this test as solving part two is slow.
+        // [Test]
+        // public void Day04_PartTwo_MatchesKnownCorrectResult()
+        // {
+        //     Assert.AreEqual(
+        //         3938038,
+        //         instance.SolvePartTwo(secretKey, 0)
+        //     );
+        // }
     }
 }
