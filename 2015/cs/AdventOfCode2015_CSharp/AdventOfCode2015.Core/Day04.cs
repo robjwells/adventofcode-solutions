@@ -11,7 +11,21 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            throw new NotImplementedException();
+            return FormatReport(SolvePartOne(input));
+        }
+
+        public int SolvePartOne(string secretKey)
+        {
+            int suffix = 0;
+            string digest;
+            while (true) {
+                digest = HashDigest($"{secretKey}{suffix}");
+                if (digest.StartsWith("00000")) {
+                    break;
+                }
+                suffix +=1;
+            }
+            return suffix;
         }
 
         public static string HashDigest(string message)
