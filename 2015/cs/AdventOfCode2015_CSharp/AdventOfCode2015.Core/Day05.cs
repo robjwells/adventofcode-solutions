@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2015.Core
 {
@@ -15,11 +16,16 @@ namespace AdventOfCode2015.Core
         private static readonly HashSet<string> forbiddenStrings = new HashSet<string>(new string[] {
             "ab", "cd", "pq", "xy"
         });
+        private static readonly Regex letterPairAppearsTwiceRegex = new Regex(@"(..).*\1");
+        private static readonly Regex letterRepeatsAfterOneCharRegex = new Regex(@"(.).\1");
 
         public override string Run(string input)
         {
             string[] parsed = input.Split('\n');
-            return FormatReport(SolvePartOne(parsed));
+            return FormatReport(
+                SolvePartOne(parsed),
+                SolvePartTwo(parsed)
+            );
         }
 
         public string[] ParseInput(string input)
@@ -30,6 +36,11 @@ namespace AdventOfCode2015.Core
         public int SolvePartOne(string[] input)
         {
             return input.Where(IsNice).Count();
+        }
+
+        public int SolvePartTwo(string[] input)
+        {
+            return input.Where(IsNewNice).Count();
         }
 
         public static bool ContainsThreeVowels(string input)
@@ -60,6 +71,21 @@ namespace AdventOfCode2015.Core
                 ContainsLetterTwiceInARow(input) &&
                 DoesNotContainForbiddenStrings(input)
             );
+        }
+
+        public static bool LetterPairAppearsTwice(string input)
+        {
+            return letterPairAppearsTwiceRegex.IsMatch(input);
+        }
+
+        public static bool LetterRepeatsAfterOneChar(string input)
+        {
+            return letterRepeatsAfterOneCharRegex.IsMatch(input);
+        }
+
+        public static bool IsNewNice(string input)
+        {
+            return LetterPairAppearsTwice(input) && LetterRepeatsAfterOneChar(input);
         }
     }
 }

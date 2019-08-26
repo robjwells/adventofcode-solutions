@@ -77,5 +77,52 @@ namespace Tests
                 instance.SolvePartOne(input)
             );
         }
+
+        [TestCase("xyxy", true)]
+        [TestCase("aabcdefgaa", true)]
+        [TestCase("aaa", false)]
+        public void Day05_LetterPairAppearsTwice_MatchesGivenExamples(string input, bool expected)
+        {
+            Assert.AreEqual(
+                expected,
+                Day05.LetterPairAppearsTwice(input)
+            );
+        }
+
+        [TestCase("xyxy", true)]
+        [TestCase("aabcdefgaa", false)]
+        [TestCase("aaa", true)]
+        [TestCase("xyx", true)]
+        [TestCase("abcdefeghi", true)]
+        public void Day05_LetterRepeatsWithSingleGap_MatchesGivenExamples(string input, bool expected)
+        {
+            Assert.AreEqual(
+                expected,
+                Day05.LetterRepeatsAfterOneChar(input)
+            );
+        }
+
+        [TestCase("qjhvhtzxzqqjkmpb", true)]
+        [TestCase("xxyxx", true)]
+        [TestCase("uurcxstgmygtbstg", false)]
+        [TestCase("ieodomkazucvgmuy", false)]
+        public void Day05_IsNewNice_MatchesGivenExamples(string input, bool expected)
+        {
+            Assert.AreEqual(
+                expected,
+                Day05.IsNewNice(input)
+            );
+        }
+
+        [Test]
+        public void Day05_PartTwo_MatchesKnownCorrectResult()
+        {
+            Day05 instance = new Day05();
+            string[] input = instance.ParseInput(Utils.LoadInput(instance.Year, instance.Day));
+            Assert.AreEqual(
+                51,
+                instance.SolvePartTwo(input)
+            );
+        }
     }
 }
