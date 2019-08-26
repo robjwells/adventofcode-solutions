@@ -11,19 +11,36 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            return FormatReport(SolvePartOne(input));
+            int suffixForFiveZeroes = SolvePartOne(input);
+            int suffixForSixZeroes = SolvePartTwo(input, suffixForFiveZeroes);
+            return FormatReport(
+                suffixForFiveZeroes,
+                suffixForSixZeroes
+            );
         }
 
         public int SolvePartOne(string secretKey)
         {
-            int suffix = 0;
+            return IterateMD5UntilPrefix(secretKey, "00000");
+        }
+
+        public int SolvePartTwo(string secretKey, int fiveZeroesSuffix)
+        {
+            return IterateMD5UntilPrefix(secretKey, "000000", startFrom: fiveZeroesSuffix);
+        }
+
+        public int IterateMD5UntilPrefix(string secretKey, string digestPrefix, int startFrom = 0)
+        {
+            int suffix = startFrom;
             string digest;
-            while (true) {
+            while (true)
+            {
                 digest = HashDigest($"{secretKey}{suffix}");
-                if (digest.StartsWith("00000")) {
+                if (digest.StartsWith(digestPrefix))
+                {
                     break;
                 }
-                suffix +=1;
+                suffix += 1;
             }
             return suffix;
         }

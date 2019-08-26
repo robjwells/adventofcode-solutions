@@ -39,5 +39,13 @@ namespace Tests
                 instance.SolvePartOne(secretKey)
             );
         }
+
+        [Test]
+        public void Day04_PartTwo_MatchesKnownCorrectResult() {
+            Assert.AreEqual(
+                3938038,
+                instance.SolvePartTwo(secretKey, 0)
+            );
+        }
     }
 }
