@@ -21,7 +21,7 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            string[] parsed = input.Split('\n');
+            string[] parsed = ParseInput(input);
             return FormatReport(
                 SolvePartOne(parsed),
                 SolvePartTwo(parsed)
