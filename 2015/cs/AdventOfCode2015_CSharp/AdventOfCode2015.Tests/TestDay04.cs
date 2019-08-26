@@ -9,7 +9,8 @@ namespace Tests
         string secretKey;
 
         [SetUp]
-        public void SetUp() {
+        public void SetUp()
+        {
             instance = new Day04();
             secretKey = Utils.LoadInput(instance.Year, instance.Day);
         }
@@ -33,7 +34,8 @@ namespace Tests
         }
 
         [Test]
-        public void Day04_PartOne_MatchesKnownCorrectResult() {
+        public void Day04_PartOne_MatchesKnownCorrectResult()
+        {
             Assert.AreEqual(
                 117946,
                 instance.SolvePartOne(secretKey)
@@ -41,7 +43,8 @@ namespace Tests
         }
 
         [Test]
-        public void Day04_PartTwo_MatchesKnownCorrectResult() {
+        public void Day04_PartTwo_MatchesKnownCorrectResult()
+        {
             Assert.AreEqual(
                 3938038,
                 instance.SolvePartTwo(secretKey, 0)
