@@ -50,7 +50,7 @@ namespace AdventOfCode2015.Core
 
         public static bool ContainsLetterTwiceInARow(string input)
         {
-            if (input.Length == 0) { return false; }
+            if (input.Length < 2) { return false; }
             return input
                 .Zip(input.Substring(1), ValueTuple.Create)
                 .Where(tuple => tuple.Item1 == tuple.Item2)
