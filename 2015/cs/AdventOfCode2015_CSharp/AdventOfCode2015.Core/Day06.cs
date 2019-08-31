@@ -4,8 +4,23 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode2015.Core
 {
-    public class Day06
+    public class Day06 : Solution2015
     {
+        public override int Day => 6;
+        public override string Title => "Probably a Fire Hazard";
+
+        public override string Run(string input)
+        {
+            return "Day 6: Not implemented.";
+        }
+
+        public static LightInstruction[] ParseInput(string input)
+        {
+            return input
+                .Split('\n')
+                .Select(LightInstruction.FromString)
+                .ToArray();
+        }
     }
 
     public enum LightAction
