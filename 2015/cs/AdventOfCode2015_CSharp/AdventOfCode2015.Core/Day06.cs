@@ -28,7 +28,7 @@ namespace AdventOfCode2015.Core
         public static int SolvePartOne(LightInstruction[] instructions)
         {
             LightGrid grid = new LightGrid();
-            foreach(LightInstruction instruction in instructions)
+            foreach (LightInstruction instruction in instructions)
             {
                 grid.Perform(instruction);
             }
