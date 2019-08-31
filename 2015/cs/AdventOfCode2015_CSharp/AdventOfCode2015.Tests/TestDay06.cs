@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using AdventOfCode2015.Core;
+using static AdventOfCode2015.Core.Day06;
 
 namespace Tests
 {
