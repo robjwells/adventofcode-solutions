@@ -39,5 +39,15 @@ namespace Tests
             g.Perform(parsed[2]);
             Assert.AreEqual(1_000_000 - 1_000 - 4, g.TotalLightsOn);
         }
+
+        [Test]
+        public void Day06_PartOne_MatchesKnownCorrectResult()
+        {
+            LightInstruction[] input = Day06.ParseInput(Utils.LoadInput(2015, 6));
+            Assert.AreEqual(
+                543903,
+                Day06.SolvePartOne(input)
+            );
+        }
     }
 }

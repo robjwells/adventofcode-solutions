@@ -11,7 +11,10 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            return "Day 6: Not implemented.";
+            LightInstruction[] parsed = ParseInput(input);
+            return FormatReport(
+                SolvePartOne(parsed)
+            );
         }
 
         public static LightInstruction[] ParseInput(string input)
@@ -20,6 +23,16 @@ namespace AdventOfCode2015.Core
                 .Split('\n')
                 .Select(LightInstruction.FromString)
                 .ToArray();
+        }
+
+        public static int SolvePartOne(LightInstruction[] instructions)
+        {
+            LightGrid grid = new LightGrid();
+            foreach(LightInstruction instruction in instructions)
+            {
+                grid.Perform(instruction);
+            }
+            return grid.TotalLightsOn;
         }
     }
 
