@@ -18,5 +18,26 @@ namespace Tests
                 (result.Action, result.StartRow, result.StartCol, result.EndRow, result.EndCol)
             );
         }
+
+        [Test]
+        public void Day06_TestGrid()
+        {
+            string input = string.Join('\n', new string[] {
+            "turn on 0,0 through 999,999",
+            "toggle 0,0 through 999,0",
+            "turn off 499,499 through 500,500"
+            });
+            LightInstruction[] parsed = Day06.ParseInput(input);
+            LightGrid g = new LightGrid();
+
+            g.Perform(parsed[0]);
+            Assert.AreEqual(1_000_000, g.TotalLightsOn);
+
+            g.Perform(parsed[1]);
+            Assert.AreEqual(1_000_000 - 1_000, g.TotalLightsOn);
+
+            g.Perform(parsed[2]);
+            Assert.AreEqual(1_000_000 - 1_000 - 4, g.TotalLightsOn);
+        }
     }
 }

@@ -91,4 +91,56 @@ namespace AdventOfCode2015.Core
             );
         }
     }
+
+    public class LightGrid
+    {
+        private int[,] lights = new int[1000, 1000];
+        public int TotalLightsOn
+        {
+            get
+            {
+                // Use query syntax here to convert the int[,]
+                // into a flattened IEnumerable<int>
+                return (from int light in lights
+                        where light == 1
+                        select light).Count();
+            }
+        }
+
+        private delegate int LightFunction(int row, int col);
+
+        private LightFunction TurnOn = (int row, int col) => 1;
+        private LightFunction TurnOff = (int row, int col) => 0;
+        private int Toggle(int row, int col)
+        {
+            return 1 - lights[row, col];
+        }
+
+        public void Perform(LightInstruction instruction)
+        {
+            switch (instruction.Action)
+            {
+                case LightAction.TurnOn:
+                    Perform(TurnOn, instruction);
+                    break;
+                case LightAction.TurnOff:
+                    Perform(TurnOff, instruction);
+                    break;
+                case LightAction.Toggle:
+                    Perform(Toggle, instruction);
+                    break;
+            }
+        }
+
+        private void Perform(LightFunction function, LightInstruction instruction)
+        {
+            for (int row = instruction.StartRow; row <= instruction.EndRow; row += 1)
+            {
+                for (int col = instruction.StartCol; col <= instruction.EndCol; col += 1)
+                {
+                    lights[row, col] = function(row, col);
+                }
+            }
+        }
+    }
 }
