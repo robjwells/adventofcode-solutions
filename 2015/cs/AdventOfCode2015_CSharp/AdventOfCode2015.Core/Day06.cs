@@ -107,7 +107,7 @@ namespace AdventOfCode2015.Core
 
     public class LightGrid
     {
-        private int[,] lights = new int[1000, 1000];
+        protected int[,] lights = new int[1000, 1000];
         public int TotalLightsOn
         {
             get
@@ -120,14 +120,11 @@ namespace AdventOfCode2015.Core
             }
         }
 
-        private delegate int LightFunction(int row, int col);
+        protected delegate int LightFunction(int row, int col);
 
-        private LightFunction TurnOn = (int row, int col) => 1;
-        private LightFunction TurnOff = (int row, int col) => 0;
-        private int Toggle(int row, int col)
-        {
-            return 1 - lights[row, col];
-        }
+        protected virtual int TurnOn(int row, int col) => 1;
+        protected virtual int TurnOff(int row, int col) => 0;
+        protected virtual int Toggle(int row, int col) => 1 - lights[row, col];
 
         public void Perform(LightInstruction instruction)
         {
