@@ -13,7 +13,8 @@ namespace AdventOfCode2015.Core
         {
             LightInstruction[] parsed = ParseInput(input);
             return FormatReport(
-                SolvePartOne(parsed)
+                SolvePartOne(parsed),
+                SolvePartTwo(parsed)
             );
         }
 
@@ -33,6 +34,16 @@ namespace AdventOfCode2015.Core
                 grid.Perform(instruction);
             }
             return grid.TotalLightsOn;
+        }
+
+        public static int SolvePartTwo(LightInstruction[] instructions)
+        {
+            BrightnessGrid grid = new BrightnessGrid();
+            foreach (LightInstruction instruction in instructions)
+            {
+                grid.Perform(instruction);
+            }
+            return grid.TotalBrightness;
         }
     }
 
