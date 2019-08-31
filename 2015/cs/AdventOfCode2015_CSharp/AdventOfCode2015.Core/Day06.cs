@@ -142,7 +142,7 @@ namespace AdventOfCode2015.Core
             }
         }
 
-        private void Perform(LightFunction function, LightInstruction instruction)
+        protected void Perform(LightFunction function, LightInstruction instruction)
         {
             for (int row = instruction.StartRow; row <= instruction.EndRow; row += 1)
             {
