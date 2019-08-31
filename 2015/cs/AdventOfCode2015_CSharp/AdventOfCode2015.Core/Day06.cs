@@ -153,4 +153,19 @@ namespace AdventOfCode2015.Core
             }
         }
     }
+
+    public class BrightnessGrid : LightGrid
+    {
+        public int TotalBrightness
+        {
+            get
+            {
+                return (from int light in lights select light).Sum();
+            }
+        }
+
+        protected override int TurnOn(int row, int col) => lights[row, col] + 1;
+        protected override int TurnOff(int row, int col) => Math.Max(0, lights[row, col] - 1);
+        protected override int Toggle(int row, int col) => lights[row, col] + 2;
+    }
 }
