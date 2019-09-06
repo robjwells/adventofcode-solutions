@@ -30,20 +30,14 @@ namespace AdventOfCode2015.Core
         public static int SolvePartOne(List<LightInstruction> instructions)
         {
             LightGrid grid = new LightGrid();
-            foreach (LightInstruction instruction in instructions)
-            {
-                grid.Perform(instruction);
-            }
+            instructions.ForEach(grid.Perform);
             return grid.TotalLightsOn;
         }
 
         public static int SolvePartTwo(List<LightInstruction> instructions)
         {
             BrightnessGrid grid = new BrightnessGrid();
-            foreach (LightInstruction instruction in instructions)
-            {
-                grid.Perform(instruction);
-            }
+            instructions.ToList().ForEach(grid.Perform);
             return grid.TotalBrightness;
         }
 
