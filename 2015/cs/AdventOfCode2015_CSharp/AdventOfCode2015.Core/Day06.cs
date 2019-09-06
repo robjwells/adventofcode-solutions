@@ -37,7 +37,7 @@ namespace AdventOfCode2015.Core
         public static int SolvePartTwo(List<LightInstruction> instructions)
         {
             BrightnessGrid grid = new BrightnessGrid();
-            instructions.ToList().ForEach(grid.Perform);
+            instructions.ForEach(grid.Perform);
             return grid.TotalBrightness;
         }
 
