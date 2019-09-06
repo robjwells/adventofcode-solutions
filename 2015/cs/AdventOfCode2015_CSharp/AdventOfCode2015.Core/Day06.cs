@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -11,22 +12,22 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            LightInstruction[] parsed = ParseInput(input);
+            List<LightInstruction> parsed = ParseInput(input);
             return FormatReport(
                 SolvePartOne(parsed),
                 SolvePartTwo(parsed)
             );
         }
 
-        public static LightInstruction[] ParseInput(string input)
+        public static List<LightInstruction> ParseInput(string input)
         {
             return input
                 .Split('\n')
                 .Select(LightInstruction.FromString)
-                .ToArray();
+                .ToList();
         }
 
-        public static int SolvePartOne(LightInstruction[] instructions)
+        public static int SolvePartOne(List<LightInstruction> instructions)
         {
             LightGrid grid = new LightGrid();
             foreach (LightInstruction instruction in instructions)
@@ -36,7 +37,7 @@ namespace AdventOfCode2015.Core
             return grid.TotalLightsOn;
         }
 
-        public static int SolvePartTwo(LightInstruction[] instructions)
+        public static int SolvePartTwo(List<LightInstruction> instructions)
         {
             BrightnessGrid grid = new BrightnessGrid();
             foreach (LightInstruction instruction in instructions)

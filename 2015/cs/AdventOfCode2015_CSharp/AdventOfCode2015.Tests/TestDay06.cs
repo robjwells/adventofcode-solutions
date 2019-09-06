@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 using AdventOfCode2015.Core;
 using static AdventOfCode2015.Core.Day06;
@@ -28,7 +29,7 @@ namespace Tests
             "toggle 0,0 through 999,0",
             "turn off 499,499 through 500,500"
             });
-            LightInstruction[] parsed = Day06.ParseInput(input);
+            List<LightInstruction> parsed = Day06.ParseInput(input);
             LightGrid g = new LightGrid();
 
             g.Perform(parsed[0]);
@@ -44,7 +45,7 @@ namespace Tests
         [Test]
         public void Day06_PartOne_MatchesKnownCorrectResult()
         {
-            LightInstruction[] input = Day06.ParseInput(Utils.LoadInput(2015, 6));
+            List<LightInstruction> input = Day06.ParseInput(Utils.LoadInput(2015, 6));
             Assert.AreEqual(
                 543903,
                 Day06.SolvePartOne(input)
@@ -59,7 +60,7 @@ namespace Tests
             "toggle 0,0 through 999,0",
             "turn off 499,499 through 500,500"
             });
-            LightInstruction[] parsed = Day06.ParseInput(input);
+            List<LightInstruction> parsed = Day06.ParseInput(input);
             BrightnessGrid g = new BrightnessGrid();
 
             g.Perform(parsed[0]);
@@ -75,7 +76,7 @@ namespace Tests
         [Test]
         public void Day06_PartTwo_MatchesKnownCorrectResult()
         {
-            LightInstruction[] input = Day06.ParseInput(Utils.LoadInput(2015, 6));
+            List<LightInstruction> input = Day06.ParseInput(Utils.LoadInput(2015, 6));
             Assert.AreEqual(
                 14687245,
                 Day06.SolvePartTwo(input)
