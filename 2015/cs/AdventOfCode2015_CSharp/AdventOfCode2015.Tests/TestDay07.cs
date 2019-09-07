@@ -21,15 +21,15 @@ NOT x -> h
 NOT y -> i
 ";
             Circuit circuit = Day07.ParseInput(input);
-            var pairs = Enumerable.Zip(
+            Enumerable.Zip(
                 new ushort[] { 72, 507, 492, 114, 65412, 65079, 123, 456},
                 new string[] { "d", "e", "f", "g", "h", "i", "x", "y"},
                 (expected, wire) => (expected, actual: circuit[wire])
+            )
+            .ToList()
+            .ForEach(
+                pair => Assert.AreEqual(pair.expected, pair.actual)
             );
-            foreach (var pair in pairs)
-            {
-                Assert.AreEqual(pair.expected, pair.actual);
-            }
         }
 
         [Test]
