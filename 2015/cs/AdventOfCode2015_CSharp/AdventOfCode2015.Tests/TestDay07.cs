@@ -31,5 +31,15 @@ NOT y -> i
                 Assert.AreEqual(pair.expected, pair.actual);
             }
         }
+
+        [Test]
+        public void WhenGivenMyInput_ThenGivesKnownCorrectResults()
+        {
+            string input = Utils.LoadInput(2015, 7);
+            Assert.AreEqual(
+                (16076, 2797),
+                Day07.SolveBothParts(input)
+            );
+        }
     }
 }
