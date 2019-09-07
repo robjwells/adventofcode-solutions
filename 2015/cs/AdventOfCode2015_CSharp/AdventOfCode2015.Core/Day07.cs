@@ -49,184 +49,83 @@ namespace AdventOfCode2015.Core
         }
     }
 
-    public abstract class Wire
+    public class Wire
     {
-        public string Name { get; set; }
-        private ushort? value;
+        public string Name { get; }
+        private string[] parts;
+        private ushort? cached;
         public ushort Resolve(Circuit circuit)
         {
-            if (!value.HasValue)
+            if (!cached.HasValue)
             {
-                value = ResolveHelper(circuit);
+                cached = ResolveHelper(circuit, parts);
             }
-            return value.Value;
+            return cached.Value;
         }
 
-        public virtual ushort ResolveHelper(Circuit circuit) => throw new NotImplementedException();
+        private delegate ushort WireFunction(Circuit circuit, string[] parts);
+        private WireFunction ResolveHelper;
 
         public void Reset()
         {
-            value = null;
+            cached = null;
         }
 
-        private static Regex immediateRegex = new Regex(
-            @"^(\d+) -> ([a-z]+)$"
-        );
-        private static Regex wireReferenceRegex = new Regex(
-            @"^([a-z]+) -> ([a-z]+)$"
-        );
-        private static Regex notRegex = new Regex(
-            @"^NOT ([a-z]+) -> ([a-z]+)$"
-        );
-        private static Regex mixedAndRegex = new Regex(
-            @"^(\d+) AND ([a-z]+) -> ([a-z]+)$"
-        );
-        private static Regex wireAndOrRegex = new Regex(
-            @"^([a-z]+) (?:AND|OR) ([a-z]+) -> ([a-z]+)$"
-        );
-        private static Regex shiftRegex = new Regex(
-            @"^([a-z]+) (?:[LR]SHIFT) (\d+) -> ([a-z]+)$"
-        );
+        Wire(string[] parts, WireFunction resolver)
+        {
+            this.parts = parts;
+            this.Name = parts.Last();
+            this.ResolveHelper = resolver;
+        }
 
         public static Wire FromString(string input)
         {
-            if (immediateRegex.IsMatch(input))
+            WireFunction immediate = (_, parts) => ushort.Parse(parts[0]);
+            WireFunction wire = (circuit, parts) => circuit[parts[0]];
+            WireFunction not = (circuit, parts) => (ushort) ~circuit[parts[1]];
+            WireFunction mixedAnd = (circuit, parts)
+                => (ushort) ( ushort.Parse(parts[0]) & circuit[parts[2]] );
+            WireFunction wireAnd = (circuit, parts)
+                => (ushort) ( circuit[parts[0]] & circuit[parts[2]] );
+            WireFunction wireOr = (circuit, parts)
+                => (ushort) ( circuit[parts[0]] | circuit[parts[2]] );
+            WireFunction leftShift = (circuit, parts)
+                => (ushort) ( circuit[parts[0]] << ushort.Parse(parts[2]) );
+            WireFunction rightShift = (circuit, parts)
+                => (ushort) ( circuit[parts[0]] >> ushort.Parse(parts[2]) );
+
+            string[] inputParts = input.Split();
+            bool startsWithDigit = Char.IsDigit(inputParts[0][0]);
+
+            if (input.Contains("AND"))
             {
-                return new ImmediateWire(immediateRegex.Match(input));
+                return new Wire(
+                    inputParts,
+                    startsWithDigit ? mixedAnd : wireAnd
+                );
             }
-            if (wireReferenceRegex.IsMatch(input))
+            if (input.Contains("OR"))
             {
-                return new ReferenceWire(wireReferenceRegex.Match(input));
+                return new Wire(inputParts, wireOr);
             }
-            if (notRegex.IsMatch(input))
+            if (input.Contains("LSHIFT"))
             {
-                return new NotWire(notRegex.Match(input));
+                return new Wire(inputParts, leftShift);
             }
-            if (mixedAndRegex.IsMatch(input))
+            if (input.Contains("RSHIFT"))
             {
-                return new MixedAndWire(mixedAndRegex.Match(input));
+                return new Wire(inputParts, rightShift);
             }
-            if (wireAndOrRegex.IsMatch(input))
+            if (input.Contains("NOT"))
             {
-                Match match = wireAndOrRegex.Match(input);
-                if (input.Contains("AND"))
-                {
-                    return new ReferenceAndWire(match);
-                }
-                else
-                {
-                    return new ReferenceOrWire(match);
-                }
+                return new Wire(inputParts, not);
             }
-            if (shiftRegex.IsMatch(input))
+            if (startsWithDigit)
             {
-                Match match = shiftRegex.Match(input);
-                if (input.Contains("LSHIFT"))
-                {
-                    return new LeftShiftWire(match);
-                }
-                else
-                {
-                    return new RightShiftWire(match);
-                }
+                return new Wire(inputParts, immediate);
             }
-            throw new ArgumentException($"Invalid input for wire types available. `{input}`");
+            return new Wire(inputParts, wire);
         }
 
-    }
-
-    public class ImmediateWire : Wire
-    {
-        public ushort value;
-        public override ushort ResolveHelper(Circuit circuit) => value;
-
-        public ImmediateWire(Match match)
-        {
-            Name = match.Groups[2].Value;
-            value = ushort.Parse(match.Groups[1].Value);
-        }
-    }
-
-    public class ReferenceWire : Wire
-    {
-        public string wire;
-        public override ushort ResolveHelper(Circuit circuit) => circuit[wire];
-
-        public ReferenceWire() { }
-        public ReferenceWire(Match match)
-        {
-            Name = match.Groups[2].Value;
-            wire = match.Groups[1].Value;
-        }
-    }
-
-    public class NotWire : ReferenceWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)~base.ResolveHelper(circuit);
-
-        public NotWire(Match match) : base(match) { }
-    }
-
-    public class ReferenceBinaryWire : Wire
-    {
-        public string left;
-        public string right;
-
-        public ReferenceBinaryWire(Match match)
-        {
-            Name = match.Groups[3].Value;
-            left = match.Groups[1].Value;
-            right = match.Groups[2].Value;
-        }
-    }
-
-    public class MixedWire : ReferenceWire
-    {
-        public ushort number;
-
-        public MixedWire(Match match)
-        {
-            Name = match.Groups[3].Value;
-            try
-            {
-                number = ushort.Parse(match.Groups[1].Value);
-                wire = match.Groups[2].Value;
-            }
-            catch (FormatException)
-            {
-                number = ushort.Parse(match.Groups[2].Value);
-                wire = match.Groups[1].Value;
-            }
-        }
-    }
-
-    public class MixedAndWire : MixedWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)(number & circuit[wire]);
-        public MixedAndWire(Match match) : base(match) { }
-    }
-
-    public class ReferenceAndWire : ReferenceBinaryWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[left] & circuit[right]);
-        public ReferenceAndWire(Match match) : base(match) { }
-    }
-
-    public class ReferenceOrWire : ReferenceBinaryWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[left] | circuit[right]);
-        public ReferenceOrWire(Match match) : base(match) { }
-    }
-
-    public class LeftShiftWire : MixedWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[wire] << number);
-        public LeftShiftWire(Match match) : base(match) { }
-    }
-
-    public class RightShiftWire : MixedWire
-    {
-        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[wire] >> number);
-        public RightShiftWire(Match match) : base(match) { }
     }
 }
