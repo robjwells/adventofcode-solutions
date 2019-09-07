@@ -20,8 +20,7 @@ y RSHIFT 2 -> g
 NOT x -> h
 NOT y -> i
 ";
-            List<Wire> parsed = Day07.ParseInput(input);
-            Circuit circuit = Circuit.FromInstructions(parsed);
+            Circuit circuit = Day07.ParseInput(input);
             var pairs = Enumerable.Zip(
                 new ushort[] { 72, 507, 492, 114, 65412, 65079, 123, 456},
                 new string[] { "d", "e", "f", "g", "h", "i", "x", "y"},
