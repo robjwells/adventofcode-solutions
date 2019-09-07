@@ -22,6 +22,7 @@ namespace AdventOfCode2015
             new Day04(),
             new Day05(),
             new Day06(),
+            new Day07(),
         };
 
         static void Main(string[] args)
