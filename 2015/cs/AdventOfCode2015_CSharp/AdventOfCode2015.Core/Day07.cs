@@ -11,8 +11,16 @@ namespace AdventOfCode2015.Core
         public override string Title => "Some Assembly Required";
         public override string Run(string input)
         {
+            List<Wire> wires = ParseInput(input);
+            Circuit circuit = Circuit.FromInstructions(wires);
+            ushort partOneResult = circuit["a"];
+            circuit.Reset();
+            circuit.Override("b", partOneResult);
+            ushort partTwoResult = circuit["a"];
+
             return FormatReport(
-                SolvePartOne(input)
+                partOneResult,
+                partTwoResult
             );
         }
 
@@ -20,13 +28,6 @@ namespace AdventOfCode2015.Core
         {
             return input.Trim().Split('\n').Select(Wire.FromString).ToList();
         }
-
-        public static ushort SolvePartOne(string input)
-        {
-            List<Wire> wires = ParseInput(input);
-            return Circuit.FromInstructions(wires)["a"];
-        }
-
     }
 
     public class Circuit
@@ -34,6 +35,16 @@ namespace AdventOfCode2015.Core
         private Dictionary<string, Wire> wireMap = new Dictionary<string, Wire>();
 
         public ushort this[string wireName] => wireMap[wireName].Resolve(this);
+
+        public void Reset()
+        {
+            wireMap.Values.ToList().ForEach(wire => wire.Reset());
+        }
+
+        public void Override(string target, ushort signal)
+        {
+            wireMap[target].Override(signal);
+        }
 
         public static Circuit FromInstructions(List<Wire> instructions)
         {
@@ -57,6 +68,16 @@ namespace AdventOfCode2015.Core
         }
 
         public virtual ushort ResolveHelper(Circuit circuit) => throw new NotImplementedException();
+
+        public void Reset()
+        {
+            value = null;
+        }
+
+        public void Override(ushort signal)
+        {
+            value = signal;
+        }
 
         private static Regex immediateRegex = new Regex(
             @"^(\d+) -> ([a-z]+)$"
