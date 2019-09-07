@@ -63,30 +63,30 @@ namespace AdventOfCode2015.Core
         {
             if (immediateRegex.IsMatch(input))
             {
-                return ImmediateWire.FromMatch(immediateRegex.Match(input));
+                return new ImmediateWire(immediateRegex.Match(input));
             }
             if (wireReferenceRegex.IsMatch(input))
             {
-                return ReferenceWire.FromMatch(wireReferenceRegex.Match(input));
+                return new ReferenceWire(wireReferenceRegex.Match(input));
             }
             if (notRegex.IsMatch(input))
             {
-                return NotWire.FromMatch(notRegex.Match(input));
+                return new NotWire(notRegex.Match(input));
             }
             if (mixedAndRegex.IsMatch(input))
             {
-                return MixedAndWire.FromMatch(mixedAndRegex.Match(input));
+                return new MixedAndWire(mixedAndRegex.Match(input));
             }
             if (wireAndOrRegex.IsMatch(input))
             {
                 Match match = wireAndOrRegex.Match(input);
                 if (input.Contains("AND"))
                 {
-                    return ReferenceAndWire.FromMatch(match);
+                    return new ReferenceAndWire(match);
                 }
                 else
                 {
-                    return ReferenceOrWire.FromMatch(match);
+                    return new ReferenceOrWire(match);
                 }
             }
             if (shiftRegex.IsMatch(input))
@@ -94,11 +94,11 @@ namespace AdventOfCode2015.Core
                 Match match = shiftRegex.Match(input);
                 if (input.Contains("LSHIFT"))
                 {
-                    return LeftShiftWire.FromMatch(match);
+                    return new LeftShiftWire(match);
                 }
                 else
                 {
-                    return RightShiftWire.FromMatch(match);
+                    return new RightShiftWire(match);
                 }
             }
             throw new ArgumentException($"Invalid input for wire types available. `{input}`");
@@ -111,13 +111,10 @@ namespace AdventOfCode2015.Core
         public ushort value;
         public override ushort Resolve(Circuit circuit) => value;
 
-        public static ImmediateWire FromMatch(Match match)
+        public ImmediateWire(Match match)
         {
-            return new ImmediateWire()
-            {
-                Name = match.Groups[2].Value,
-                value = ushort.Parse(match.Groups[1].Value)
-            };
+            Name = match.Groups[2].Value;
+            value = ushort.Parse(match.Groups[1].Value);
         }
     }
 
@@ -126,19 +123,19 @@ namespace AdventOfCode2015.Core
         public string wire;
         public override ushort Resolve(Circuit circuit) => circuit[wire];
 
-        public static ReferenceWire FromMatch(Match match)
+        public ReferenceWire() {}
+        public ReferenceWire(Match match)
         {
-            return new ReferenceWire()
-            {
-                Name = match.Groups[2].Value,
-                wire = match.Groups[1].Value
-            };
+            Name = match.Groups[2].Value;
+            wire = match.Groups[1].Value;
         }
     }
 
     public class NotWire : ReferenceWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)~base.Resolve(circuit);
+
+        public NotWire(Match match) : base(match) {}
     }
 
     public class ReferenceBinaryWire : Wire
@@ -146,14 +143,11 @@ namespace AdventOfCode2015.Core
         public string left;
         public string right;
 
-        public static ReferenceBinaryWire FromMatch(Match match)
+        public ReferenceBinaryWire(Match match)
         {
-            return new ReferenceBinaryWire()
-            {
-                Name = match.Groups[3].Value,
-                left = match.Groups[1].Value,
-                right = match.Groups[2].Value
-            };
+            Name = match.Groups[3].Value;
+            left = match.Groups[1].Value;
+            right = match.Groups[2].Value;
         }
     }
 
@@ -161,51 +155,49 @@ namespace AdventOfCode2015.Core
     {
         public ushort number;
 
-        public new static MixedWire FromMatch(Match match)
+        public MixedWire(Match match)
         {
-            ushort number;
-            string wireReference;
+            Name = match.Groups[3].Value;
             try
             {
                 number = ushort.Parse(match.Groups[1].Value);
-                wireReference = match.Groups[2].Value;
+                wire = match.Groups[2].Value;
             }
             catch (FormatException)
             {
                 number = ushort.Parse(match.Groups[2].Value);
-                wireReference = match.Groups[1].Value;
+                wire = match.Groups[1].Value;
             }
-            return new MixedWire()
-            {
-                Name = match.Groups[3].Value,
-                number = number,
-                wire = wireReference
-            };
         }
     }
 
     public class MixedAndWire : MixedWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)(number & circuit[wire]);
+        public MixedAndWire(Match match) : base(match) {}
     }
 
     public class ReferenceAndWire : ReferenceBinaryWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)(circuit[left] & circuit[right]);
+        public ReferenceAndWire(Match match) : base(match) {}
     }
 
     public class ReferenceOrWire : ReferenceBinaryWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)(circuit[left] | circuit[right]);
+        public ReferenceOrWire(Match match) : base(match) {}
     }
 
     public class LeftShiftWire : MixedWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)(circuit[wire] << number);
+        public LeftShiftWire(Match match) : base(match) {}
     }
 
     public class RightShiftWire : MixedWire
     {
         public override ushort Resolve(Circuit circuit) => (ushort)(circuit[wire] >> number);
+        public RightShiftWire(Match match) : base(match) {}
     }
 }
