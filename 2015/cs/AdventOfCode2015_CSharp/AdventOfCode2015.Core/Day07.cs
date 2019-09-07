@@ -11,15 +11,10 @@ namespace AdventOfCode2015.Core
         public override string Title => "Some Assembly Required";
         public override string Run(string input)
         {
-            Circuit circuit = ParseInput(input);
-            ushort partOneResult = circuit["a"];
-            circuit.Reset();
-            circuit.Add($"{partOneResult} -> b");
-            ushort partTwoResult = circuit["a"];
-
+            var results = SolveBothParts(input);
             return FormatReport(
-                partOneResult,
-                partTwoResult
+                results.partOne,
+                results.partTwo
             );
         }
 
@@ -28,6 +23,16 @@ namespace AdventOfCode2015.Core
             Circuit circuit = new Circuit();
             input.Trim().Split('\n').ToList().ForEach(circuit.Add);
             return circuit;
+        }
+
+        public static (ushort partOne, ushort partTwo) SolveBothParts(string input)
+        {
+            Circuit circuit = ParseInput(input);
+            ushort partOneResult = circuit["a"];
+            circuit.Reset();
+            circuit.Add($"{partOneResult} -> b");
+            ushort partTwoResult = circuit["a"];
+            return (partOneResult, partTwoResult);
         }
     }
 
