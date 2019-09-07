@@ -53,6 +53,7 @@ namespace AdventOfCode2015.Core
     {
         public string Name { get; }
         private string[] parts;
+
         private ushort? cached;
         public ushort Resolve(Circuit circuit)
         {
@@ -71,7 +72,7 @@ namespace AdventOfCode2015.Core
             cached = null;
         }
 
-        Wire(string[] parts, WireFunction resolver)
+        private Wire(string[] parts, WireFunction resolver)
         {
             this.parts = parts;
             this.Name = parts.Last();
