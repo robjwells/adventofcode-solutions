@@ -11,9 +11,8 @@ namespace AdventOfCode2015.Core
         public override string Title => "Some Assembly Required";
         public override string Run(string input)
         {
-            List<Wire> wires = ParseInput(input);
             return FormatReport(
-                SolvePartOne(wires)
+                SolvePartOne(input)
             );
         }
 
@@ -22,8 +21,9 @@ namespace AdventOfCode2015.Core
             return input.Trim().Split('\n').Select(Wire.FromString).ToList();
         }
 
-        public static ushort SolvePartOne(List<Wire> wires)
+        public static ushort SolvePartOne(string input)
         {
+            List<Wire> wires = ParseInput(input);
             return Circuit.FromInstructions(wires)["a"];
         }
 
