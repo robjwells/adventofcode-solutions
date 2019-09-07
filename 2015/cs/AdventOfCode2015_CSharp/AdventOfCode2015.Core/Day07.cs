@@ -86,19 +86,22 @@ namespace AdventOfCode2015.Core
 
         public static Wire FromString(string input)
         {
-            WireFunction immediate = (_, parts) => ushort.Parse(parts[0]);
-            WireFunction wire = (circuit, parts) => circuit[parts[0]];
-            WireFunction not = (circuit, parts) => (ushort)~circuit[parts[1]];
-            WireFunction mixedAnd = (circuit, parts)
-                => (ushort)(ushort.Parse(parts[0]) & circuit[parts[2]]);
-            WireFunction wireAnd = (circuit, parts)
-                => (ushort)(circuit[parts[0]] & circuit[parts[2]]);
-            WireFunction wireOr = (circuit, parts)
-                => (ushort)(circuit[parts[0]] | circuit[parts[2]]);
-            WireFunction leftShift = (circuit, parts)
-                => (ushort)(circuit[parts[0]] << ushort.Parse(parts[2]));
-            WireFunction rightShift = (circuit, parts)
-                => (ushort)(circuit[parts[0]] >> ushort.Parse(parts[2]));
+            WireFunction immediate =
+                (circuit, parts) => ushort.Parse(parts[0]);
+            WireFunction wire =
+                (circuit, parts) => circuit[parts[0]];
+            WireFunction not =
+                (circuit, parts) => (ushort)~circuit[parts[1]];
+            WireFunction mixedAnd =
+                (circuit, parts) => (ushort)(ushort.Parse(parts[0]) & circuit[parts[2]]);
+            WireFunction wireAnd =
+                (circuit, parts) => (ushort)(circuit[parts[0]] & circuit[parts[2]]);
+            WireFunction wireOr =
+                (circuit, parts) => (ushort)(circuit[parts[0]] | circuit[parts[2]]);
+            WireFunction leftShift =
+                (circuit, parts) => (ushort)(circuit[parts[0]] << ushort.Parse(parts[2]));
+            WireFunction rightShift =
+                (circuit, parts) => (ushort)(circuit[parts[0]] >> ushort.Parse(parts[2]));
 
             string[] inputParts = input.Split();
             bool startsWithDigit = Char.IsDigit(inputParts[0][0]);
