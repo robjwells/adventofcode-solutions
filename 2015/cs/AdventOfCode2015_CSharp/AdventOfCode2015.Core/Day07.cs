@@ -38,7 +38,17 @@ namespace AdventOfCode2015.Core
     public abstract class Wire
     {
         public string Name { get; set; }
-        public virtual ushort Resolve(Circuit circuit) => throw new NotImplementedException();
+        private ushort? value;
+        public ushort Resolve(Circuit circuit)
+        {
+            if (!value.HasValue)
+            {
+                value = ResolveHelper(circuit);
+            }
+            return value.Value;
+        }
+
+        public virtual ushort ResolveHelper(Circuit circuit) => throw new NotImplementedException();
 
         private static Regex immediateRegex = new Regex(
             @"^(\d+) -> ([a-z]+)$"
@@ -109,7 +119,7 @@ namespace AdventOfCode2015.Core
     public class ImmediateWire : Wire
     {
         public ushort value;
-        public override ushort Resolve(Circuit circuit) => value;
+        public override ushort ResolveHelper(Circuit circuit) => value;
 
         public ImmediateWire(Match match)
         {
@@ -121,9 +131,9 @@ namespace AdventOfCode2015.Core
     public class ReferenceWire : Wire
     {
         public string wire;
-        public override ushort Resolve(Circuit circuit) => circuit[wire];
+        public override ushort ResolveHelper(Circuit circuit) => circuit[wire];
 
-        public ReferenceWire() {}
+        public ReferenceWire() { }
         public ReferenceWire(Match match)
         {
             Name = match.Groups[2].Value;
@@ -133,9 +143,9 @@ namespace AdventOfCode2015.Core
 
     public class NotWire : ReferenceWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)~base.Resolve(circuit);
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)~base.ResolveHelper(circuit);
 
-        public NotWire(Match match) : base(match) {}
+        public NotWire(Match match) : base(match) { }
     }
 
     public class ReferenceBinaryWire : Wire
@@ -173,31 +183,31 @@ namespace AdventOfCode2015.Core
 
     public class MixedAndWire : MixedWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)(number & circuit[wire]);
-        public MixedAndWire(Match match) : base(match) {}
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)(number & circuit[wire]);
+        public MixedAndWire(Match match) : base(match) { }
     }
 
     public class ReferenceAndWire : ReferenceBinaryWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)(circuit[left] & circuit[right]);
-        public ReferenceAndWire(Match match) : base(match) {}
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[left] & circuit[right]);
+        public ReferenceAndWire(Match match) : base(match) { }
     }
 
     public class ReferenceOrWire : ReferenceBinaryWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)(circuit[left] | circuit[right]);
-        public ReferenceOrWire(Match match) : base(match) {}
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[left] | circuit[right]);
+        public ReferenceOrWire(Match match) : base(match) { }
     }
 
     public class LeftShiftWire : MixedWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)(circuit[wire] << number);
-        public LeftShiftWire(Match match) : base(match) {}
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[wire] << number);
+        public LeftShiftWire(Match match) : base(match) { }
     }
 
     public class RightShiftWire : MixedWire
     {
-        public override ushort Resolve(Circuit circuit) => (ushort)(circuit[wire] >> number);
-        public RightShiftWire(Match match) : base(match) {}
+        public override ushort ResolveHelper(Circuit circuit) => (ushort)(circuit[wire] >> number);
+        public RightShiftWire(Match match) : base(match) { }
     }
 }
