@@ -96,36 +96,24 @@ namespace AdventOfCode2015.Core
 
             string[] inputParts = input.Split();
             bool startsWithDigit = Char.IsDigit(inputParts[0][0]);
+            Regex operatorRegex = new Regex(@"\b(NOT|AND|OR|LSHIFT|RSHIFT)\b");
 
-            if (input.Contains("AND"))
+            switch (operatorRegex.Match(input).Groups[1].Value)
             {
-                return new Wire(
-                    inputParts,
-                    startsWithDigit ? mixedAnd : wireAnd
-                );
+                case "NOT":
+                    return new Wire(inputParts, not);
+                case "AND":
+                    return new Wire(inputParts, startsWithDigit ? mixedAnd : wireAnd);
+                case "OR":
+                    return new Wire(inputParts, wireOr);
+                case "LSHIFT":
+                    return new Wire(inputParts, leftShift);
+                case "RSHIFT":
+                    return new Wire(inputParts, rightShift);
+                default:
+                    return new Wire(inputParts, startsWithDigit ? immediate : wire);
             }
-            if (input.Contains("OR"))
-            {
-                return new Wire(inputParts, wireOr);
-            }
-            if (input.Contains("LSHIFT"))
-            {
-                return new Wire(inputParts, leftShift);
-            }
-            if (input.Contains("RSHIFT"))
-            {
-                return new Wire(inputParts, rightShift);
-            }
-            if (input.Contains("NOT"))
-            {
-                return new Wire(inputParts, not);
-            }
-            if (startsWithDigit)
-            {
-                return new Wire(inputParts, immediate);
-            }
-            return new Wire(inputParts, wire);
+            throw new ArgumentException($"No wire operation for input: `{input}`");
         }
-
     }
 }
