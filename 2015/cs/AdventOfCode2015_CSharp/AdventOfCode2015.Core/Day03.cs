@@ -72,13 +72,9 @@ namespace AdventOfCode2015.Core
                         .Select(t => t.Element)
                         .ToList()
                 )
-                .Select(VisitedLocations)
-                .Aggregate((combined, locations) =>
-                {
-                    combined.UnionWith(locations);
-                    return combined;
-                })
-                .Count;
+                .SelectMany(VisitedLocations)   // Also flattening step
+                .Distinct()
+                .Count();
         }
     }
 }
