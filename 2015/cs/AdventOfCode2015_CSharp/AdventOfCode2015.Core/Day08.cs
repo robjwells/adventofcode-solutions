@@ -12,7 +12,8 @@ namespace AdventOfCode2015.Core
         {
             List<string> inputLines = ParseInput(input);
             return FormatReport(
-                SolvePartOne(inputLines)
+                SolvePartOne(inputLines),
+                SolvePartTwo(inputLines)
             );
         }
 
