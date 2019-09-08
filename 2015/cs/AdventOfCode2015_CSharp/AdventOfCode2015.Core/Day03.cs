@@ -67,7 +67,7 @@ namespace AdventOfCode2015.Core
         {
             return new int[] { 0, 1 }
                 .Select(remainder =>
-                    Utils.EnumerateSequence(directions)
+                    directions.EnumerateSequence()
                         .Where(t => t.Index % 2 == remainder)
                         .Select(t => t.Element)
                         .ToList()

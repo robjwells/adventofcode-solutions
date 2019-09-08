@@ -1,10 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 namespace AdventOfCode2015.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
     public static class Utils
     {
         public static string LoadInput(int year, int day)
@@ -31,20 +31,27 @@ namespace AdventOfCode2015.Core
             );
         }
 
-        // Yield a stream of tuples (index, element) where each element is taken from the
-        // sequence in order, and index is a counter starting from `from`.
-        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(IEnumerable<T> sequence, int from)
+        // Infinite IEnumerable that returns evenly spaced values, from start, by step.
+        public static IEnumerable<int> Count(int start = 0, int step = 1)
         {
-            int index = from;
-            foreach (T element in sequence) {
-                yield return (Index: index, Element: element);
-                index += 1;
+            int current = start;
+            while (true)
+            {
+                yield return current;
+                current += step;
             }
         }
 
-        // Convenience wrapper around EnumerateSequence that starts from 0.
-        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(IEnumerable<T> sequence) {
-            return EnumerateSequence(sequence, from: 0);
-        }
+        // Yield a stream of tuples (index, element) where each element is taken from the
+        // sequence in order, and index is a counter starting from `from`.
+        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(
+            this IEnumerable<T> sequence,
+            int from = 0
+        )
+        =>  Enumerable.Zip(
+                Count(start: from),
+                sequence,
+                ValueTuple.Create
+            );
     }
 }
