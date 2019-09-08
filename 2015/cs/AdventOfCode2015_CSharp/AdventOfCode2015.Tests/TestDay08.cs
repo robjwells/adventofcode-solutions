@@ -1,4 +1,4 @@
-// using System.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
 using AdventOfCode2015.Core;
 
@@ -15,6 +15,27 @@ namespace Tests
             Assert.AreEqual(
                 expected,
                 Day08.Unescape(input).Length
+            );
+        }
+
+        [Test]
+        public void SolvePartOne_WhenGivenSampleInput_GivesSampleOutput()
+        {
+            string allInputWords = "\"\"\n\"abc\"\n\"aaa\\\"aaa\"\n\"\\x27\"";
+            List<string> inputList = Day08.ParseInput(allInputWords);
+            Assert.AreEqual(
+                12,
+                Day08.SolvePartOne(inputList)
+            );
+        }
+
+        [Test]
+        public void SolvePartOne_WhenGivenMyInput_GivesKnownCorrectResult()
+        {
+            List<string> inputList = Day08.ParseInput(Utils.LoadInput(2015, 8));
+            Assert.AreEqual(
+                1350,
+                Day08.SolvePartOne(inputList)
             );
         }
     }

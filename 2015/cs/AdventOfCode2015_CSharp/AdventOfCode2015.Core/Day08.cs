@@ -13,6 +13,14 @@ namespace AdventOfCode2015.Core
             return FormatReport("");
         }
 
+        public static int SolvePartOne(List<string> lines)
+        {
+            return (
+                from line in lines
+                select (original: line, unescaped: Unescape(line))
+            ).Sum(results => results.original.Length - results.unescaped.Length);
+        }
+
         public static List<string> ParseInput(string input) => input.Split('\n').ToList();
 
         public static string Unescape(string input)
