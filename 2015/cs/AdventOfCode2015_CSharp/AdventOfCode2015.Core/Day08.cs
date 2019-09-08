@@ -20,8 +20,8 @@ namespace AdventOfCode2015.Core
         {
             return (
                 from line in lines
-                select (original: line, unescaped: Unescape(line))
-            ).Sum(results => results.original.Length - results.unescaped.Length);
+                select (escaped: line, unescaped: Unescape(line))
+            ).Sum(results => results.escaped.Length - results.unescaped.Length);
         }
 
         public static List<string> ParseInput(string input) => input.Split('\n').ToList();
