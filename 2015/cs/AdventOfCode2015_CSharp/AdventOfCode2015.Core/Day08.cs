@@ -18,20 +18,14 @@ namespace AdventOfCode2015.Core
         }
 
         public static int SolvePartOne(List<string> lines)
-        {
-            return (
-                from line in lines
+            => (from line in lines
                 select (escaped: line, unescaped: Unescape(line))
             ).Sum(results => results.escaped.Length - results.unescaped.Length);
-        }
 
         public static int SolvePartTwo(List<string> lines)
-        {
-            return (
-                from line in lines
+            => (from line in lines
                 select (escaped: Escape(line), unescaped: line)
             ).Sum(results => results.escaped.Length - results.unescaped.Length);
-        }
 
         public static List<string> ParseInput(string input) => input.Split('\n').ToList();
 
