@@ -44,7 +44,7 @@ namespace AdventOfCode2015.Core
 
         // Yield a stream of tuples (index, element) where each element is taken from the
         // sequence in order, and index is a counter starting from `from`.
-        public static IEnumerable<(int Index, T Element)> EnumerateSequence<T>(
+        public static IEnumerable<(int Index, T Element)> Enumerate<T>(
             this IEnumerable<T> sequence,
             int from = 0
         )

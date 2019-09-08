@@ -10,7 +10,7 @@ namespace Tests
         {
             int[] seq = new int[] {9, 8, 7};
             int predecessor = 42;
-            foreach ((int index, int element) tuple in seq.EnumerateSequence(from: 43))
+            foreach ((int index, int element) tuple in seq.Enumerate(from: 43))
             {
                 Assert.True(predecessor + 1 == tuple.index);
                 predecessor = tuple.index;
@@ -20,7 +20,7 @@ namespace Tests
         [Test]
         public void EnumerateSequence_ZeroBasedIndexesCanBeUsedToIndexIntoOriginalCollection() {
             int[] seq = new int[] {9, 8, 7};
-            foreach ((int index, int element) tuple in seq.EnumerateSequence()) {
+            foreach ((int index, int element) tuple in seq.Enumerate()) {
                 Assert.AreEqual(
                     tuple.element,
                     seq[tuple.index]
