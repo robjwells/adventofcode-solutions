@@ -24,6 +24,14 @@ namespace AdventOfCode2015.Core
             ).Sum(results => results.escaped.Length - results.unescaped.Length);
         }
 
+        public static int SolvePartTwo(List<string> lines)
+        {
+            return (
+                from line in lines
+                select (escaped: Escape(line), unescaped: line)
+            ).Sum(results => results.escaped.Length - results.unescaped.Length);
+        }
+
         public static List<string> ParseInput(string input) => input.Split('\n').ToList();
 
         public static string Unescape(string input)
@@ -33,6 +41,13 @@ namespace AdventOfCode2015.Core
                      .Replace("\\\\", "?"),          // Replace escaped backslashes with dummy character
                 @"\\x[0-9a-f]{2}",                   // Replace hex-escapes with dummy character
                 "?"
+            );
+
+        public static string Escape(string input)
+            => string.Format(
+                "\"{0}\"",                  // Surround with double quotes
+                input.Replace("\\", "\\\\") // Escape backslashes
+                     .Replace("\"", "\\\"") // Escape double quotes
             );
     }
 }

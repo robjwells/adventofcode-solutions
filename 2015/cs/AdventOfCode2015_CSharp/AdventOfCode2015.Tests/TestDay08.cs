@@ -38,5 +38,27 @@ namespace Tests
                 Day08.SolvePartOne(inputList)
             );
         }
+
+        [TestCase("\"\"", 6)]
+        [TestCase("\"abc\"", 9)]
+        [TestCase("\"aaa\\\"aaa\"", 16)]
+        [TestCase("\"\\x27\"", 11)]
+        public void Escape_WhenGivenKnownExample_GivesEscapedCharacterCount(string input, int expected)
+        {
+            Assert.AreEqual(
+                expected,
+                Day08.Escape(input).Length
+            );
+        }
+
+        [Test]
+        public void SolvePartTwo_WhenGivenMyInput_GivesKnownCorrectResult()
+        {
+            List<string> inputList = Day08.ParseInput(Utils.LoadInput(2015, 8));
+            Assert.AreEqual(
+                2085,
+                Day08.SolvePartTwo(inputList)
+            );
+        }
     }
 }
