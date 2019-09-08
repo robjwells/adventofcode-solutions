@@ -25,10 +25,10 @@ namespace AdventOfCode2015.Core
 
         public static string Unescape(string input)
             => Regex.Replace(
-                input.Substring(1, input.Length - 2)
-                     .Replace("\\\"", "\"")
-                     .Replace("\\\\", "?"),
-                @"\\x[0-9a-f]{2}",
+                input.Substring(1, input.Length - 2) // Remove surrounding double quotes
+                     .Replace("\\\"", "\"")          // Unescape double quotes
+                     .Replace("\\\\", "?"),          // Replace escaped backslashes with dummy character
+                @"\\x[0-9a-f]{2}",                   // Replace hex-escapes with dummy character
                 "?"
             );
     }
