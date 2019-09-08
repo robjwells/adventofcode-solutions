@@ -11,14 +11,14 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            List<Point> parsed = ParseInput(input);
+            IEnumerable<Point> parsed = ParseInput(input);
             return FormatReport(
                 SolvePartOne(parsed),
                 SolvePartTwo(parsed)
             );
         }
 
-        public static List<Point> ParseInput(string input)
+        public static IEnumerable<Point> ParseInput(string input)
         {
             return input.Select(c =>
             {
@@ -35,15 +35,15 @@ namespace AdventOfCode2015.Core
                     default:
                         throw new ArgumentException($"Invalid direction character: {c}");
                 }
-            }).ToList();
+            });
         }
 
-        public int SolvePartOne(List<Point> directions)
+        public int SolvePartOne(IEnumerable<Point> directions)
         {
             return VisitedLocations(directions).Count;
         }
 
-        HashSet<Point> VisitedLocations(List<Point> directions)
+        HashSet<Point> VisitedLocations(IEnumerable<Point> directions)
         {
             HashSet<Point> visited = new HashSet<Point>();
             Point origin = Point.Origin();
@@ -63,14 +63,13 @@ namespace AdventOfCode2015.Core
             return visited;
         }
 
-        public int SolvePartTwo(List<Point> directions)
+        public int SolvePartTwo(IEnumerable<Point> directions)
         {
             return new int[] { 0, 1 }
                 .Select(remainder =>
                     directions.Enumerate()
                         .Where(t => t.Index % 2 == remainder)
                         .Select(t => t.Element)
-                        .ToList()
                 )
                 .SelectMany(VisitedLocations)   // Also flattening step
                 .Distinct()
