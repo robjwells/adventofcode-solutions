@@ -10,7 +10,10 @@ namespace AdventOfCode2015.Core
         public override string Title => "Matchsticks";
         public override string Run(string input)
         {
-            return FormatReport("");
+            List<string> inputLines = ParseInput(input);
+            return FormatReport(
+                SolvePartOne(inputLines)
+            );
         }
 
         public static int SolvePartOne(List<string> lines)
