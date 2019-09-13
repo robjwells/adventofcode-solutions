@@ -4,11 +4,10 @@
 package com.robjwells.adventofcode2015;
 
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
+    private final static Solution[] days = {
+
+    };
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
     }
 }
