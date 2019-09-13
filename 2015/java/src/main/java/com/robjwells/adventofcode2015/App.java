@@ -5,9 +5,13 @@ package com.robjwells.adventofcode2015;
 
 public class App {
     private final static Solution[] days = {
-
+        new Day01()
     };
 
     public static void main(String[] args) {
+        for (Solution day : days) {
+            String input = Utils.loadPuzzleInput(day.getYear(), day.getDay());
+            System.out.println(day.run(input) + "\n");
+        }
     }
 }

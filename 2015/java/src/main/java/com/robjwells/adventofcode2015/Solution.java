@@ -6,14 +6,15 @@ interface Solution {
     String getTitle();
 
     private String titleLine() {
-        return String.format("%s\n%s", getTitle(), "a".repeat(getTitle().length()));
+        String firstLine = String.format("Day %d: %s", getDay(), getTitle());
+        return String.format("%s\n%s", firstLine, "=".repeat(firstLine.length()));
     }
 
-    private String formatReport(Object partOneResult) {
+    default String formatReport(Object partOneResult) {
         return String.format("%s\nPart one: %s", titleLine(), partOneResult);
     }
 
-    private String formatReport(Object partOneResult, Object partTwoResult) {
+    default String formatReport(Object partOneResult, Object partTwoResult) {
         return String.format("%s\nPart two: %s", formatReport(partOneResult), partTwoResult);
     }
 
