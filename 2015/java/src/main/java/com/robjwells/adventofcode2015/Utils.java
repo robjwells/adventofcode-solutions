@@ -8,6 +8,11 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 
 class IOFailedException extends RuntimeException {
+    /**
+     * Dummy serial version ID to make the linter happy.
+     */
+    private static final long serialVersionUID = 1L;
+
     IOFailedException(String msg) {
         super(msg);
     }
