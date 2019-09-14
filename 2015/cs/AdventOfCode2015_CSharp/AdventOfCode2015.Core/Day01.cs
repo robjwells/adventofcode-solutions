@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdventOfCode2015.Core
@@ -10,26 +11,21 @@ namespace AdventOfCode2015.Core
 
         public override string Run(string input)
         {
-            return FormatReport(SolvePartOne(input), SolvePartTwo(input));
+            IEnumerable<int> parsed = parseInput(input);
+            return FormatReport(SolvePartOne(parsed), SolvePartTwo(parsed));
         }
 
-        public int SolvePartOne(string input)
-        {
-            return input.Select(c => c == '(' ? 1 : -1).Sum();
-        }
+        public static IEnumerable<int> parseInput(string input)
+            => input.Select(c => c == '(' ? 1 : -1);
 
-        public int SolvePartTwo(string input)
+        public int SolvePartOne(IEnumerable<int> input)
+            => input.Sum();
+
+        public int SolvePartTwo(IEnumerable<int> input)
         {
-            int floor = 0;
-            for (int index = 0; index < input.Length; index++)
-            {
-                floor += input[index] == '(' ? 1 : -1;
-                if (floor == -1)
-                {
-                    return index + 1;   // Puzzle indexes instructions from 1
-                }
-            }
-            throw new ArgumentException("Instructions do not place Santa in the basement.");
+            return input.Accumulate((total, next) => total + next)
+                .TakeWhile(floor => floor != -1)
+                .Count() + 1;
         }
     }
 }

@@ -35,14 +35,16 @@ namespace Tests
         [TestCase(")())())", -3)]
         public void Day01_PartOne_GivenCasesCorrect(string input, int expected)
         {
-            Assert.AreEqual(expected, instance.SolvePartOne(input));
+            var parsed = Day01.parseInput(input);
+            Assert.AreEqual(expected, instance.SolvePartOne(parsed));
         }
 
         [TestCase(")", 1)]
         [TestCase("()())", 5)]
         public void Day01_PartTwo_GivenCasesCorrect(string input, int expected)
         {
-            Assert.AreEqual(expected, instance.SolvePartTwo(input));
+            var parsed = Day01.parseInput(input);
+            Assert.AreEqual(expected, instance.SolvePartTwo(parsed));
         }
 
         [Test]
@@ -50,7 +52,7 @@ namespace Tests
         {
             Assert.AreEqual(
                 expected: 280,
-                actual: instance.SolvePartOne(puzzleInput)
+                actual: instance.SolvePartOne(Day01.parseInput(puzzleInput))
             );
         }
 
@@ -59,7 +61,7 @@ namespace Tests
         {
             Assert.AreEqual(
                 expected: 1797,
-                actual: instance.SolvePartTwo(puzzleInput)
+                actual: instance.SolvePartTwo(Day01.parseInput(puzzleInput))
             );
         }
 
