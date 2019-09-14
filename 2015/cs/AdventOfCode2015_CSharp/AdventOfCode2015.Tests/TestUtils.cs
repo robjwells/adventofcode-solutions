@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Linq;
 using static AdventOfCode2015.Core.Utils;
 
 namespace Tests
@@ -26,6 +27,33 @@ namespace Tests
                     seq[tuple.index]
                 );
             }
+        }
+
+        [Test]
+        public void Accumulate_IntegerAdditionWorks()
+        {
+            int[] source = {1, 2, 3};
+            int[] expected = {1, 3, 6};
+            int[] result = source.Accumulate((total, next) => total + next).ToArray();
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void Accumulate_IntegerMultiplicationWorks()
+        {
+            int[] source = {1, 2, 3};
+            int[] expected = {1, 2, 6};
+            int[] result = source.Accumulate((total, next) => total * next).ToArray();
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void Accumulate_StringConcatenationWorks()
+        {
+            string[] source = {"a", "b", "c"};
+            string[] expected = {"a", "ab", "abc"};
+            string[] result = source.Accumulate((total, next) => total + next).ToArray();
+            Assert.AreEqual(expected, result);
         }
     }
 }

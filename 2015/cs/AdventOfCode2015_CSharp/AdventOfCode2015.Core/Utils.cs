@@ -53,5 +53,16 @@ namespace AdventOfCode2015.Core
                 sequence,
                 ValueTuple.Create
             );
+
+        public static IEnumerable<T> Accumulate<T>(this IEnumerable<T> source, Func<T, T, T> reducer)
+        {
+            T total = source.First();
+            yield return total;
+            foreach (T item in source.Skip(1))
+            {
+                total = reducer(total, item);
+                yield return total;
+            }
+        }
     }
 }
