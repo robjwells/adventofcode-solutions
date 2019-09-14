@@ -7,7 +7,8 @@ import java.util.List;
 
 public class App {
     private final static List<Solution> days = List.of(
-            new Day01()
+            new Day01(),
+            new Day02()
     );
 
     private static void runOne(Solution day) {
