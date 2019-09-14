@@ -17,7 +17,10 @@ public class App {
     }
 
     private static void runAll() {
-        days.forEach(App::runOne);
+        for (Solution day : days) {
+            runOne(day);
+            System.out.println();
+        }
     }
 
     public static void main(String[] args) {
