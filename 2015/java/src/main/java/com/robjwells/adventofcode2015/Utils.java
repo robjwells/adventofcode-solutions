@@ -5,6 +5,10 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
 
 class IOFailedException extends RuntimeException {
@@ -54,6 +58,37 @@ class Utils {
         } catch (IOException exc) {
             logger.severe(String.format("Could not read from file %s.", filename));
             throw new IOFailedException(String.format("Could not read from file %s", filename));
+        }
+    }
+
+    static <T> Iterator<T> accumulate(Iterator<T> input, BinaryOperator<T> reducer) {
+        return new AccumulationIterator<>(input, reducer);
+    }
+
+    private static class AccumulationIterator<T> implements Iterator<T> {
+        private final Iterator<T> source;
+        private final BinaryOperator<T> reducer;
+        private T total;
+
+        AccumulationIterator(Iterator<T> source, BinaryOperator<T> reducer) {
+            this.source = source;
+            this.reducer = reducer;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return source.hasNext();
+        }
+
+        @Override
+        public T next() {
+            if (!source.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            total = total == null
+                    ? source.next()
+                    : reducer.apply(total, source.next());
+            return total;
         }
     }
 }
