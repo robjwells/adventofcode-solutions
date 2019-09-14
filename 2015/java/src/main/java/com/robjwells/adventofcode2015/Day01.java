@@ -1,6 +1,9 @@
 package com.robjwells.adventofcode2015;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+
+import static com.robjwells.adventofcode2015.Utils.accumulate;
+import static com.robjwells.adventofcode2015.Utils.enumerate;
 
 public class Day01 extends Solution2015 {
     @Override
@@ -15,27 +18,24 @@ public class Day01 extends Solution2015 {
 
     @Override
     public String run(String input) {
-        return formatReport(solvePartOne(input), solvePartTwo(input));
+        int[] parsed = parseInput(input);
+        return formatReport(solvePartOne(parsed), solvePartTwo(parsed));
     }
 
-    static int instructionToFloorDelta(int instruction) {
-        return instruction == '(' ? 1 : -1;
+    static int[] parseInput(String input) {
+        return input.chars().map(c -> c == '(' ? 1 : -1).toArray();
     }
 
-    static int solvePartOne(String input) {
-        return input.chars().map(Day01::instructionToFloorDelta).sum();
+    static int solvePartOne(int[] deltas) {
+        return Arrays.stream(deltas).sum();
     }
 
-    static int solvePartTwo(String input) {
-        int floor = 0;
-        int instruction = 0;
-        for (int delta : input.chars().map(Day01::instructionToFloorDelta).toArray()) {
-            floor += delta;
-            instruction += 1;
-            if (floor == -1) {
-                return instruction;
-            }
-        }
-        throw new RuntimeException("Never entered basement; unreachable given puzzle input.");
+    static int solvePartTwo(int[] deltas) {
+        var floorsReached = accumulate(Arrays.stream(deltas).iterator(), Math::addExact);
+        return enumerate(floorsReached, 1)
+                .filter(e -> e.element == -1)
+                .map(e -> e.index)
+                .findFirst()
+                .get();
     }
 }
