@@ -22,10 +22,8 @@ namespace AdventOfCode2015.Core
             => input.Sum();
 
         public int SolvePartTwo(IEnumerable<int> input)
-        {
-            return input.Accumulate((total, next) => total + next)
+            => input.Accumulate((total, next) => total + next)
                 .TakeWhile(floor => floor != -1)
                 .Count() + 1;
-        }
     }
 }
