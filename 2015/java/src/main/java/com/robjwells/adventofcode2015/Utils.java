@@ -10,6 +10,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 class IOFailedException extends RuntimeException {
     /**
@@ -61,8 +63,8 @@ class Utils {
         }
     }
 
-    static <T> Iterator<T> accumulate(Iterator<T> input, BinaryOperator<T> reducer) {
-        return new AccumulationIterator<>(input, reducer);
+    static <T> Stream<T> accumulate(Iterator<T> input, BinaryOperator<T> reducer) {
+        return iteratorToStream(new AccumulationIterator<>(input, reducer));
     }
 
     private static class AccumulationIterator<T> implements Iterator<T> {
@@ -82,13 +84,16 @@ class Utils {
 
         @Override
         public T next() {
-            if (!source.hasNext()) {
-                throw new NoSuchElementException();
-            }
             total = total == null
                     ? source.next()
                     : reducer.apply(total, source.next());
             return total;
         }
     }
+
+    static <T> Stream<T> iteratorToStream(Iterator<T> source) {
+        Iterable<T> iterableWrapper = () -> source;
+        return StreamSupport.stream(iterableWrapper.spliterator(), false);
+    }
+
 }
