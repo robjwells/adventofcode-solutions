@@ -38,7 +38,7 @@ class Day01Test {
             "), 1",
             "()()), 5"
     })
-    void solvePartTwo_SampleInput(String input, int instructionThatEntersBasement) {
+    void solvePartTwo_SampleInput(String input, long instructionThatEntersBasement) {
         assertEquals(instructionThatEntersBasement, Day01.solvePartTwo(Day01.parseInput(input)));
     }
 

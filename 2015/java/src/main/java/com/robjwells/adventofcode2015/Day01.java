@@ -3,7 +3,6 @@ package com.robjwells.adventofcode2015;
 import java.util.Arrays;
 
 import static com.robjwells.adventofcode2015.Utils.accumulate;
-import static com.robjwells.adventofcode2015.Utils.enumerate;
 
 public class Day01 extends Solution2015 {
     @Override
@@ -30,12 +29,9 @@ public class Day01 extends Solution2015 {
         return Arrays.stream(deltas).sum();
     }
 
-    static int solvePartTwo(int[] deltas) {
-        var floorsReached = accumulate(Arrays.stream(deltas).iterator(), Math::addExact);
-        return enumerate(floorsReached, 1)
-                .filter(e -> e.element == -1)
-                .map(e -> e.index)
-                .findFirst()
-                .get();
+    static long solvePartTwo(int[] deltas) {
+        return accumulate(Arrays.stream(deltas).iterator(), Math::addExact)
+                .takeWhile(floor -> floor != -1)
+                .count() + 1;
     }
 }
