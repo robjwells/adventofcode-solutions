@@ -95,4 +95,43 @@ class Utils {
         return StreamSupport.stream(iterableWrapper.spliterator(), false);
     }
 
+    static <T> Stream<Enumerated<T>> enumerate(Iterator<T> source) {
+        return enumerate(source, 0);
+    }
+
+    static <T> Stream<Enumerated<T>> enumerate(Iterator<T> source, int start) {
+        return iteratorToStream(new EnumerationIterator<>(source, start));
+    }
+
+    private static class EnumerationIterator<T> implements Iterator<Enumerated<T>> {
+        private final Iterator<T> source;
+        private int currentIndex;
+
+        EnumerationIterator(Iterator<T> source, int startIndex) {
+            this.source = source;
+            this.currentIndex = startIndex;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return source.hasNext();
+        }
+
+        @Override
+        public Enumerated<T> next() {
+            Enumerated<T> e = new Enumerated<>(currentIndex, source.next());
+            currentIndex += 1;
+            return e;
+        }
+    }
+
+    static class Enumerated<T> {
+        public final int index;
+        public final T element;
+
+        Enumerated(int index, T element) {
+            this.index = index;
+            this.element = element;
+        }
+    }
 }
