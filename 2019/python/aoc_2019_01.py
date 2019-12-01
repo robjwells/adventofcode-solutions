@@ -6,12 +6,12 @@ from typing import List
 DAY = 1
 
 
-def fuel_to_launch_module(module_mass: int) -> int:
+def fuel_to_launch_mass(module_mass: int) -> int:
     """Calculate the fuel to launch a module of the given mass."""
     return max(module_mass // 3 - 2, 0)
 
 
-def comprehensive_fuel_to_launch_module(mass: int) -> int:
+def fuel_to_launch_mass_and_fuel(mass: int) -> int:
     """Calculate fuel required for initial mass and fuel itself.
 
     Recursively calculate the fuel required to launch a module of
@@ -21,29 +21,26 @@ def comprehensive_fuel_to_launch_module(mass: int) -> int:
     """
     if mass <= 0:
         return 0
-    immediate_fuel_required = fuel_to_launch_module(mass)
-    fuel_required_for_fuel = comprehensive_fuel_to_launch_module(
-        immediate_fuel_required
-    )
-    return immediate_fuel_required + fuel_required_for_fuel
+    immediate_fuel = fuel_to_launch_mass(mass)
+    return immediate_fuel + fuel_to_launch_mass_and_fuel(immediate_fuel)
 
 
 @pytest.mark.parametrize("mass,fuel", [(12, 2), (14, 2), (1969, 654), (100756, 33583)])
 def test_mass_to_fuel(mass: int, fuel: int) -> None:
-    assert fuel_to_launch_module(mass) == fuel
+    assert fuel_to_launch_mass(mass) == fuel
 
 
 @pytest.mark.parametrize("mass,fuel", [(14, 2), (1969, 966), (100756, 50346)])
 def test_comprehensive_fuel_to_launch_module(mass: int, fuel: int) -> None:
-    assert comprehensive_fuel_to_launch_module(mass) == fuel
+    assert fuel_to_launch_mass_and_fuel(mass) == fuel
 
 
 def solve_part_one(puzzle_input: List[int]) -> int:
-    return sum(fuel_to_launch_module(mass) for mass in puzzle_input)
+    return sum(fuel_to_launch_mass(mass) for mass in puzzle_input)
 
 
 def solve_part_two(puzzle_input: List[int]) -> int:
-    return sum(comprehensive_fuel_to_launch_module(mass) for mass in puzzle_input)
+    return sum(fuel_to_launch_mass_and_fuel(mass) for mass in puzzle_input)
 
 
 def parse_input(puzzle_input: str) -> List[int]:
