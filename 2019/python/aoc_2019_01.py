@@ -1,7 +1,7 @@
 """Day 1: The Tyranny of the Rocket Equation"""
 import aoc_common
 import pytest
-from typing import List
+from typing import Callable, List
 
 DAY = 1
 
@@ -35,12 +35,11 @@ def test_comprehensive_fuel_to_launch_module(mass: int, fuel: int) -> None:
     assert fuel_to_launch_mass_and_fuel(mass) == fuel
 
 
-def solve_part_one(puzzle_input: List[int]) -> int:
-    return sum(fuel_to_launch_mass(mass) for mass in puzzle_input)
-
-
-def solve_part_two(puzzle_input: List[int]) -> int:
-    return sum(fuel_to_launch_mass_and_fuel(mass) for mass in puzzle_input)
+def sum_fuel_requirements(
+    masses: List[int], fuel_function: Callable[[int], int]
+) -> int:
+    """Returns total of the fuel requirements for the given list of masses."""
+    return sum(fuel_function(mass) for mass in masses)
 
 
 def parse_input(puzzle_input: str) -> List[int]:
@@ -50,8 +49,8 @@ def parse_input(puzzle_input: str) -> List[int]:
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     parsed = parse_input(puzzle_input)
-    fuel_required_for_modules = solve_part_one(parsed)
-    total_fuel_required = solve_part_two(parsed)
+    fuel_required_for_modules = sum_fuel_requirements(parsed, fuel_to_launch_mass)
+    total_fuel_required = sum_fuel_requirements(parsed, fuel_to_launch_mass_and_fuel)
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=fuel_required_for_modules,
