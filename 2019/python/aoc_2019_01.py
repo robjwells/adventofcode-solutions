@@ -7,16 +7,18 @@ DAY = 1
 
 
 def fuel_to_launch_module(module_mass: int) -> int:
-    """Calculate the fuel to launch a module of the given mass.
-
-    Fuel required to launch a given module is based on its mass.
-    Specifically, to find the fuel required for a module,
-    take its mass, divide by three, round down, and subtract 2.
-    """
+    """Calculate the fuel to launch a module of the given mass."""
     return max(module_mass // 3 - 2, 0)
 
 
 def comprehensive_fuel_to_launch_module(mass: int) -> int:
+    """Calculate fuel required for initial mass and fuel itself.
+
+    Recursively calculate the fuel required to launch a module of
+    the given mass (initial call), then fuel required to launch
+    that fuel, and so on until the amount of additional fuel
+    needed is zero.
+    """
     if mass <= 0:
         return 0
     immediate_fuel_required = fuel_to_launch_module(mass)
