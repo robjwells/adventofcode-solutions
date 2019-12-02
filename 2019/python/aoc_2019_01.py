@@ -35,13 +35,6 @@ def test_comprehensive_fuel_to_launch_module(mass: int, fuel: int) -> None:
     assert fuel_to_launch_mass_and_fuel(mass) == fuel
 
 
-def sum_fuel_requirements(
-    masses: List[int], fuel_function: Callable[[int], int]
-) -> int:
-    """Returns total of the fuel requirements for the given list of masses."""
-    return sum(fuel_function(mass) for mass in masses)
-
-
 def parse_input(puzzle_input: str) -> List[int]:
     return [int(line) for line in puzzle_input.splitlines()]
 
@@ -49,8 +42,8 @@ def parse_input(puzzle_input: str) -> List[int]:
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     parsed = parse_input(puzzle_input)
-    fuel_required_for_modules = sum_fuel_requirements(parsed, fuel_to_launch_mass)
-    total_fuel_required = sum_fuel_requirements(parsed, fuel_to_launch_mass_and_fuel)
+    fuel_required_for_modules = sum(map(fuel_to_launch_mass, parsed))
+    total_fuel_required = sum(map(fuel_to_launch_mass_and_fuel, parsed))
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=fuel_required_for_modules,
