@@ -7,7 +7,7 @@ import pathlib
 from typing import Optional
 
 
-def load_puzzle_input(day):
+def load_puzzle_input(day: int) -> str:
     """Return the puzzle input for the day’s puzzle"""
     input_directory = pathlib.Path(__file__).parent.with_name("input")
     year = input_directory.parent.name
