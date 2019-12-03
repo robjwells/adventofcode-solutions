@@ -1,5 +1,6 @@
 """Day 3: Crossed Wires"""
 import aoc_common
+from functools import reduce
 import pytest
 from typing import Dict, List, Set, Tuple
 from typing import NamedTuple
@@ -115,6 +116,12 @@ def trace_single_wire_locations(instructions: List[Instruction]) -> Dict[Point, 
     return visited
 
 
+def intersect_dict_keys(dictionaries: List[Dict[Point, int]]) -> Set[Point]:
+    if not dictionaries:
+        return set()
+    return reduce(lambda keys, d: keys & d.keys(), dictionaries)  # type: ignore
+
+
 def find_closest_intersection(intersections: Set[Point]) -> Point:
     return min(
         intersections, key=lambda point: manhattan_distance(point, Point.origin())
@@ -122,8 +129,15 @@ def find_closest_intersection(intersections: Set[Point]) -> Point:
 
 
 def find_closest_intersection_distance(wire_traces: List[Dict[Point, int]]) -> int:
-    intersecting = wire_traces[0].keys() & wire_traces[1].keys()
+    intersecting = intersect_dict_keys(wire_traces)
     return manhattan_distance(find_closest_intersection(intersecting), Point.origin())
+
+
+def find_lowest_intersection_signal_delay(wire_traces: List[Dict[Point, int]]) -> int:
+    intersecting_points = intersect_dict_keys(wire_traces)
+    return min(
+        sum(trace[point] for trace in wire_traces) for point in intersecting_points
+    )
 
 
 def trace_wires(instructions: List[List[Instruction]]) -> List[Dict[Point, int]]:
@@ -134,10 +148,17 @@ def solve_part_one(instructions: List[List[Instruction]]) -> int:
     return find_closest_intersection_distance(trace_wires(instructions))
 
 
+def solve_part_two(instructions: List[List[Instruction]]) -> int:
+    return find_lowest_intersection_signal_delay(trace_wires(instructions))
+
+
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     parsed = parse_input(puzzle_input)
     part_one_solution = solve_part_one(parsed)
+    part_two_solution = solve_part_two(parsed)
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
     )
