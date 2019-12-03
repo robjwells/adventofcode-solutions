@@ -32,10 +32,9 @@ DAY = 3
 def test_find_closest_intersection_distance(
     puzzle_input: str, expected_distance: int
 ) -> None:
-    assert (
-        find_closest_intersection_distance(parse_input(puzzle_input))
-        == expected_distance
-    )
+    parsed = parse_input(puzzle_input)
+    wire_traces = trace_wires(parsed)
+    assert find_closest_intersection_distance(wire_traces) == expected_distance
 
 
 class Instruction(NamedTuple):
@@ -64,7 +63,7 @@ def manhattan_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
 
-def trace_wire_locations(instructions: List[Instruction]) -> Dict[Point, int]:
+def trace_single_wire_locations(instructions: List[Instruction]) -> Dict[Point, int]:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
     move_functions = {
@@ -86,26 +85,29 @@ def trace_wire_locations(instructions: List[Instruction]) -> Dict[Point, int]:
     return visited
 
 
-def filter_intersecting_locations(locations: List[Set[Point]]) -> Set[Point]:
-    return locations[0] & locations[1]
-
-
 def find_closest_intersection(intersections: Set[Point]) -> Point:
     return min(
         intersections, key=lambda point: manhattan_distance(point, Point.origin())
     )
 
 
-def find_closest_intersection_distance(instructions: List[List[Instruction]]) -> int:
-    visited = [trace_wire_locations(wire).keys() for wire in instructions]
-    intersecting = filter_intersecting_locations(visited)
+def find_closest_intersection_distance(wire_traces: List[Dict[Point, int]]) -> int:
+    intersecting = wire_traces[0].keys() & wire_traces[1].keys()
     return manhattan_distance(find_closest_intersection(intersecting), Point.origin())
+
+
+def trace_wires(instructions: List[List[Instruction]]) -> List[Dict[Point, int]]:
+    return [trace_single_wire_locations(wire) for wire in instructions]
+
+
+def solve_part_one(instructions: List[List[Instruction]]) -> int:
+    return find_closest_intersection_distance(trace_wires(instructions))
 
 
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     parsed = parse_input(puzzle_input)
-    part_one_solution = find_closest_intersection_distance(parsed)
+    part_one_solution = solve_part_one(parsed)
     aoc_common.report_solution(
         puzzle_title=__doc__, part_one_solution=part_one_solution
     )
