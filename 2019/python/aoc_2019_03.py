@@ -1,7 +1,8 @@
 """Day 3: Crossed Wires"""
 from __future__ import annotations
+
 from functools import reduce
-from typing import Callable, Dict, List, NamedTuple, Set
+from typing import Callable, Dict, List, NamedTuple, Set, Tuple
 
 import pytest
 
@@ -152,12 +153,17 @@ def trace_wires(instructions: List[List[Instruction]]) -> List[TraceDict]:
     return [trace_single_wire_locations(wire) for wire in instructions]
 
 
-if __name__ == "__main__":
+def main() -> Tuple[int, int]:
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     instructions = parse_input(puzzle_input)
     wire_traces = trace_wires(instructions)
     part_one_solution = find_closest_intersection_distance(wire_traces)
     part_two_solution = find_lowest_intersection_signal_delay(wire_traces)
+    return (part_one_solution, part_two_solution)
+
+
+if __name__ == "__main__":
+    part_one_solution, part_two_solution = main()
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=part_one_solution,
