@@ -1,9 +1,10 @@
 """Day 3: Crossed Wires"""
-import aoc_common
 from functools import reduce
+from typing import Dict, List, NamedTuple, Set
+
 import pytest
-from typing import Dict, List, Set, Tuple
-from typing import NamedTuple
+
+import aoc_common
 
 DAY = 3
 
