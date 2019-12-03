@@ -1,7 +1,7 @@
 """Day 3: Crossed Wires"""
 from __future__ import annotations
 
-from functools import reduce
+from functools import partial, reduce
 from typing import Callable, Dict, List, NamedTuple, Set, Tuple
 
 import pytest
@@ -111,6 +111,9 @@ def manhattan_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
 
+manhattan_distance_from_origin = partial(manhattan_distance, Point.origin())
+
+
 def trace_single_wire_locations(instructions: List[Instruction]) -> TraceDict:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
@@ -132,14 +135,13 @@ def intersect_dict_keys(dictionaries: List[TraceDict]) -> Set[Point]:
 
 
 def find_closest_intersection(intersections: Set[Point]) -> Point:
-    return min(
-        intersections, key=lambda point: manhattan_distance(point, Point.origin())
-    )
+    return min(intersections, key=manhattan_distance_from_origin)
 
 
 def find_closest_intersection_distance(wire_traces: List[TraceDict]) -> int:
     intersecting = intersect_dict_keys(wire_traces)
-    return manhattan_distance(find_closest_intersection(intersecting), Point.origin())
+    closest_intersection = find_closest_intersection(intersecting)
+    return manhattan_distance_from_origin(closest_intersection)
 
 
 def find_lowest_intersection_signal_delay(wire_traces: List[TraceDict]) -> int:
