@@ -79,7 +79,7 @@ class Point(NamedTuple):
     y: int
 
     @staticmethod
-    def origin():
+    def origin() -> Point:
         return Point(0, 0)
 
 
