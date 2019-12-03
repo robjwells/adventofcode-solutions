@@ -1,7 +1,7 @@
 """Day 3: Crossed Wires"""
 from __future__ import annotations
 from functools import reduce
-from typing import Dict, List, NamedTuple, Set
+from typing import Callable, Dict, List, NamedTuple, Set
 
 import pytest
 
@@ -83,6 +83,17 @@ class Point(NamedTuple):
     def origin() -> Point:
         return Point(0, 0)
 
+    def move(self, direction: str, *, distance: int = 1) -> Point:
+        move_functions: Dict[str, Callable[[Point, int], Point]] = {
+            "U": lambda p, d: Point(p.x, p.y + d),
+            "D": lambda p, d: Point(p.x, p.y - d),
+            "R": lambda p, d: Point(p.x + d, p.y),
+            "L": lambda p, d: Point(p.x - d, p.y),
+        }
+        if not direction or direction not in move_functions:
+            raise ValueError("Direction must be either U, D, R or L.")
+        return move_functions[direction](self, distance)
+
 
 TraceDict = Dict[Point, int]
 
@@ -102,22 +113,14 @@ def manhattan_distance(a: Point, b: Point) -> int:
 def trace_single_wire_locations(instructions: List[Instruction]) -> TraceDict:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
-    move_functions = {
-        "U": lambda p: Point(p.x, p.y + 1),
-        "D": lambda p: Point(p.x, p.y - 1),
-        "R": lambda p: Point(p.x + 1, p.y),
-        "L": lambda p: Point(p.x - 1, p.y),
-    }
     visited: TraceDict = {}
     step = 0
     for instruction in instructions:
-        mover = move_functions[instruction.direction]
         for _ in range(instruction.distance):
-            current = mover(current)
+            current = current.move(instruction.direction)
             step += 1
             if current not in visited:
                 visited[current] = step
-
     return visited
 
 
