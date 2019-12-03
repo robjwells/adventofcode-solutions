@@ -91,7 +91,7 @@ class Point(NamedTuple):
             "R": lambda p, d: Point(p.x + d, p.y),
             "L": lambda p, d: Point(p.x - d, p.y),
         }
-        if not direction or direction not in move_functions:
+        if direction not in move_functions:
             raise ValueError("Direction must be either U, D, R or L.")
         return move_functions[direction](self, distance)
 
