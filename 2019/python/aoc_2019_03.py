@@ -64,9 +64,7 @@ def manhattan_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
 
-def trace_wire_locations(
-    instructions: List[Instruction]
-) -> Tuple[Set[Point], Dict[Point, int]]:
+def trace_wire_locations(instructions: List[Instruction]) -> Dict[Point, int]:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
     move_functions = {
@@ -75,19 +73,17 @@ def trace_wire_locations(
         "R": lambda p: Point(current.x + 1, current.y),
         "L": lambda p: Point(current.x - 1, current.y),
     }
-    visited: Set[Point] = set()
-    signal_delay: Dict[Point, int] = {}
+    visited: Dict[Point, int] = {}
     step = 0
     for instruction in instructions:
         mover = move_functions[instruction.direction]
         for _ in range(instruction.distance):
             current = mover(current)
-            visited.add(current)
             step += 1
-            if current not in signal_delay:
-                signal_delay[current] = step
+            if current not in visited:
+                visited[current] = step
 
-    return (visited, signal_delay)
+    return visited
 
 
 def filter_intersecting_locations(locations: List[Set[Point]]) -> Set[Point]:
@@ -101,7 +97,7 @@ def find_closest_intersection(intersections: Set[Point]) -> Point:
 
 
 def find_closest_intersection_distance(instructions: List[List[Instruction]]) -> int:
-    visited = [trace_wire_locations(wire)[0] for wire in instructions]
+    visited = [trace_wire_locations(wire).keys() for wire in instructions]
     intersecting = filter_intersecting_locations(visited)
     return manhattan_distance(find_closest_intersection(intersecting), Point.origin())
 
