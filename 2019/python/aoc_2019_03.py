@@ -102,10 +102,10 @@ def trace_single_wire_locations(instructions: List[Instruction]) -> TraceDict:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
     move_functions = {
-        "U": lambda p: Point(current.x, current.y + 1),
-        "D": lambda p: Point(current.x, current.y - 1),
-        "R": lambda p: Point(current.x + 1, current.y),
-        "L": lambda p: Point(current.x - 1, current.y),
+        "U": lambda p: Point(p.x, p.y + 1),
+        "D": lambda p: Point(p.x, p.y - 1),
+        "R": lambda p: Point(p.x + 1, p.y),
+        "L": lambda p: Point(p.x - 1, p.y),
     }
     visited: TraceDict = {}
     step = 0
