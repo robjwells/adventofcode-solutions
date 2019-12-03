@@ -83,6 +83,9 @@ class Point(NamedTuple):
         return Point(0, 0)
 
 
+TraceDict = Dict[Point, int]
+
+
 def parse_input(puzzle_input: str) -> List[List[Instruction]]:
     """Split each line in the input into a list of (direction, distance) tuples."""
     return [
@@ -95,7 +98,7 @@ def manhattan_distance(a: Point, b: Point) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
 
-def trace_single_wire_locations(instructions: List[Instruction]) -> Dict[Point, int]:
+def trace_single_wire_locations(instructions: List[Instruction]) -> TraceDict:
     """Returns a set of the unique locations traced by the wire instructions."""
     current = Point.origin()
     move_functions = {
@@ -104,7 +107,7 @@ def trace_single_wire_locations(instructions: List[Instruction]) -> Dict[Point, 
         "R": lambda p: Point(current.x + 1, current.y),
         "L": lambda p: Point(current.x - 1, current.y),
     }
-    visited: Dict[Point, int] = {}
+    visited: TraceDict = {}
     step = 0
     for instruction in instructions:
         mover = move_functions[instruction.direction]
@@ -117,7 +120,7 @@ def trace_single_wire_locations(instructions: List[Instruction]) -> Dict[Point, 
     return visited
 
 
-def intersect_dict_keys(dictionaries: List[Dict[Point, int]]) -> Set[Point]:
+def intersect_dict_keys(dictionaries: List[TraceDict]) -> Set[Point]:
     if not dictionaries:
         return set()
     return reduce(lambda keys, d: keys & d.keys(), dictionaries)  # type: ignore
@@ -129,19 +132,19 @@ def find_closest_intersection(intersections: Set[Point]) -> Point:
     )
 
 
-def find_closest_intersection_distance(wire_traces: List[Dict[Point, int]]) -> int:
+def find_closest_intersection_distance(wire_traces: List[TraceDict]) -> int:
     intersecting = intersect_dict_keys(wire_traces)
     return manhattan_distance(find_closest_intersection(intersecting), Point.origin())
 
 
-def find_lowest_intersection_signal_delay(wire_traces: List[Dict[Point, int]]) -> int:
+def find_lowest_intersection_signal_delay(wire_traces: List[TraceDict]) -> int:
     intersecting_points = intersect_dict_keys(wire_traces)
     return min(
         sum(trace[point] for trace in wire_traces) for point in intersecting_points
     )
 
 
-def trace_wires(instructions: List[List[Instruction]]) -> List[Dict[Point, int]]:
+def trace_wires(instructions: List[List[Instruction]]) -> List[TraceDict]:
     return [trace_single_wire_locations(wire) for wire in instructions]
 
 
