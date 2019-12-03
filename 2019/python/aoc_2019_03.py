@@ -148,19 +148,12 @@ def trace_wires(instructions: List[List[Instruction]]) -> List[TraceDict]:
     return [trace_single_wire_locations(wire) for wire in instructions]
 
 
-def solve_part_one(instructions: List[List[Instruction]]) -> int:
-    return find_closest_intersection_distance(trace_wires(instructions))
-
-
-def solve_part_two(instructions: List[List[Instruction]]) -> int:
-    return find_lowest_intersection_signal_delay(trace_wires(instructions))
-
-
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
-    parsed = parse_input(puzzle_input)
-    part_one_solution = solve_part_one(parsed)
-    part_two_solution = solve_part_two(parsed)
+    instructions = parse_input(puzzle_input)
+    wire_traces = trace_wires(instructions)
+    part_one_solution = find_closest_intersection_distance(wire_traces)
+    part_two_solution = find_lowest_intersection_signal_delay(wire_traces)
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=part_one_solution,
