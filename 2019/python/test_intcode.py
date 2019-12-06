@@ -16,3 +16,14 @@ from intcode import IntCode
 )
 def test_execute_program(input_data: List[int], output_data: List[int]) -> None:
     assert IntCode.execute_program(input_data) == output_data
+
+
+@pytest.mark.parametrize(
+    "program,index_to_check,expected_value",
+    [([1101, 100, -1, 4, 0], 4, 99), ([1002, 4, 3, 4, 33], 4, 99)],
+)
+def test_paramater_modes(
+    program: List[int], index_to_check: int, expected_value: int
+) -> None:
+    result = IntCode.execute_program(program)
+    assert result[index_to_check] == expected_value
