@@ -1,10 +1,9 @@
 """Day 2: 1202 Program Alarm"""
+import aoc_common
 from operator import add, mul
+import pytest
 from typing import Callable, List, Optional
 
-import pytest
-
-import aoc_common
 from intcode import IntCode
 
 DAY = 2
