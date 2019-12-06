@@ -4,39 +4,9 @@ from operator import add, mul
 import pytest
 from typing import Callable, List, Optional
 
+from intcode import IntCode
+
 DAY = 2
-
-PC_INCREMENT = 4
-HALT = 99
-
-
-@pytest.mark.parametrize(
-    "input_data,output_data",
-    [
-        ([1, 0, 0, 0, 99], [2, 0, 0, 0, 99]),
-        ([2, 3, 0, 3, 99], [2, 3, 0, 6, 99]),
-        ([2, 4, 4, 5, 99, 0], [2, 4, 4, 5, 99, 9801]),
-        ([1, 1, 1, 4, 99, 5, 6, 0, 99], [30, 1, 1, 4, 2, 5, 6, 0, 99]),
-    ],
-)
-def test_execute_program(input_data: List[int], output_data: List[int]) -> None:
-    assert execute_program(input_data) == output_data
-
-
-def opcode_to_function(opcode: int) -> Callable[[int, int], int]:
-    functions = {1: add, 2: mul}
-    return functions[opcode]
-
-
-def execute_program(input_data: List[int]) -> List[int]:
-    data = input_data[:]
-    for program_counter in range(0, len(data), PC_INCREMENT):
-        opcode, *locations = data[program_counter : program_counter + PC_INCREMENT]
-        if opcode == HALT:
-            break
-        source1, source2, destination = locations
-        data[destination] = opcode_to_function(opcode)(data[source1], data[source2])
-    return data
 
 
 def patch_input(input_data: List[int], noun: int, verb: int) -> List[int]:
@@ -48,15 +18,16 @@ def patch_input(input_data: List[int], noun: int, verb: int) -> List[int]:
 
 def solve_part_one(input_data: List[int]) -> int:
     data = patch_input(input_data, noun=12, verb=2)
-    executed_data = execute_program(data)
+    executed_data = IntCode().execute_program(data)
     return executed_data[0]
 
 
 def solve_part_two(input_data: List[int]) -> Optional[int]:
+    computer = IntCode()
     for noun in range(100):
         for verb in range(100):
             data = patch_input(input_data, noun, verb)
-            executed_data = execute_program(data)
+            executed_data = computer.execute_program(data)
             if executed_data[0] == 19690720:
                 return 100 * noun + verb
     return None
@@ -70,7 +41,9 @@ if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
     parsed = parse_input(puzzle_input)
     part_one_solution = solve_part_one(parsed)
+    assert part_one_solution == 5866663, "Solution does not match known-correct"
     part_two_solution = solve_part_two(parsed)
+    assert part_one_solution == 4259, "Solution does not match known-correct"
     if part_two_solution is None:
         print("!! Failed to find part two solution.")
     aoc_common.report_solution(
