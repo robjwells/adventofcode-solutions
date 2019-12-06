@@ -27,6 +27,7 @@ def halt_execution(*args):
 
 class IntCode:
     _PC: int
+    _PC_modified: bool
     _memory: List[int]
     _instructions: Dict[int, Instruction]
     _param_modes: Dict[int, Callable[[int], int]]
@@ -35,6 +36,7 @@ class IntCode:
 
     def __init__(self, program: List[int]):
         self._PC = 0
+        self._PC_modified = False
         self._memory = program[:]
         self.input_queue = deque()
         self.output_queue = deque()
@@ -44,6 +46,10 @@ class IntCode:
             2: Instruction(2, 4, True, mul),
             3: Instruction(3, 2, True, self.input_queue.popleft),
             4: Instruction(4, 2, False, self.output_queue.append),
+            5: Instruction(5, 3, False, self._jump_if_true),
+            6: Instruction(6, 3, False, self._jump_if_false),
+            7: Instruction(7, 4, True, lambda a, b: int(a < b)),
+            8: Instruction(8, 4, True, lambda a, b: int(a == b)),
             99: Instruction(99, 1, False, halt_execution),
         }
 
@@ -54,6 +60,14 @@ class IntCode:
 
     def _load(self, address: int) -> int:
         return self._memory[address]
+
+    def _jump_if_true(self, first: int, second: int) -> None:
+        if first:
+            self._PC = second
+            self._PC_modified = True
+
+    def _jump_if_false(self, first: int, second: int) -> None:
+        return self._jump_if_true(not first, second)
 
     def parse_opcode(self, full_opcode: int) -> Tuple[Instruction, ParameterModeList]:
         modes, opcode = divmod(full_opcode, 100)
@@ -81,7 +95,11 @@ class IntCode:
         else:
             parameters = self.load_parameters(args, parameter_modes)
             action(*parameters)
-        self._PC += length
+
+        if not self._PC_modified:
+            self._PC += length
+        else:
+            self._PC_modified = False
 
     def run_until_halt(self) -> None:
         try:
