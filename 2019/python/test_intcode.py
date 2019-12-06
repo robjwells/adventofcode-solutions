@@ -15,4 +15,4 @@ from intcode import IntCode
     ],
 )
 def test_execute_program(input_data: List[int], output_data: List[int]) -> None:
-    assert IntCode().execute_program(input_data) == output_data
+    assert IntCode.execute_program(input_data) == output_data

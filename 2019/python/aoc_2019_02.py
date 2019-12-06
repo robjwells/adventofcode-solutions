@@ -18,16 +18,15 @@ def patch_input(input_data: List[int], noun: int, verb: int) -> List[int]:
 
 def solve_part_one(input_data: List[int]) -> int:
     data = patch_input(input_data, noun=12, verb=2)
-    executed_data = IntCode().execute_program(data)
+    executed_data = IntCode.execute_program(data)
     return executed_data[0]
 
 
 def solve_part_two(input_data: List[int]) -> Optional[int]:
-    computer = IntCode()
     for noun in range(100):
         for verb in range(100):
             data = patch_input(input_data, noun, verb)
-            executed_data = computer.execute_program(data)
+            executed_data = IntCode.execute_program(data)
             if executed_data[0] == 19690720:
                 return 100 * noun + verb
     return None
