@@ -1,7 +1,9 @@
 """Day 1: The Tyranny of the Rocket Equation"""
-import aoc_common
+from typing import List
+
 import pytest
-from typing import Callable, List
+
+import aoc_common
 
 DAY = 1
 
