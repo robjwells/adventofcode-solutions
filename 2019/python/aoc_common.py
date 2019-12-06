@@ -4,7 +4,7 @@ Common utility functions for Advent of Code solutions
 """
 
 import pathlib
-from typing import Optional
+from typing import List, Optional
 
 
 def load_puzzle_input(day: int) -> str:
@@ -26,3 +26,11 @@ def report_solution(
     print(f"Part one solution:    {part_one_solution}")
     if part_two_solution is not None:
         print(f"Part two solution:    {part_two_solution}")
+
+
+def split_number_by_places(number: int) -> List[int]:
+    places = []
+    while number:
+        places.append(number % 10)
+        number //= 10
+    return list(reversed(places))

@@ -20,14 +20,6 @@ def test_acceptability_nonoverlapping() -> None:
     assert is_acceptable(111122, overlapping_ok=False)
 
 
-def split_number_by_places(number: int) -> List[int]:
-    places = []
-    while number:
-        places.append(number % 10)
-        number //= 10
-    return list(reversed(places))
-
-
 def is_in_nondecreasing_order(place_list: List[int]) -> bool:
     for a, b in zip(place_list, place_list[1:]):
         if b < a:
@@ -62,7 +54,7 @@ def is_acceptable(number: int, *, overlapping_ok: bool = True) -> bool:
         double_func = contains_double_number
     else:
         double_func = contains_nonoverlapping_double_number
-    place_list = split_number_by_places(number)
+    place_list = aoc_common.split_number_by_places(number)
     return is_in_nondecreasing_order(place_list) and double_func(place_list)
 
 
