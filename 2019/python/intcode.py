@@ -84,11 +84,15 @@ class IntCode:
             action(*args)
         self._PC += length
 
+    def run_until_halt(self) -> None:
+        try:
+            while True:
+                self.step()
+        except HaltExecution:
+            pass
+
     @classmethod
     def execute_program(cls, input_data: List[int]) -> List[int]:
         computer = cls(input_data)
-        try:
-            while True:
-                computer.step()
-        except HaltExecution:
-            return computer._memory
+        computer.run_until_halt()
+        return computer._memory
