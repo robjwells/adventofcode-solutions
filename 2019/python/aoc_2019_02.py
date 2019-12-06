@@ -44,7 +44,7 @@ if __name__ == "__main__":
     part_one_solution = solve_part_one(parsed)
     assert part_one_solution == 5866663, "Solution does not match known-correct"
     part_two_solution = solve_part_two(parsed)
-    assert part_one_solution == 4259, "Solution does not match known-correct"
+    assert part_two_solution == 4259, "Solution does not match known-correct"
     if part_two_solution is None:
         print("!! Failed to find part two solution.")
     aoc_common.report_solution(
