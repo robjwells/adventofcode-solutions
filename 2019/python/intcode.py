@@ -43,9 +43,7 @@ class IntCode:
             1: Instruction(1, 4, True, add),
             2: Instruction(2, 4, True, mul),
             3: Instruction(3, 2, True, self.input_queue.popleft),
-            4: Instruction(
-                4, 2, False, lambda src: self.output_queue.append(self._load(src))
-            ),
+            4: Instruction(4, 2, False, self.output_queue.append),
             99: Instruction(99, 1, False, halt_execution),
         }
 
@@ -81,7 +79,8 @@ class IntCode:
             result = action(*parameters)
             self._store(result, destination)
         else:
-            action(*args)
+            parameters = self.load_parameters(args, parameter_modes)
+            action(*parameters)
         self._PC += length
 
     def run_until_halt(self) -> None:
