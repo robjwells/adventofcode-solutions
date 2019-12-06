@@ -69,7 +69,7 @@ class IntCode:
     def _jump_if_false(self, first: int, second: int) -> None:
         return self._jump_if_true(not first, second)
 
-    def parse_opcode(self, full_opcode: int) -> Tuple[Instruction, ParameterModeList]:
+    def parse_opcode(self, full_opcode: int) -> Tuple[ParameterModeList, Instruction]:
         modes, opcode = divmod(full_opcode, 100)
         # Reverse the mode list as the modes are given in reverse order
         # in the 'full' opcode.
