@@ -19,5 +19,7 @@ class IntCode:
             if opcode == HALT:
                 break
             source1, source2, destination = locations
-            data[destination] = self.opcode_to_function(opcode)(data[source1], data[source2])
+            data[destination] = self.opcode_to_function(opcode)(
+                data[source1], data[source2]
+            )
         return data

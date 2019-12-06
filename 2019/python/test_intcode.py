@@ -4,6 +4,7 @@ import pytest
 
 from intcode import IntCode
 
+
 @pytest.mark.parametrize(
     "input_data,output_data",
     [
