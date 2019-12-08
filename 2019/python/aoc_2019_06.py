@@ -2,7 +2,7 @@
 import math
 from collections import defaultdict, deque
 from copy import deepcopy
-from typing import Deque, DefaultDict, Iterator, List, NamedTuple, Tuple
+from typing import DefaultDict, Deque, Iterator, List, Tuple
 
 import aoc_common
 
@@ -11,20 +11,12 @@ DAY = 6
 OrbitGraph = DefaultDict[str, List[str]]
 
 
-class Orbit(NamedTuple):
-    orbited: str
-    orbited_by: str
-
-
-def parse_input(input_text: str) -> List[Orbit]:
-    return [Orbit(*line.split(")")) for line in input_text.splitlines()]
-
-
-def create_orbit_graph(orbits: List[Orbit]) -> OrbitGraph:
-    orbit_graph: DefaultDict[str, List[str]] = defaultdict(list)
-    for orbited, orbited_by in orbits:
-        orbit_graph[orbited].append(orbited_by)
-    return orbit_graph
+def parse_input(input_text: str) -> OrbitGraph:
+    orbits: OrbitGraph = defaultdict(list)
+    pairs = [line.split(")") for line in input_text.splitlines()]
+    for orbited, orbited_by in pairs:
+        orbits[orbited].append(orbited_by)
+    return orbits
 
 
 def orbit_depths(orbit_graph: OrbitGraph) -> Iterator[int]:
@@ -100,8 +92,7 @@ def directed_to_undirected_graph(directed: OrbitGraph) -> OrbitGraph:
     return undirected
 
 
-def main(orbit_list: List[Orbit]) -> Tuple[int, int]:
-    orbit_graph = create_orbit_graph(orbit_list)
+def main(orbit_graph: OrbitGraph) -> Tuple[int, int]:
     part_one_solution = sum(orbit_depths(orbit_graph))
     part_two_solution, shortest_path = find_shortest_path(orbit_graph)
     return (part_one_solution, part_two_solution)
@@ -120,7 +111,7 @@ D)I
 E)J
 J)K
 K)L"""
-    orbit_graph = create_orbit_graph(parse_input(orbits))
+    orbit_graph = parse_input(orbits)
     assert sum(orbit_depths(orbit_graph)) == 42
 
 
@@ -139,7 +130,7 @@ J)K
 K)L
 K)YOU
 I)SAN"""
-    orbit_graph = create_orbit_graph(parse_input(orbits))
+    orbit_graph = parse_input(orbits)
     distance, path = find_shortest_path(orbit_graph)
     assert distance == 4
     assert path == ["K", "J", "E", "D", "I"]
