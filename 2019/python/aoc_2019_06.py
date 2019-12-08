@@ -2,7 +2,7 @@
 import math
 from collections import defaultdict, deque
 from copy import deepcopy
-from typing import DefaultDict, Deque, Iterator, List, Tuple
+from typing import DefaultDict, Iterator, List, NamedTuple, Tuple
 
 import aoc_common
 
@@ -35,27 +35,26 @@ def find_shortest_path(
 ) -> Tuple[int, List[str]]:
     orbits = directed_to_undirected_graph(directed_orbit_graph)
 
-    source_body = orbits[source][0]
-    SearchEntry = Tuple[int, str, List[str]]
-    queue: Deque[SearchEntry] = deque(
-        [
-            # Depth, current node, path from source
-            (0, source_body, [])
-        ]
-    )
+    class BFSEntry(NamedTuple):
+        depth: int
+        current_node: str
+        path_from_source: List[str]
+
+    start = orbits[source][0]  # Body orbited by source
+    queue = deque([BFSEntry(0, start, [])])
 
     min_distance = math.inf
     shortest_path: List[str] = []
     while queue:
-        depth, body, path = queue.popleft()
+        depth, current_node, path = queue.popleft()
         if depth >= min_distance:
             # Cut off search branch if distance is already too long.
             continue
 
         # Filter already-visited nodes from next steps to avoid cycles.
-        unvisited_neighbours = [n for n in orbits[body] if n not in path]
+        unvisited_neighbours = [n for n in orbits[current_node] if n not in path]
 
-        current_path = path + [body]
+        current_path = path + [current_node]
         if dest in unvisited_neighbours:
             # The earlier check ensures the current distance is known to be
             # shorter than the previous-shortest, so we can just assign the
@@ -65,7 +64,7 @@ def find_shortest_path(
         else:
             queue.extend(
                 [
-                    (depth + 1, neighbour, current_path)
+                    BFSEntry(depth + 1, neighbour, current_path)
                     for neighbour in unvisited_neighbours
                 ]
             )
