@@ -2,7 +2,7 @@ from aoc_common import split_number_by_places
 from collections import deque
 from itertools import zip_longest
 from operator import add, mul
-from typing import Callable, Dict, List, NamedTuple, Tuple
+from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 PC_INCREMENT = 4
 HALT = 99
@@ -31,21 +31,38 @@ class IntCode:
     _memory: List[int]
     _instructions: Dict[int, Instruction]
     _param_modes: Dict[int, Callable[[int], int]]
+    _input_action: Callable[[int], None]
+    _output_action: Callable[[], int]
     input_queue: deque
     output_queue: deque
 
-    def __init__(self, program: List[int]):
+    def __init__(
+        self,
+        program: List[int],
+        input_action: Optional[Callable[[int], None]] = None,
+        output_action: Optional[Callable[[], int]] = None,
+    ):
         self._PC = 0
         self._PC_modified = False
         self._memory = program[:]
-        self.input_queue = deque()
-        self.output_queue = deque()
+
+        if input_action is not None:
+            self._input_action = input_action
+        else:
+            self.input_queue = deque()
+            self._input_action = self.input_queue.popleft
+
+        if output_action is not None:
+            self._output_action = output_action
+        else:
+            self.output_queue = deque()
+            self._output_action = self.output_queue.append
 
         self._instructions = {
             1: Instruction(1, 4, True, add),
             2: Instruction(2, 4, True, mul),
-            3: Instruction(3, 2, True, self.input_queue.popleft),
-            4: Instruction(4, 2, False, self.output_queue.append),
+            3: Instruction(3, 2, True, self._input_action),
+            4: Instruction(4, 2, False, self._output_action),
             5: Instruction(5, 3, False, self._jump_if_true),
             6: Instruction(6, 3, False, self._jump_if_false),
             7: Instruction(7, 4, True, lambda a, b: int(a < b)),
