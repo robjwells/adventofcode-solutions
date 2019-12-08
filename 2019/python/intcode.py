@@ -31,8 +31,8 @@ class IntCode:
     _memory: List[int]
     _instructions: Dict[int, Instruction]
     _param_modes: Dict[int, Callable[[int], int]]
-    _input_action: Callable[[int], None]
-    _output_action: Callable[[], int]
+    input_action: Callable[[int], None]
+    output_action: Callable[[], int]
     input_queue: deque
     output_queue: deque
 
@@ -50,20 +50,20 @@ class IntCode:
         self.output_queue = deque()
 
         if input_action is not None:
-            self._input_action = input_action
+            self.input_action = input_action
         else:
-            self._input_action = self.input_queue.popleft
+            self.input_action = self.input_queue.popleft
 
         if output_action is not None:
-            self._output_action = output_action
+            self.output_action = output_action
         else:
-            self._output_action = self.output_queue.append
+            self.output_action = self.output_queue.append
 
         self._instructions = {
             1: Instruction(1, 4, True, add),
             2: Instruction(2, 4, True, mul),
-            3: Instruction(3, 2, True, self._input_action),
-            4: Instruction(4, 2, False, self._output_action),
+            3: Instruction(3, 2, True, self.input_action),
+            4: Instruction(4, 2, False, self.output_action),
             5: Instruction(5, 3, False, self._jump_if_true),
             6: Instruction(6, 3, False, self._jump_if_false),
             7: Instruction(7, 4, True, lambda a, b: int(a < b)),
