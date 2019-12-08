@@ -2,7 +2,7 @@
 from typing import List, Optional
 
 import aoc_common
-from intcode import IntCode
+from intcode import IntCode, parse_program
 
 DAY = 2
 
@@ -30,13 +30,9 @@ def solve_part_two(input_data: List[int]) -> Optional[int]:
     return None
 
 
-def parse_input(puzzle_input: str) -> List[int]:
-    return [int(x) for x in puzzle_input.split(",")]
-
-
 if __name__ == "__main__":
     puzzle_input = aoc_common.load_puzzle_input(DAY)
-    parsed = parse_input(puzzle_input)
+    parsed = parse_program(puzzle_input)
     part_one_solution = solve_part_one(parsed)
     assert part_one_solution == 5866663, "Solution does not match known-correct"
     part_two_solution = solve_part_two(parsed)

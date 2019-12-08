@@ -2,13 +2,9 @@
 from typing import List, Tuple
 
 import aoc_common
-from intcode import IntCode
+from intcode import IntCode, parse_program
 
 DAY = 5
-
-
-def parse_input(puzzle_input: str) -> List[int]:
-    return [int(x) for x in puzzle_input.split(",")]
 
 
 def main(program: List[int]) -> Tuple[int, int]:
@@ -31,7 +27,7 @@ def main(program: List[int]) -> Tuple[int, int]:
 
 
 if __name__ == "__main__":
-    program = parse_input(aoc_common.load_puzzle_input(DAY))
+    program = parse_program(aoc_common.load_puzzle_input(DAY))
     part_one_solution, part_two_solution = main(program)
     assert (
         part_one_solution == 7566643
