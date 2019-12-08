@@ -4,9 +4,6 @@ from itertools import zip_longest
 from operator import add, mul
 from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
-PC_INCREMENT = 4
-HALT = 99
-
 ParameterModeList = List[int]
 
 
@@ -21,26 +18,26 @@ class HaltExecution(Exception):
     pass
 
 
-def halt_execution(*args):
-    raise HaltExecution()
-
-
 class IntCode:
     _PC: int
     _PC_modified: bool
+    _PC_pending_increment: Optional[int] = None
     _memory: List[int]
     _instructions: Dict[int, Instruction]
     _param_modes: Dict[int, Callable[[int], int]]
+    _has_halted: bool = False
     input_action: Callable[[int], None]
     output_action: Callable[[], int]
     input_queue: deque
     output_queue: deque
+    _description: str
 
     def __init__(
         self,
         program: List[int],
         input_action: Optional[Callable[[int], None]] = None,
         output_action: Optional[Callable[[], int]] = None,
+        description: str = "<Some Amp>",
     ):
         self._PC = 0
         self._PC_modified = False
@@ -49,35 +46,47 @@ class IntCode:
         self.input_queue = deque()
         self.output_queue = deque()
 
+        self._description = description
+
         if input_action is not None:
-            self.input_action = input_action
+            self.input_action = input_action  # type: ignore
         else:
-            self.input_action = self.input_queue.popleft
+            self.input_action = self.input_queue.popleft  # type: ignore
 
         if output_action is not None:
-            self.output_action = output_action
+            self.output_action = output_action  # type: ignore
         else:
-            self.output_action = self.output_queue.append
+            self.output_action = self.output_queue.append  # type: ignore
 
         self._instructions = {
             1: Instruction(1, 4, True, add),
             2: Instruction(2, 4, True, mul),
-            3: Instruction(3, 2, True, self.input_action),
-            4: Instruction(4, 2, False, self.output_action),
+            3: Instruction(3, 2, True, self._input),
+            4: Instruction(4, 2, False, self._output),
             5: Instruction(5, 3, False, self._jump_if_true),
             6: Instruction(6, 3, False, self._jump_if_false),
             7: Instruction(7, 4, True, lambda a, b: int(a < b)),
             8: Instruction(8, 4, True, lambda a, b: int(a == b)),
-            99: Instruction(99, 1, False, halt_execution),
+            99: Instruction(99, 1, False, self._halt_execution),
         }
 
         self._param_modes = {0: self._load, 1: lambda immediate: immediate}
+
+    def __repr__(self):
+        return self._description
 
     def _store(self, value: int, address: int) -> None:
         self._memory[address] = value
 
     def _load(self, address: int) -> int:
         return self._memory[address]
+
+    def _halt_execution(self):
+        self._has_halted = True
+        raise HaltExecution()
+
+    def has_halted(self):
+        return self._has_halted
 
     def _jump_if_true(self, first: int, second: int) -> None:
         if first:
@@ -101,10 +110,17 @@ class IntCode:
         ]
 
     def step(self) -> None:
+        if self._PC_pending_increment is not None:
+            # Handle early termination of the step function
+            self._PC += self._PC_pending_increment
+
         opcode = self._memory[self._PC]
         parameter_modes, instruction = self.parse_opcode(opcode)
         _, length, store_result, action = instruction
         args = self._memory[self._PC + 1 : self._PC + length]
+
+        self._PC_pending_increment = length
+
         if store_result:
             parameters = self.load_parameters(args[:-1], parameter_modes)
             destination = args[-1]
@@ -118,6 +134,7 @@ class IntCode:
             self._PC += length
         else:
             self._PC_modified = False
+        self._PC_pending_increment = None
 
     def run_until_halt(self) -> None:
         try:
@@ -140,6 +157,12 @@ class IntCode:
 
     def read_output(self) -> int:
         return self.output_queue.popleft()
+
+    def _input(self) -> int:
+        return self.input_action()  # type: ignore
+
+    def _output(self, value: int) -> None:
+        self.output_action(value)  # type: ignore
 
 
 def parse_program(puzzle_input: str) -> List[int]:
