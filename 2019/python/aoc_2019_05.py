@@ -10,18 +10,18 @@ DAY = 5
 def main(program: List[int]) -> Tuple[int, int]:
     # Part one: provide 1 as input
     computer = IntCode(program)
-    computer.input_queue.append(1)
+    computer.pass_input(1)
     computer.run_until_halt()
-    while computer.output_queue:
-        output = computer.output_queue.popleft()
-        if not computer.output_queue:
+    while computer.has_output():
+        output = computer.read_output()
+        if not computer.has_output():
             part_one_solution = output
 
     # Part two: provide 5 as input
     computer = IntCode(program)
-    computer.input_queue.append(5)
+    computer.pass_input(5)
     computer.run_until_halt()
-    part_two_solution = computer.output_queue.popleft()
+    part_two_solution = computer.read_output()
 
     return (part_one_solution, part_two_solution)
 

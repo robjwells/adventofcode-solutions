@@ -46,16 +46,17 @@ class IntCode:
         self._PC_modified = False
         self._memory = program[:]
 
+        self.input_queue = deque()
+        self.output_queue = deque()
+
         if input_action is not None:
             self._input_action = input_action
         else:
-            self.input_queue = deque()
             self._input_action = self.input_queue.popleft
 
         if output_action is not None:
             self._output_action = output_action
         else:
-            self.output_queue = deque()
             self._output_action = self.output_queue.append
 
         self._instructions = {
@@ -130,6 +131,15 @@ class IntCode:
         computer = cls(input_data)
         computer.run_until_halt()
         return computer._memory
+
+    def pass_input(self, value: int) -> None:
+        self.input_queue.append(value)
+
+    def has_output(self) -> bool:
+        return len(self.output_queue) == 0
+
+    def read_output(self) -> int:
+        return self.output_queue.popleft()
 
 
 def parse_program(puzzle_input: str) -> List[int]:

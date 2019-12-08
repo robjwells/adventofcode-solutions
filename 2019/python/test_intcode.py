@@ -54,9 +54,9 @@ def test_comparisons(
     program: List[int], program_input: int, expected_output: int
 ) -> None:
     computer = IntCode(program)
-    computer.input_queue.append(program_input)
+    computer.pass_input(program_input)
     computer.run_until_halt()
-    assert computer.output_queue.pop() == expected_output
+    assert computer.read_output() == expected_output
 
 
 @pytest.mark.parametrize(
@@ -74,9 +74,9 @@ def test_comparisons(
 )
 def test_jumps(program: List[int], program_input: int, expected_output: int) -> None:
     computer = IntCode(program)
-    computer.input_queue.append(program_input)
+    computer.pass_input(program_input)
     computer.run_until_halt()
-    assert computer.output_queue.pop() == expected_output
+    assert computer.read_output() == expected_output
 
 
 @pytest.mark.parametrize(
@@ -111,6 +111,6 @@ def test_larger_comparison(program_input: int, expected_output: int) -> None:
     ]
     # fmt: on
     computer = IntCode(program)
-    computer.input_queue.append(program_input)
+    computer.pass_input(program_input)
     computer.run_until_halt()
-    assert computer.output_queue.pop() == expected_output
+    assert computer.read_output() == expected_output
