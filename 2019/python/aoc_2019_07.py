@@ -64,7 +64,7 @@ def main(program: List[int]) -> int:
     ],
 )
 def test_max_of_single_amp_run(program: List[int], expected_result: int) -> None:
-    pass
+    assert max_of_single_amp_run(program) == expected_result
 
 
 if __name__ == "__main__":
