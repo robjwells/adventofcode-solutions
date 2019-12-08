@@ -1,6 +1,6 @@
 """Day 6: Universal Orbit Map"""
 from collections import defaultdict, deque
-from typing import Dict, Iterator, List, NamedTuple
+from typing import Dict, Iterator, List, Optional, NamedTuple, Tuple
 
 import aoc_common
 
@@ -35,10 +35,11 @@ def orbit_depths(orbit_graph: OrbitGraph) -> Iterator[int]:
         )
 
 
-def main(orbit_list: List[Orbit]) -> None:
+def main(orbit_list: List[Orbit]) -> Tuple[int, Optional[int]]:
     orbit_graph = create_orbit_graph(orbit_list)
     part_one_solution = sum(orbit_depths(orbit_graph))
-    print(part_one_solution)
+
+    return (part_one_solution, None)
 
 
 def test_orbit_depths():
@@ -60,4 +61,9 @@ K)L"""
 
 if __name__ == "__main__":
     parsed = parse_input(aoc_common.load_puzzle_input(DAY))
-    main(parsed)
+    part_one_solution, part_two_solution = main(parsed)
+    aoc_common.report_solution(
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
+    )
