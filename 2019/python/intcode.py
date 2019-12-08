@@ -113,3 +113,7 @@ class IntCode:
         computer = cls(input_data)
         computer.run_until_halt()
         return computer._memory
+
+
+def parse_program(puzzle_input: str) -> List[int]:
+    return [int(x) for x in puzzle_input.split(",")]
