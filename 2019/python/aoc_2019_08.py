@@ -1,5 +1,5 @@
 """Day 8: Space Image Format"""
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 import aoc_common
 
@@ -49,10 +49,23 @@ def test_SpaceImage() -> None:
     assert list(image) == expected_layers
 
 
-def main() -> None:
-    pass
+def main(image: SpaceImage) -> Tuple[int, None]:
+    # Part one
+    layer_with_least_zeroes = min(image, key=lambda layer: layer.count(0))
+    checksum = layer_with_least_zeroes.count(1) * layer_with_least_zeroes.count(2)
+    return checksum, None
 
 
 if __name__ == "__main__":
     image_data = aoc_common.load_puzzle_input(DAY)
     image = SpaceImage(width=25, height=6, image_data=image_data)
+    part_one_solution, part_two_solution = main(image)
+    assert (
+        part_one_solution == 2413
+    ), "Part one solution does not match known-correct answer."
+
+    aoc_common.report_solution(
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
+    )
