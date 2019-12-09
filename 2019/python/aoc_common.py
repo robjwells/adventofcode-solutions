@@ -4,7 +4,7 @@ Common utility functions for Advent of Code solutions
 """
 
 import pathlib
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 def load_puzzle_input(day: int) -> str:
@@ -19,7 +19,7 @@ def report_solution(
     *,
     puzzle_title: str,
     part_one_solution: int,
-    part_two_solution: Optional[int] = None,
+    part_two_solution: Optional[Union[int, str]] = None,
 ) -> None:
     print(puzzle_title)
     print("=" * len(puzzle_title))
