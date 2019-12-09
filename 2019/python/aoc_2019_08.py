@@ -1,5 +1,4 @@
 """Day 8: Space Image Format"""
-from itertools import islice
 from typing import Iterator, List, Tuple
 
 import aoc_common
@@ -48,14 +47,11 @@ class SpaceImage:
         return 2  # Transparent
 
     def render(self) -> List[List[int]]:
-        stacked = zip(*iter(self))
-        visible = map(self._first_non_transparent_pixel_value, stacked)
+        visible_pixels = [
+            self._first_non_transparent_pixel_value(stack) for stack in zip(*iter(self))
+        ]
         return [
-            list(
-                islice(
-                    visible, row_num * self.width, (row_num * self.width) + self.width
-                )
-            )
+            visible_pixels[row_num * self.width : (row_num * self.width) + self.width]
             for row_num in range(self.height)
         ]
 
