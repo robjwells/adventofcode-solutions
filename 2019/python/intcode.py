@@ -1,8 +1,21 @@
-from aoc_common import split_number_by_places
+from __future__ import annotations
+
 from collections import deque
 from itertools import zip_longest
 from operator import add, mul
-from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
+from typing import (
+    Callable,
+    Deque,
+    Dict,
+    List,
+    NamedTuple,
+    NoReturn,
+    Optional,
+    Tuple,
+    Union,
+)
+
+from aoc_common import split_number_by_places
 
 ParameterModeList = List[int]
 
@@ -11,7 +24,13 @@ class Instruction(NamedTuple):
     opcode: int
     length: int
     store_result: bool
-    action: Callable
+    action: Union[
+        Callable[[int, int], int],
+        Callable[[int, int], None],
+        Callable[[int], None],
+        Callable[[], int],
+        Callable[[], NoReturn],
+    ]
 
 
 class HaltExecution(Exception):
@@ -28,8 +47,8 @@ class IntCode:
     _has_halted: bool = False
     input_action: Callable[[int], None]
     output_action: Callable[[], int]
-    input_queue: deque
-    output_queue: deque
+    input_queue: Deque[int]
+    output_queue: Deque[int]
     _description: str
 
     def __init__(
@@ -72,7 +91,7 @@ class IntCode:
 
         self._param_modes = {0: self._load, 1: lambda immediate: immediate}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self._description
 
     def _store(self, value: int, address: int) -> None:
@@ -81,11 +100,11 @@ class IntCode:
     def _load(self, address: int) -> int:
         return self._memory[address]
 
-    def _halt_execution(self):
+    def _halt_execution(self) -> NoReturn:
         self._has_halted = True
         raise HaltExecution()
 
-    def has_halted(self):
+    def has_halted(self) -> bool:
         return self._has_halted
 
     def _jump_if_true(self, first: int, second: int) -> None:
@@ -103,7 +122,9 @@ class IntCode:
         mode_list = list(reversed(split_number_by_places(modes)))
         return mode_list, self._instructions[opcode]
 
-    def load_parameters(self, parameters: List[int], modes: ParameterModeList):
+    def load_parameters(
+        self, parameters: List[int], modes: ParameterModeList
+    ) -> List[int]:
         return [
             self._param_modes[mode](param)
             for param, mode in zip_longest(parameters, modes, fillvalue=0)
@@ -125,6 +146,7 @@ class IntCode:
             parameters = self.load_parameters(args[:-1], parameter_modes)
             destination = args[-1]
             result = action(*parameters)
+            assert isinstance(result, int)
             self._store(result, destination)
         else:
             parameters = self.load_parameters(args, parameter_modes)
