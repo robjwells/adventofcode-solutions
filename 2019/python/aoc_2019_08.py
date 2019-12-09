@@ -95,6 +95,21 @@ if __name__ == "__main__":
         part_one_solution == 2413
     ), "Part one solution does not match known-correct answer."
 
+    part_two_expected = """\
+███   ██  ███  ████ ███
+█  █ █  █ █  █    █ █  █
+███  █    █  █   █  ███
+█  █ █    ███   █   █  █
+█  █ █  █ █    █    █  █
+███   ██  █    ████ ███
+""".strip()
+    part_two_stripped = "\n".join(
+        line.strip() for line in part_two_solution.splitlines()
+    )
+    assert (
+        part_two_stripped == part_two_expected
+    ), "Part two solution does not match saved known-correct solution."
+
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=part_one_solution,
