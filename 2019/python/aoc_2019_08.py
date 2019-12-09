@@ -46,7 +46,7 @@ class SpaceImage:
                 return pixel  # First (ie on highest layer) non-transparent pixel
         return 2  # Transparent
 
-    def render(self) -> List[List[int]]:
+    def compute_visible(self) -> List[List[int]]:
         visible_pixels = [
             self._first_non_transparent_pixel_value(stack) for stack in zip(*iter(self))
         ]
@@ -65,41 +65,39 @@ def test_SpaceImage() -> None:
     assert list(image) == expected_layers
 
 
-def test_render() -> None:
+def test_compute_visible() -> None:
     width, height = (2, 2)
     data = "0222112222120000"
     image = SpaceImage(width, height, data)
 
     expected = [[0, 1], [1, 0]]
-    assert image.render() == expected
+    assert image.compute_visible() == expected
 
 
-def main(image: SpaceImage) -> int:
+def main(image: SpaceImage) -> Tuple[int, str]:
     # Part one
     layer_with_least_zeroes = min(image, key=lambda layer: layer.count(0))
     checksum = layer_with_least_zeroes.count(1) * layer_with_least_zeroes.count(2)
 
     # Part two
-    # Answer is printed rather than returned because it's a string,
-    # not an int, and I've yet to refactor aoc_common to accept it
-    # without mypy complaining.
-
-    # Known-correct solution is "BCPZB".
-    rendered = image.render()
-    for row in rendered:
-        print(*["█" if pixel else " " for pixel in row], sep="")
-
-    return checksum
+    rendered_image = "\n".join(
+        "".join("█" if pixel else " " for pixel in row)
+        for row in image.compute_visible()
+    )
+    return checksum, rendered_image
 
 
 if __name__ == "__main__":
     image_data = aoc_common.load_puzzle_input(DAY)
     image = SpaceImage(width=25, height=6, image_data=image_data)
-    part_one_solution = main(image)
+    part_one_solution, part_two_solution = main(image)
     assert (
         part_one_solution == 2413
     ), "Part one solution does not match known-correct answer."
 
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution="\n\n" + part_two_solution,
+        # Prepend newlines to the image string to clear "Part two solution".
     )
