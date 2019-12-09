@@ -175,7 +175,7 @@ class IntCode:
         self.input_queue.append(value)
 
     def has_output(self) -> bool:
-        return len(self.output_queue) == 0
+        return len(self.output_queue) != 0
 
     def read_output(self) -> int:
         return self.output_queue.popleft()
