@@ -1,4 +1,5 @@
 """Day 8: Space Image Format"""
+from itertools import islice
 from typing import Iterator, List, Tuple
 
 import aoc_common
@@ -39,6 +40,25 @@ class SpaceImage:
             layer_start = pixels_per_layer * layer_index
             yield self._data[layer_start : layer_start + pixels_per_layer]
 
+    @staticmethod
+    def _first_non_transparent_pixel_value(pixels: Tuple[int, ...]) -> int:
+        for pixel in pixels:
+            if pixel != 2:
+                return pixel  # First (ie on highest layer) non-transparent pixel
+        return 2  # Transparent
+
+    def render(self) -> List[List[int]]:
+        stacked = zip(*iter(self))
+        visible = map(self._first_non_transparent_pixel_value, stacked)
+        return [
+            list(
+                islice(
+                    visible, row_num * self.width, (row_num * self.width) + self.width
+                )
+            )
+            for row_num in range(self.height)
+        ]
+
 
 def test_SpaceImage() -> None:
     width, height = (3, 2)
@@ -49,23 +69,41 @@ def test_SpaceImage() -> None:
     assert list(image) == expected_layers
 
 
-def main(image: SpaceImage) -> Tuple[int, None]:
+def test_render() -> None:
+    width, height = (2, 2)
+    data = "0222112222120000"
+    image = SpaceImage(width, height, data)
+
+    expected = [[0, 1], [1, 0]]
+    assert image.render() == expected
+
+
+def main(image: SpaceImage) -> int:
     # Part one
     layer_with_least_zeroes = min(image, key=lambda layer: layer.count(0))
     checksum = layer_with_least_zeroes.count(1) * layer_with_least_zeroes.count(2)
-    return checksum, None
+
+    # Part two
+    # Answer is printed rather than returned because it's a string,
+    # not an int, and I've yet to refactor aoc_common to accept it
+    # without mypy complaining.
+
+    # Known-correct solution is "BCPZB".
+    rendered = image.render()
+    for row in rendered:
+        print(*["█" if pixel else " " for pixel in row], sep="")
+
+    return checksum
 
 
 if __name__ == "__main__":
     image_data = aoc_common.load_puzzle_input(DAY)
     image = SpaceImage(width=25, height=6, image_data=image_data)
-    part_one_solution, part_two_solution = main(image)
+    part_one_solution = main(image)
     assert (
         part_one_solution == 2413
     ), "Part one solution does not match known-correct answer."
 
     aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+        puzzle_title=__doc__, part_one_solution=part_one_solution
     )
