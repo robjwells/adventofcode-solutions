@@ -1,7 +1,6 @@
 """Day 10: Monitoring Station"""
 from collections import defaultdict, deque
 from functools import partial
-from itertools import cycle
 from math import atan2, gcd, sqrt
 from typing import DefaultDict, Deque, Iterable, Iterator, List, NamedTuple, Set, Tuple
 
@@ -211,15 +210,15 @@ def destroy_asteroids_in_order(
     laser: Location, asteroids: Iterable[Location]
 ) -> Iterator[Location]:
     clockwise_order_from_above = clockwise_asteroid_queues(laser, asteroids)
-    for queue in cycle(clockwise_order_from_above):
-        if not sum(len(q) for q in clockwise_order_from_above):
-            # Cycle will loop forever even if all its elements evaulate to
-            # false, so explicitly check if all asteroids are destroyed.
-            return
-        if queue:
-            # Closer asteroids are at the front of the queue,
-            # so popleft rather than just pop.
-            yield queue.popleft()
+    while clockwise_order_from_above:
+        for queue in clockwise_order_from_above:
+            try:
+                # Closer asteroids are at the front of the queue,
+                # so popleft rather than just pop.
+                yield queue.popleft()
+            except IndexError:
+                # Queue is exhausted, so remove it.
+                clockwise_order_from_above.remove(queue)
 
 
 def find_nth_asteroid_destroyed(
