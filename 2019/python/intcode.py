@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections import deque
-from itertools import zip_longest
 from operator import add, mul
 from typing import (
     Callable,
@@ -142,14 +141,15 @@ class IntCode:
         # Reverse the mode list as the modes are given in reverse order
         # in the 'full' opcode.
         mode_list = list(reversed(split_number_by_places(modes)))
+        if len(mode_list) < 5:
+            mode_list += [0 for _ in range(5 - len(mode_list))]
         return mode_list, self._instructions[opcode]
 
     def load_parameters(
         self, parameters: List[int], modes: ParameterModeList
     ) -> List[int]:
         return [
-            self._param_modes[mode](param)
-            for param, mode in zip_longest(parameters, modes, fillvalue=0)
+            self._param_modes[mode](param) for param, mode in zip(parameters, modes)
         ]
 
     def step(self) -> None:
@@ -161,6 +161,8 @@ class IntCode:
         parameter_modes, instruction = self.parse_opcode(opcode)
         _, length, store_result, action = instruction
         args = self._memory[self._PC + 1 : self._PC + length]
+        # Ensure 1-to-1 match between parameters (in args) and modes
+        parameter_modes = parameter_modes[: len(args)]
 
         self._PC_pending_increment = length
 
