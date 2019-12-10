@@ -41,6 +41,7 @@ class IntCode:
     _PC: int
     _PC_modified: bool
     _PC_pending_increment: Optional[int] = None
+    _relative_addressing_base: int = 0
     _memory: List[int]
     _instructions: Dict[int, Instruction]
     _param_modes: Dict[int, Callable[[int], int]]
@@ -86,10 +87,18 @@ class IntCode:
             6: Instruction(6, 3, False, self._jump_if_false),
             7: Instruction(7, 4, True, lambda a, b: int(a < b)),
             8: Instruction(8, 4, True, lambda a, b: int(a == b)),
+            9: Instruction(9, 2, False, self._adjust_relative_base),
             99: Instruction(99, 1, False, self._halt_execution),
         }
 
-        self._param_modes = {0: self._load, 1: lambda immediate: immediate}
+        self._param_modes = {
+            # Direct addressing
+            0: self._load,
+            # Immediate addressing
+            1: lambda immediate: immediate,
+            # Base + offset (relative) addressing
+            2: lambda offset: self._load(self._relative_addressing_base + offset),
+        }
 
     def __repr__(self) -> str:
         return self._description
@@ -114,6 +123,9 @@ class IntCode:
 
     def _jump_if_false(self, first: int, second: int) -> None:
         return self._jump_if_true(not first, second)
+
+    def _adjust_relative_base(self, adjustment: int) -> None:
+        self._relative_addressing_base += adjustment
 
     def parse_opcode(self, full_opcode: int) -> Tuple[ParameterModeList, Instruction]:
         modes, opcode = divmod(full_opcode, 100)
