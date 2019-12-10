@@ -145,6 +145,15 @@ class IntCode:
             mode_list += [0 for _ in range(5 - len(mode_list))]
         return mode_list, self._instructions[opcode]
 
+    def _parse_destination_address(self, raw_address: int, mode: int) -> int:
+        if mode == 0:
+            # Direct addressing
+            return raw_address
+        if mode == 2:
+            # Base + offset addressing
+            return self._relative_addressing_base + raw_address
+        raise ValueError("Unknown destination parameter mode.")
+
     def load_parameters(
         self, parameters: List[int], modes: ParameterModeList
     ) -> List[int]:
@@ -167,8 +176,8 @@ class IntCode:
         self._PC_pending_increment = length
 
         if store_result:
-            parameters = self.load_parameters(args[:-1], parameter_modes)
-            destination = args[-1]
+            parameters = self.load_parameters(args[:-1], parameter_modes[:-1])
+            destination = self._parse_destination_address(args[-1], parameter_modes[-1])
             result = action(*parameters)
             assert isinstance(result, int)
             self._store(result, destination)
