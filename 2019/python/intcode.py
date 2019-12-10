@@ -103,10 +103,20 @@ class IntCode:
     def __repr__(self) -> str:
         return self._description
 
+    def _ensure_memory_capacity(self, index: int) -> None:
+        """Extend memory with zeroes to accommodate given index."""
+        if index < len(self._memory):
+            return
+        new_allocation = [0 for _ in range(index * 2)]
+        new_allocation[0 : len(self._memory)] = self._memory
+        self._memory = new_allocation
+
     def _store(self, value: int, address: int) -> None:
+        self._ensure_memory_capacity(address)
         self._memory[address] = value
 
     def _load(self, address: int) -> int:
+        self._ensure_memory_capacity(address)
         return self._memory[address]
 
     def _halt_execution(self) -> NoReturn:
