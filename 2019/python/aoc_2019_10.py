@@ -1,6 +1,9 @@
 """Day 10: Monitoring Station"""
-from math import gcd
-from typing import List, NamedTuple, Set
+from collections import defaultdict, deque
+from functools import partial
+from itertools import cycle
+from math import atan2, gcd, sqrt
+from typing import DefaultDict, Deque, Iterable, Iterator, List, NamedTuple, Set, Tuple
 
 import pytest
 
@@ -54,13 +57,15 @@ def relative_distance(source: Location, dest: Location) -> Direction:
     return Direction(source.across - dest.across, source.down - dest.down)
 
 
+def basic_direction(source: Location, dest: Location) -> Direction:
+    return reduce_direction(relative_distance(source, dest))
+
+
 def find_best_spot_for_monitoring_station(grid: ParsedGrid) -> AsteroidObservation:
     observations: List[AsteroidObservation] = []
     for this in grid.asteroids:
         directions = {
-            reduce_direction(relative_distance(this, other))
-            for other in grid.asteroids
-            if other != this
+            basic_direction(this, other) for other in grid.asteroids if other != this
         }
         observations.append(AsteroidObservation(this, len(directions)))
     return max(observations, key=lambda ao: ao.asteroids_visible)
@@ -155,16 +160,143 @@ def test_find_best_spot_for_monitoring_station(
     assert find_best_spot_for_monitoring_station(parsed) == expected_observation
 
 
-def main(grid: ParsedGrid) -> int:
-    return find_best_spot_for_monitoring_station(grid).asteroids_visible
+def distance(a: Location, b: Location) -> float:
+    return sqrt((b.across - a.across) ** 2 + (b.down - a.down) ** 2)
+
+
+def direction_and_distance(
+    first: Location, second: Location
+) -> Tuple[Direction, float]:
+    return (basic_direction(first, second), distance(first, second))
+
+
+def clockwise_asteroid_queues(
+    centre: Location, asteroids: Iterable[Location]
+) -> List[Deque[Location]]:
+    direction_and_distance_from_centre = partial(direction_and_distance, centre)
+
+    # Build dictionary of asteroids by location after pre-sorting the asteroids
+    # by direction and then distance order. Pre-sorting avoids having to sort
+    # the queues individually later.
+    direction_queues: DefaultDict[Direction, Deque[Location]] = defaultdict(deque)
+    for asteroid in sorted(asteroids, key=direction_and_distance_from_centre):
+        direction = basic_direction(centre, asteroid)
+        direction_queues[direction].append(asteroid)
+
+    # Sort the queues by the angle of their basic direction (the key) so that
+    # the asteroids can be iterated in a circular manner.
+    sorted_by_angle = sorted(
+        direction_queues.items(), key=lambda item: atan2(*item[0]), reverse=True
+    )
+
+    # Find the index of the basic location that is closest to directly above the
+    # centre location, noting that "above" in our co-ordinate system is negative
+    # (so the inverse of what you’d normally find with atan2).
+    starting_index = sorted_by_angle.index(
+        min(sorted_by_angle, key=lambda pair: abs(atan2(0, 1) - atan2(*pair[0])))
+    )
+
+    # Slice the list so that asteroids directly above the centre location come
+    # first, and discard the direction information.
+    clockwise_order_from_above = [
+        queue
+        for direction, queue in sorted_by_angle[starting_index:]
+        + sorted_by_angle[:starting_index]
+    ]
+
+    return clockwise_order_from_above
+
+
+def destroy_asteroids_in_order(
+    laser: Location, asteroids: Iterable[Location]
+) -> Iterator[Location]:
+    clockwise_order_from_above = clockwise_asteroid_queues(laser, asteroids)
+    for queue in cycle(clockwise_order_from_above):
+        if not sum(len(q) for q in clockwise_order_from_above):
+            # Cycle will loop forever even if all its elements evaulate to
+            # false, so explicitly check if all asteroids are destroyed.
+            return
+        if queue:
+            # Closer asteroids are at the front of the queue,
+            # so popleft rather than just pop.
+            yield queue.popleft()
+
+
+def find_nth_asteroid_destroyed(
+    laser: Location, asteroids: Iterable[Location], n: int = 200
+) -> Location:
+    destroyed_gen = destroy_asteroids_in_order(laser, asteroids)
+    for number, destroyed_asteroid in enumerate(destroyed_gen, start=1):
+        if number == n:
+            return destroyed_asteroid
+    raise ValueError(f"Too few asteroids given to find number {n} destroyed.")
+
+
+def test_asteroid_destruction() -> None:
+    grid_string = """\
+.#..##.###...#######
+##.############..##.
+.#.######.########.#
+.###.#######.####.#.
+#####.##.#.##.###.##
+..#####..#.#########
+####################
+#.####....###.#.#.##
+##.#################
+#####.##.###..####..
+..######..##.#######
+####.##.####...##..#
+.#####..#.######.###
+##...#.##########...
+#.##########.#######
+.####.#.###.###.#.##
+....##.##.###..#####
+.#.#.###########.###
+#.#.#.#####.####.###
+###.##.####.##.#..##
+"""
+    grid = parse_grid(grid_string)
+    laser = find_best_spot_for_monitoring_station(grid).asteroid
+    asteroids = grid.asteroids - {laser}
+    destruction_order = list(destroy_asteroids_in_order(laser, asteroids))
+    expected = (
+        (1, (11, 12)),
+        (2, (12, 1)),
+        (3, (12, 2)),
+        (10, (12, 8)),
+        (20, (16, 0)),
+        (50, (16, 9)),
+        (100, (10, 16)),
+        (199, (9, 6)),
+        (200, (8, 2)),
+        (201, (10, 9)),
+        (299, (11, 1)),
+    )
+    filtered = [destruction_order[n - 1] for n, _ in expected]
+    locations = [Location(*coords) for _, coords in expected]
+    assert filtered == locations
+
+
+def main(grid: ParsedGrid) -> Tuple[int, int]:
+    best_spot = find_best_spot_for_monitoring_station(grid)
+    asteroid_200 = find_nth_asteroid_destroyed(
+        best_spot.asteroid, grid.asteroids - {best_spot.asteroid}
+    )
+    asteroid_200_coord = asteroid_200.across * 100 + asteroid_200.down
+    return best_spot.asteroids_visible, asteroid_200_coord
 
 
 if __name__ == "__main__":
     grid = parse_grid(aoc_common.load_puzzle_input(DAY))
-    part_one_solution = main(grid)
+    part_one_solution, part_two_solution = main(grid)
     assert (
         part_one_solution == 276
     ), "Part one solution doesn't match known-correct answer."
+    assert (
+        part_two_solution == 1321
+    ), "Part two solution doesn't match known-correct answer."
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
     )
