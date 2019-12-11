@@ -1,12 +1,12 @@
 """Day 11: Space Police"""
 from __future__ import annotations
-from enum import Enum
-from typing import DefaultDict, List, Tuple, NamedTuple
+
 from collections import defaultdict
-from itertools import groupby
+from enum import Enum
+from typing import DefaultDict, NamedTuple
 
 import aoc_common
-from intcode import IntCode, parse_program, HaltExecution
+from intcode import HaltExecution, IntCode, parse_program
 
 DAY = 11
 
