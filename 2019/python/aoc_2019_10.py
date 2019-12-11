@@ -267,7 +267,7 @@ def test_asteroid_destruction() -> None:
     )
     filtered = [destruction_order[n - 1] for n, _ in expected]
     locations = [Location(*coords) for _, coords in expected]
-    assert filtered == locations
+    assert locations == filtered
 
 
 def main(grid: ParsedGrid) -> Tuple[int, int]:
