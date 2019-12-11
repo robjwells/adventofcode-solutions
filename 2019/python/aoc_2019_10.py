@@ -53,7 +53,7 @@ def reduce_direction(unsimplified: Direction) -> Direction:
 
 
 def relative_distance(source: Location, dest: Location) -> Direction:
-    return Direction(source.across - dest.across, source.down - dest.down)
+    return Direction(dest.across - source.across, dest.down - source.down)
 
 
 def basic_direction(source: Location, dest: Location) -> Direction:
@@ -182,35 +182,22 @@ def clockwise_asteroid_queues(
         direction = basic_direction(centre, asteroid)
         direction_queues[direction].append(asteroid)
 
-    # Sort the queues by the angle of their basic direction (the key) so that
-    # the asteroids can be iterated in a circular manner.
-    # atan2's y parameter is given as -down as our coordinate system is
-    # vertically inverted (+1 moves downwards, -1 moves upwards).
+    # Sort the queues (not their elements) by the angle of their basic
+    # direction (the key) so that the asteroids can be iterated in a
+    # circular manner.
+    #
+    # We deliberately misprovide the arguments to atan2 to adjust the ray
+    # from which the angle is calculated, and the direction in which it is
+    # calculated.
+    #
+    # `-atan2(x, y)` would usually give an anti-clockwise order from
+    # the 6 position, but as our vertical axis is inverted it gives the
+    # equivalent of `-atan2(x, -y)`, which is a clockwise traversal
+    # from the 12 position.
     sorted_by_angle = sorted(
-        direction_queues.items(),
-        key=lambda item: atan2(-item[0].down, item[0].across),
-        reverse=True,
+        direction_queues.items(), key=lambda item: -atan2(item[0].across, item[0].down)
     )
-
-    # Find the index of the basic location that is closest to directly above the
-    # centre location, noting that "above" in our co-ordinate system is negative
-    # (so the inverse of what you’d normally find with atan2).
-    starting_index = sorted_by_angle.index(
-        min(
-            sorted_by_angle,
-            key=lambda pair: abs(atan2(-1, 0) - atan2(-pair[0].down, pair[0].across)),
-        )
-    )
-
-    # Slice the list so that asteroids directly above the centre location come
-    # first, and discard the direction information.
-    clockwise_order_from_above = [
-        queue
-        for direction, queue in sorted_by_angle[starting_index:]
-        + sorted_by_angle[:starting_index]
-    ]
-
-    return clockwise_order_from_above
+    return [queue for direction, queue in sorted_by_angle]
 
 
 def destroy_asteroids_in_order(
