@@ -1,9 +1,10 @@
 """Day 12: The N-Body Problem"""
 from __future__ import annotations
 
-from itertools import combinations
-from typing import List, NamedTuple, Tuple
 import re
+from functools import reduce
+from itertools import combinations
+from typing import Iterable, List, NamedTuple, Tuple
 
 import aoc_common
 
@@ -26,26 +27,46 @@ class Velocity(NamedTuple):
         return cls(0, 0, 0)
 
     @staticmethod
-    def _single_delta(a: int, b: int) -> Tuple[int, int]:
+    def combine(velocities: Iterable[Velocity]) -> Velocity:
+        def reducer(total: Velocity, current: Velocity) -> Velocity:
+            return Velocity(*[t + c for t, c in zip(total, current)])
+
+        return reduce(reducer, velocities)
+
+
+class Moon(NamedTuple):
+    position: Position
+    velocity: Velocity
+
+    @staticmethod
+    def compute_gravity(a: Moon, b: Moon) -> Tuple[Velocity, Velocity]:
+        velocity_deltas = [
+            Moon._single_gravity_delta(a, b) for a, b in zip(a.position, b.position)
+        ]
+        deltas_by_moon = [Velocity(*deltas) for deltas in zip(*velocity_deltas)]
+        new_velocities = map(
+            Velocity.combine, zip([a.velocity, b.velocity], deltas_by_moon)
+        )
+        return (next(new_velocities), next(new_velocities))
+
+    @staticmethod
+    def _single_gravity_delta(a: int, b: int) -> Tuple[int, int]:
         if a < b:
             return (1, -1)
         elif b < a:
             return (-1, 1)
         return (0, 0)
 
-    @classmethod
-    def compute_deltas(cls, a: Velocity, b: Velocity) -> Tuple[Velocity, Velocity]:
-        deltas = [
-            Velocity._single_delta(a_component, b_component)
-            for a_component, b_component in zip(a, b)
-        ]
-        velocity_deltas = [Velocity(x, y, z) for x, y, z in zip(*deltas)]
-        return velocity_deltas[0], velocity_deltas[1]
+    def update_velocity(self, v: Velocity) -> Moon:
+        return Moon(
+            position=self.position, velocity=Velocity.combine([self.velocity, v])
+        )
 
-
-class Moon(NamedTuple):
-    position: Position
-    velocity: Velocity
+    def apply_velocity(self) -> Moon:
+        return Moon(
+            Position(*[p + v for p, v in zip(self.position, self.velocity)]),
+            self.velocity,
+        )
 
 
 # def simulate_step(moons=List[Moon]) -> List[Moon]:
