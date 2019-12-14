@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Dict, List, Tuple
 
 import aoc_common
-from intcode import IntCode, parse_program
+from intcode import HaltExecution, IntCode, parse_program
 
 DAY = 13
 
@@ -18,20 +18,44 @@ class Tile(Enum):
     Ball = 4
 
 
-def render_screen(computer: IntCode) -> Dict[Tuple[int, int], Tile]:
+class JoystickPosition(Enum):
+    Neutral = 0
+    Left = -1
+    Right = 1
+
+
+class ArcadeCabinet:
     screen: Dict[Tuple[int, int], Tile] = {}
-    while computer.has_output():
-        x, y = computer.read_output(), computer.read_output()
-        tile = Tile(computer.read_output())
-        screen[(x, y)] = tile
-    return screen
+    computer: IntCode
+
+    def __init__(self, program: List[int], play_for_free: bool = False):
+        program = program[:]
+        if play_for_free:
+            program[0] = 2
+        self.computer = IntCode(program)
+
+    def play_until_game_over(self) -> None:
+        try:
+            while True:
+                self.computer.step()
+                self.render_screen()
+        except HaltExecution:
+            pass
+
+    def render_screen(self) -> None:
+        while len(self.computer.output_queue) >= 3:
+            x, y = self.computer.read_output(), self.computer.read_output()
+            tile = Tile(self.computer.read_output())
+            self.screen[(x, y)] = tile
 
 
 def main(program: List[int]) -> int:
-    computer = IntCode(program)
-    computer.run_until_halt()
-    screen = render_screen(computer)
-    num_blocks = len([pos for pos, tile in screen.items() if tile is Tile.Block])
+    cabinet = ArcadeCabinet(program)
+    cabinet.play_until_game_over()
+    num_blocks = len(
+        [pos for pos, tile in cabinet.screen.items() if tile is Tile.Block]
+    )
+
     return num_blocks
 
 
