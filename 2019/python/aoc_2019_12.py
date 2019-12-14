@@ -32,10 +32,12 @@ class Velocity(NamedTuple):
 
     @staticmethod
     def combine(velocities: Iterable[Velocity]) -> Velocity:
-        def reducer(total: Velocity, current: Velocity) -> Velocity:
-            return Velocity(*[t + c for t, c in zip(total, current)])
-
-        return reduce(reducer, velocities)
+        acc = list(velocities[0])
+        for v in velocities[1:]:
+            acc[0] += v[0]
+            acc[1] += v[1]
+            acc[2] += v[2]
+        return Velocity(*acc)
 
 
 class Moon(NamedTuple):
