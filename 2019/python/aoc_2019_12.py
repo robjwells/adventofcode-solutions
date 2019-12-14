@@ -156,16 +156,10 @@ def parse_input(input_string: str) -> List[Moon]:
     ],
 )
 def test_total_energy(input_data: str, steps: int, expected_energy: int) -> None:
-    sample = """\
-<x=-1, y=0, z=2>
-<x=2, y=-10, z=-7>
-<x=4, y=-8, z=8>
-<x=3, y=5, z=-1>
-"""
-    moons = parse_input(sample)
-    after_10_steps = simulate_n_steps(moons, 10)
-    system_total_energy = sum(moon.total_energy for moon in after_10_steps)
-    assert system_total_energy == 179
+    moons = parse_input(input_data)
+    after_n_steps = simulate_n_steps(moons, steps)
+    system_total_energy = sum(moon.total_energy for moon in after_n_steps)
+    assert system_total_energy == expected_energy
 
 
 @pytest.mark.parametrize(
