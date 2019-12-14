@@ -5,6 +5,7 @@ import re
 from collections import defaultdict
 from functools import reduce
 from itertools import combinations
+from math import gcd
 from typing import DefaultDict, Iterable, List, NamedTuple, Tuple
 
 import pytest
@@ -186,6 +187,31 @@ def test_total_energy(input_data: str, steps: int, expected_energy: int) -> None
 def test_calculate_cycle_time(input_data: str, cycle_time: int) -> None:
     moons = parse_input(input_data)
     assert calculate_cycle_time(moons) == cycle_time
+
+
+def least_common_multiple(*numbers: int) -> int:
+    """Find the least common multiple of several numbers."""
+
+    def lcm(a: int, b: int) -> int:
+        """Find the least common multiple of two numbers."""
+        return a * (b // gcd(a, b))
+
+    return reduce(lcm, numbers)
+
+
+@pytest.mark.parametrize(
+    "numbers,expected",
+    [
+        ((3, 5), 15),
+        ((4, 5), 20),
+        ((6, 10), 30),
+        ((4, 6, 8), 24),
+        ((2, 7, 13), 182),
+        ((5, 11, 13), 715),
+    ],
+)
+def test_least_common_multiple(numbers: Iterable[int], expected: int) -> None:
+    assert least_common_multiple(*numbers) == expected
 
 
 def calculate_cycle_time(moons: List[Moon]) -> int:
