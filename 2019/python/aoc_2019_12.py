@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
     assert (
         part_two_solution == 320_380_285_873_116
-    ), "Part one solution doesn't match known-correct answer."
+    ), "Part two solution doesn't match known-correct answer."
 
     aoc_common.report_solution(
         puzzle_title=__doc__,
