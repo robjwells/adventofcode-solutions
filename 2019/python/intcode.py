@@ -56,7 +56,7 @@ class IntCode:
         program: List[int],
         input_action: Optional[Callable[[int], None]] = None,
         output_action: Optional[Callable[[], int]] = None,
-        description: str = "<Some Amp>",
+        description: Optional[str] = None,
     ):
         self._PC = 0
         self._PC_modified = False
@@ -65,7 +65,10 @@ class IntCode:
         self.input_queue = deque()
         self.output_queue = deque()
 
-        self._description = description
+        if description is not None:
+            self._description = description
+        else:
+            self._description = f"<IntCode @ {id(self)}"
 
         if input_action is not None:
             self.input_action = input_action  # type: ignore
