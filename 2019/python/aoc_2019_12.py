@@ -219,9 +219,7 @@ def find_cycle_length(
     moons: List[Moon], extractor: Callable[[Moon], Tuple[int, int, int]]
 ) -> int:
     initial_state = sorted(map(extractor, moons))
-    # It's not clear to me why we start counting at 2 rather than 1,
-    # but it produces the expected results.
-    for cycle in count(start=2):
+    for cycle in count(start=1):
         moons = simulate_step(moons)
         state = sorted(map(extractor, moons))
         if state == initial_state:
@@ -232,13 +230,13 @@ def find_cycle_length(
 def calculate_cycle_time(moons: List[Moon]) -> int:
     """Find the system cycle time by taking the LCM of the axis cycle times."""
     x_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.x, m.position.x)
+        moons, lambda m: (m.moon_id, m.position.x, m.velocity.x)
     )
     y_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.y, m.position.y)
+        moons, lambda m: (m.moon_id, m.position.y, m.velocity.y)
     )
     z_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.z, m.position.z)
+        moons, lambda m: (m.moon_id, m.position.z, m.velocity.z)
     )
     print(x_cycle, y_cycle, z_cycle)
     lcm = least_common_multiple(x_cycle, y_cycle, z_cycle)
