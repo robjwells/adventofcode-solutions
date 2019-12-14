@@ -120,14 +120,20 @@ def main(moons: List[Moon]) -> int:
     return all_moons_total_energy
 
 
+def test_total_energy() -> None:
+    sample = """\
+<x=-1, y=0, z=2>
+<x=2, y=-10, z=-7>
+<x=4, y=-8, z=8>
+<x=3, y=5, z=-1>
+"""
+    moons = parse_input(sample)
+    after_10_steps = simulate_n_steps(moons, 10)
+    system_total_energy = sum(moon.total_energy for moon in after_10_steps)
+    assert system_total_energy == 179
+
+
 if __name__ == "__main__":
-    #     sample = """\
-    # <x=-1, y=0, z=2>
-    # <x=2, y=-10, z=-7>
-    # <x=4, y=-8, z=8>
-    # <x=3, y=5, z=-1>
-    # """
-    # moons = parse_input(sample)
 
     moons = parse_input(aoc_common.load_puzzle_input(DAY))
     part_one_solution = main(moons)
