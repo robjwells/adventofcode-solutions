@@ -69,7 +69,11 @@ class Moon(NamedTuple):
     def apply_velocity(self) -> Moon:
         return Moon(
             moon_id=self.moon_id,
-            position=Position(*[p + v for p, v in zip(self.position, self.velocity)]),
+            position=Position(
+                self.position[0] + self.velocity[0],
+                self.position[1] + self.velocity[1],
+                self.position[2] + self.velocity[2],
+            ),
             velocity=self.velocity,
         )
 
