@@ -160,6 +160,41 @@ def test_total_energy(input_data: str, steps: int, expected_energy: int) -> None
     assert system_total_energy == 179
 
 
+@pytest.mark.parametrize(
+    "input_data,cycle_time",
+    [
+        (
+            (
+                "<x=-1, y=0, z=2>\n"
+                "<x=2, y=-10, z=-7>\n"
+                "<x=4, y=-8, z=8>\n"
+                "<x=3, y=5, z=-1>"
+            ),
+            2772,
+        ),
+        (
+            (
+                "<x=-8, y=-10, z=0>\n"
+                "<x=5, y=5, z=10>\n"
+                "<x=2, y=-7, z=3>\n"
+                "<x=9, y=-8, z=-3>"
+            ),
+            4_686_774_924,
+        ),
+    ],
+)
+def test_calculate_cycle_time(input_data: str, cycle_time: int) -> None:
+    moons = parse_input(input_data)
+    assert calculate_cycle_time(moons) == cycle_time
+
+
+def calculate_cycle_time(moons: List[Moon]) -> int:
+    # We're going to work on the assumption (from the Reddit thread)
+    # that each axis cycles independently, then we take the least
+    # common multiple of the axis cycling times.
+    pass
+
+
 if __name__ == "__main__":
 
     moons = parse_input(aoc_common.load_puzzle_input(DAY))
