@@ -24,11 +24,11 @@ class JoystickPosition(Enum):
     Right = 1
 
 
-Screen = Dict[Tuple[int, int], Tile]
+State = Dict[Tuple[int, int], Tile]
 
 
 class ArcadeCabinet:
-    screen: Screen = {}
+    state: State = {}
     score: int = 0
     computer: IntCode
     playable: bool = False
@@ -51,13 +51,13 @@ class ArcadeCabinet:
             while True:
                 if self.playable:
                     self.computer.input_queue.clear()  # Ensure input doesn't build up
-                    self.computer.pass_input(self.bot_move(self.screen).value)
+                    self.computer.pass_input(self.bot_move(self.state).value)
                 self.computer.step()
-                self.render_screen()
+                self.update_state()
         except HaltExecution:
             pass
 
-    def render_screen(self) -> None:
+    def update_state(self) -> None:
         while len(self.computer.output_queue) >= 3:
             self.frame += 1
             x, y = self.computer.read_output(), self.computer.read_output()
@@ -65,13 +65,13 @@ class ArcadeCabinet:
                 self.score = self.computer.read_output()
             else:
                 tile = Tile(self.computer.read_output())
-                self.screen[(x, y)] = tile
+                self.state[(x, y)] = tile
 
-    def bot_move(self, screen: Screen) -> JoystickPosition:
+    def bot_move(self, state: State) -> JoystickPosition:
         try:
-            paddle_position = next(pos for pos in screen if screen[pos] is Tile.Paddle)
+            paddle_position = next(pos for pos in state if state[pos] is Tile.Paddle)
             paddle_x_position = paddle_position[0]
-            ball_x_position = next(pos[0] for pos in screen if screen[pos] is Tile.Ball)
+            ball_x_position = next(pos[0] for pos in state if state[pos] is Tile.Ball)
             if ball_x_position < paddle_x_position:
                 return JoystickPosition.Left
             elif ball_x_position > paddle_x_position:
@@ -88,7 +88,7 @@ def main(program: List[int]) -> Tuple[int, int]:
     cabinet = ArcadeCabinet(program)
     cabinet.play_until_game_over()
     num_blocks = len(
-        [pos for pos, tile in cabinet.screen.items() if tile is Tile.Block]
+        [pos for pos, tile in cabinet.state.items() if tile is Tile.Block]
     )
 
     cabinet = ArcadeCabinet(program, enable_play=True)
