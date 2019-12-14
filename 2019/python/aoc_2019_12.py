@@ -15,29 +15,17 @@ import aoc_common
 DAY = 12
 
 
-class Position(NamedTuple):
-    x: int
-    y: int
-    z: int
+Position = Tuple[int, int, int]
+Velocity = Tuple[int, int, int]
 
 
-class Velocity(NamedTuple):
-    x: int
-    y: int
-    z: int
-
-    @classmethod
-    def static(cls) -> Velocity:
-        return cls(0, 0, 0)
-
-    @staticmethod
-    def combine(velocities: Iterable[Velocity]) -> Velocity:
-        acc = list(velocities[0])
-        for v in velocities[1:]:
-            acc[0] += v[0]
-            acc[1] += v[1]
-            acc[2] += v[2]
-        return Velocity(*acc)
+def combine_velocities(vs: List[Velocity]) -> Velocity:
+    acc = list(vs[0])
+    for v in vs[1:]:
+        acc[0] += v[0]
+        acc[1] += v[1]
+        acc[2] += v[2]
+    return tuple(acc)  # type: ignore
 
 
 class Moon(NamedTuple):
@@ -48,10 +36,14 @@ class Moon(NamedTuple):
     @staticmethod
     def compute_gravity(a: Moon, b: Moon) -> Tuple[Velocity, Velocity]:
         velocity_deltas = [
-            Moon._single_gravity_delta(a, b) for a, b in zip(a.position, b.position)
+            Moon._single_gravity_delta(a.position[0], b.position[0]),
+            Moon._single_gravity_delta(a.position[1], b.position[1]),
+            Moon._single_gravity_delta(a.position[2], b.position[2]),
         ]
-        deltas_by_moon = [Velocity(*deltas) for deltas in zip(*velocity_deltas)]
-        return deltas_by_moon[0], deltas_by_moon[1]
+        return (
+            (velocity_deltas[0][0], velocity_deltas[1][0], velocity_deltas[2][0]),
+            (velocity_deltas[0][1], velocity_deltas[1][1], velocity_deltas[2][1]),
+        )
 
     @staticmethod
     def _single_gravity_delta(a: int, b: int) -> Tuple[int, int]:
@@ -65,17 +57,17 @@ class Moon(NamedTuple):
         return Moon(
             moon_id=self.moon_id,
             position=self.position,
-            velocity=Velocity(
+            velocity=(
                 self.velocity[0] + v[0],
                 self.velocity[1] + v[1],
                 self.velocity[2] + v[2],
-            )
+            ),
         )
 
     def apply_velocity(self) -> Moon:
         return Moon(
             moon_id=self.moon_id,
-            position=Position(
+            position=(
                 self.position[0] + self.velocity[0],
                 self.position[1] + self.velocity[1],
                 self.position[2] + self.velocity[2],
@@ -109,7 +101,7 @@ def simulate_step(moons: List[Moon]) -> List[Moon]:
         gravity_changes[moon_a].append(a_delta)
         gravity_changes[moon_b].append(b_delta)
     return [
-        moon.update_velocity(Velocity.combine(deltas)).apply_velocity()
+        moon.update_velocity(combine_velocities(deltas)).apply_velocity()
         for moon, deltas in gravity_changes.items()
     ]
 
@@ -124,10 +116,12 @@ def parse_input(input_string: str) -> List[Moon]:
     moon_regex = re.compile(r"<x=(-?\d+), y=(-?\d+), z=(-?\d+)>")
     matches = [moon_regex.match(line) for line in input_string.splitlines()]
     assert all(
-        match is not None for match in matches
+        [match is not None for match in matches]
     ), "Could not parse all input lines."
-    positions = [Position(*map(int, m.groups())) for m in matches]  # type: ignore
-    return [Moon(n, pos, Velocity.static()) for n, pos in zip(count(), positions)]
+    positions = [tuple(map(int, m.groups())) for m in matches]  # type: ignore
+    return [
+        Moon(n, pos, (0, 0, 0)) for n, pos in zip(count(), positions)
+    ]  # type: ignore
 
 
 @pytest.mark.parametrize(
@@ -230,13 +224,13 @@ def find_cycle_length(
 def calculate_cycle_time(moons: List[Moon]) -> int:
     """Find the system cycle time by taking the LCM of the axis cycle times."""
     x_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.x, m.velocity.x)
+        moons, lambda m: (m.moon_id, m.position[0], m.velocity[0])
     )
     y_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.y, m.velocity.y)
+        moons, lambda m: (m.moon_id, m.position[1], m.velocity[1])
     )
     z_cycle = find_cycle_length(
-        moons, lambda m: (m.moon_id, m.position.z, m.velocity.z)
+        moons, lambda m: (m.moon_id, m.position[2], m.velocity[2])
     )
     print(x_cycle, y_cycle, z_cycle)
     lcm = least_common_multiple(x_cycle, y_cycle, z_cycle)
