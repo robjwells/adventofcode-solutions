@@ -7,6 +7,8 @@ from functools import reduce
 from itertools import combinations
 from typing import DefaultDict, Iterable, List, NamedTuple, Tuple
 
+import pytest
+
 import aoc_common
 
 DAY = 12
@@ -120,7 +122,32 @@ def main(moons: List[Moon]) -> int:
     return all_moons_total_energy
 
 
-def test_total_energy() -> None:
+@pytest.mark.parametrize(
+    "input_data,steps,expected_energy",
+    [
+        (
+            (
+                "<x=-1, y=0, z=2>\n"
+                "<x=2, y=-10, z=-7>\n"
+                "<x=4, y=-8, z=8>\n"
+                "<x=3, y=5, z=-1>"
+            ),
+            10,
+            179,
+        ),
+        (
+            (
+                "<x=-8, y=-10, z=0>\n"
+                "<x=5, y=5, z=10>\n"
+                "<x=2, y=-7, z=3>\n"
+                "<x=9, y=-8, z=-3>"
+            ),
+            100,
+            1940,
+        ),
+    ],
+)
+def test_total_energy(input_data: str, steps: int, expected_energy: int) -> None:
     sample = """\
 <x=-1, y=0, z=2>
 <x=2, y=-10, z=-7>
