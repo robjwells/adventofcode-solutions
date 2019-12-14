@@ -65,7 +65,11 @@ class Moon(NamedTuple):
         return Moon(
             moon_id=self.moon_id,
             position=self.position,
-            velocity=Velocity.combine([self.velocity, v]),
+            velocity=Velocity(
+                self.velocity[0] + v[0],
+                self.velocity[1] + v[1],
+                self.velocity[2] + v[2],
+            )
         )
 
     def apply_velocity(self) -> Moon:
