@@ -4,9 +4,9 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from functools import reduce
-from itertools import combinations
+from itertools import combinations, count
 from math import gcd
-from typing import DefaultDict, Iterable, List, NamedTuple, Tuple
+from typing import Callable, DefaultDict, Iterable, List, NamedTuple, Tuple
 
 import pytest
 
@@ -39,6 +39,7 @@ class Velocity(NamedTuple):
 
 
 class Moon(NamedTuple):
+    moon_id: int
     position: Position
     velocity: Velocity
 
@@ -60,13 +61,16 @@ class Moon(NamedTuple):
 
     def update_velocity(self, v: Velocity) -> Moon:
         return Moon(
-            position=self.position, velocity=Velocity.combine([self.velocity, v])
+            moon_id=self.moon_id,
+            position=self.position,
+            velocity=Velocity.combine([self.velocity, v]),
         )
 
     def apply_velocity(self) -> Moon:
         return Moon(
-            Position(*[p + v for p, v in zip(self.position, self.velocity)]),
-            self.velocity,
+            moon_id=self.moon_id,
+            position=Position(*[p + v for p, v in zip(self.position, self.velocity)]),
+            velocity=self.velocity,
         )
 
     @property
@@ -113,14 +117,7 @@ def parse_input(input_string: str) -> List[Moon]:
         match is not None for match in matches
     ), "Could not parse all input lines."
     positions = [Position(*map(int, m.groups())) for m in matches]  # type: ignore
-    return [Moon(pos, Velocity.static()) for pos in positions]
-
-
-def main(moons: List[Moon]) -> int:
-    after_1000_steps = simulate_n_steps(moons, 1000)
-    all_moons_total_energy = sum(moon.total_energy for moon in after_1000_steps)
-
-    return all_moons_total_energy
+    return [Moon(n, pos, Velocity.static()) for n, pos in zip(count(), positions)]
 
 
 @pytest.mark.parametrize(
@@ -214,22 +211,59 @@ def test_least_common_multiple(numbers: Iterable[int], expected: int) -> None:
     assert least_common_multiple(*numbers) == expected
 
 
+def find_cycle_length(
+    moons: List[Moon], extractor: Callable[[Moon], Tuple[int, int, int]]
+) -> int:
+    initial_state = sorted(map(extractor, moons))
+    # It's not clear to me why we start counting at 2 rather than 1,
+    # but it produces the expected results.
+    for cycle in count(start=2):
+        moons = simulate_step(moons)
+        state = sorted(map(extractor, moons))
+        if state == initial_state:
+            return cycle
+    assert False, "Unreachable"  # Make mypy happy
+
+
 def calculate_cycle_time(moons: List[Moon]) -> int:
-    # We're going to work on the assumption (from the Reddit thread)
-    # that each axis cycles independently, then we take the least
-    # common multiple of the axis cycling times.
-    pass
+    """Find the system cycle time by taking the LCM of the axis cycle times."""
+    x_cycle = find_cycle_length(
+        moons, lambda m: (m.moon_id, m.position.x, m.position.x)
+    )
+    y_cycle = find_cycle_length(
+        moons, lambda m: (m.moon_id, m.position.y, m.position.y)
+    )
+    z_cycle = find_cycle_length(
+        moons, lambda m: (m.moon_id, m.position.z, m.position.z)
+    )
+    print(x_cycle, y_cycle, z_cycle)
+    lcm = least_common_multiple(x_cycle, y_cycle, z_cycle)
+    return lcm
+
+
+def main(moons: List[Moon]) -> Tuple[int, int]:
+    after_1000_steps = simulate_n_steps(moons, 1000)
+    all_moons_total_energy = sum(moon.total_energy for moon in after_1000_steps)
+
+    system_cycle_time = calculate_cycle_time(moons)
+
+    return all_moons_total_energy, system_cycle_time
 
 
 if __name__ == "__main__":
-
     moons = parse_input(aoc_common.load_puzzle_input(DAY))
-    part_one_solution = main(moons)
+    part_one_solution, part_two_solution = main(moons)
 
     assert (
         part_one_solution == 12053
     ), "Part one solution doesn't match known-correct answer."
 
+    assert (
+        part_two_solution == 320_380_285_873_116
+    ), "Part one solution doesn't match known-correct answer."
+
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
     )
