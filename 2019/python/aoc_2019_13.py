@@ -65,31 +65,28 @@ class ArcadeCabinet:
                 self.score = self.computer.read_output()
             else:
                 tile = Tile(self.computer.read_output())
+                if tile is Tile.Paddle:
+                    self.paddle_position = (x, y)
+                elif tile is Tile.Ball:
+                    self.ball_position = (x, y)
                 self.state[(x, y)] = tile
 
     def bot_move(self, state: State) -> JoystickPosition:
-        try:
-            paddle_position = next(pos for pos in state if state[pos] is Tile.Paddle)
-            paddle_x_position = paddle_position[0]
-            ball_x_position = next(pos[0] for pos in state if state[pos] is Tile.Ball)
-            if ball_x_position < paddle_x_position:
-                return JoystickPosition.Left
-            elif ball_x_position > paddle_x_position:
-                return JoystickPosition.Right
-            else:
-                return JoystickPosition.Neutral
-        except StopIteration:
-            # Paddle or Ball not rendered yet, or one has disappeared
-            assert self.move_counter == 0, "Ball or Paddle disappeared"
+        if self.ball_position is None or self.paddle_position is None:
+            return JoystickPosition.Neutral
+
+        if self.ball_position[0] < self.paddle_position[0]:
+            return JoystickPosition.Left
+        elif self.ball_position[0] > self.paddle_position[0]:
+            return JoystickPosition.Right
+        else:
             return JoystickPosition.Neutral
 
 
 def main(program: List[int]) -> Tuple[int, int]:
     cabinet = ArcadeCabinet(program)
     cabinet.play_until_game_over()
-    num_blocks = len(
-        [pos for pos, tile in cabinet.state.items() if tile is Tile.Block]
-    )
+    num_blocks = len([pos for pos, tile in cabinet.state.items() if tile is Tile.Block])
 
     cabinet = ArcadeCabinet(program, enable_play=True)
     try:
