@@ -32,10 +32,6 @@ class ArcadeCabinet:
     score: int = 0
     computer: IntCode
     playable: bool = False
-    frame: int = 0
-    move_counter: int = 0
-    blocks_seen: int = -1
-
     paddle_position: Optional[Tuple[int, int]] = None
     ball_position: Optional[Tuple[int, int]] = None
 
@@ -59,17 +55,16 @@ class ArcadeCabinet:
 
     def update_state(self) -> None:
         while len(self.computer.output_queue) >= 3:
-            self.frame += 1
-            x, y = self.computer.read_output(), self.computer.read_output()
-            if (x, y) == (-1, 0):
+            pos = self.computer.read_output(), self.computer.read_output()
+            if pos == (-1, 0):
                 self.score = self.computer.read_output()
             else:
                 tile = Tile(self.computer.read_output())
                 if tile is Tile.Paddle:
-                    self.paddle_position = (x, y)
+                    self.paddle_position = pos
                 elif tile is Tile.Ball:
-                    self.ball_position = (x, y)
-                self.state[(x, y)] = tile
+                    self.ball_position = pos
+                self.state[pos] = tile
 
     def bot_move(self, state: State) -> JoystickPosition:
         if self.ball_position is None or self.paddle_position is None:
@@ -89,10 +84,7 @@ def main(program: List[int]) -> Tuple[int, int]:
     num_blocks = len([pos for pos, tile in cabinet.state.items() if tile is Tile.Block])
 
     cabinet = ArcadeCabinet(program, enable_play=True)
-    try:
-        cabinet.play_until_game_over()
-    except AssertionError:
-        pass
+    cabinet.play_until_game_over()
     score = cabinet.score
 
     return num_blocks, score
