@@ -222,6 +222,24 @@ class IntCode:
     def _output(self, value: int) -> None:
         self.output_action(value)  # type: ignore
 
+    def clone(self) -> IntCode:
+        new = IntCode(
+            program=[],
+            input_action=self.input_action,
+            output_action=self.output_action,
+            description=self._description,
+        )
+        new._memory = self._memory[:]
+        new._PC = self._PC
+        new._PC_modified = self._PC_modified
+        new._PC_pending_increment = self._PC_pending_increment
+        new._relative_addressing_base = self._relative_addressing_base
+        new._has_halted = self._has_halted
+        new.input_queue = deque(self.input_queue)
+        new.output_queue = deque(self.output_queue)
+
+        return new
+
 
 def parse_program(puzzle_input: str) -> List[int]:
     return [int(x) for x in puzzle_input.split(",")]
