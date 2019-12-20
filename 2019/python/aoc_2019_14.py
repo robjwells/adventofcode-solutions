@@ -48,11 +48,11 @@ def topo_dfs(graph: Dict[str, List[str]]) -> Deque[str]:
     return L
 
 
-def main(reaction_gen: Iterator[Reaction]) -> None:
-    reactions = list(reaction_gen)
+def main(reaction: List[Reaction]) -> None:
     names = {chem[0]: [r[0] for r in reqs] for chem, reqs in reactions}
     ts = topo_dfs(names)
 
 
 if __name__ == "__main__":
-    main(parse_input(aoc_common.load_puzzle_input(DAY)))
+    reactions = list(parse_input(aoc_common.load_puzzle_input(DAY)))
+    main(reactions)
