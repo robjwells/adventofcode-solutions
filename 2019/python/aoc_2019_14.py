@@ -24,7 +24,7 @@ def parse_input(data: str) -> Iterator[Reaction]:
         yield (output, reqs)
 
 
-def topo_dfs(graph: Dict[str, List[str]]) -> Deque[str]:
+def topological_sort(graph: Dict[str, List[str]]) -> Deque[str]:
     L: Deque[str] = deque()
     unvisited = set(graph)
     temporary_mark: Set[str] = set()
@@ -50,7 +50,7 @@ def topo_dfs(graph: Dict[str, List[str]]) -> Deque[str]:
 
 def main(reaction: List[Reaction]) -> None:
     names = {chem[0]: [r[0] for r in reqs] for chem, reqs in reactions}
-    ts = topo_dfs(names)
+    ts = topological_sort(names)
 
 
 if __name__ == "__main__":
