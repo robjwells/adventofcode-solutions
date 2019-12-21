@@ -78,7 +78,34 @@ class Droid:
         return Droid(computer=self.computer.clone(), position=self.position)
 
 
-def main(program: List[int]) -> None:
+def bfs_distance(maze: Dict[Position, Tile], start: Position = (0, 0)) -> int:
+    queue = deque()
+    deltas = [(0, 1), (0, -1), (-1, 0), (1, 0)]
+    queue.extend(
+        [
+            (1, pos)
+            for pos in deltas
+            if maze.get(pos, Tile.Wall) in (Tile.Blank, Tile.Target)
+        ]
+    )
+    visited = {(0, 0)}
+    while queue:
+        distance, position = queue.popleft()
+        visited.add(position)
+        if maze[position] is Tile.Target:
+            return distance
+        x, y = position
+        for dx, dy in deltas:
+            nx, ny = x + dx, y + dy
+            if (nx, ny) not in visited and maze.get((nx, ny), Tile.Wall) in (
+                Tile.Blank,
+                Tile.Target,
+            ):
+                queue.append((distance + 1, (nx, ny)))
+    return -1
+
+
+def explore_maze(program: List[int]) -> Dict[Position, Tile]:
     visited: Dict[Position, Tile] = {}
     queue: Deque[Droid] = deque()
 
@@ -105,6 +132,15 @@ def main(program: List[int]) -> None:
             if result in (MoveResult.Moved, MoveResult.FoundTarget):
                 queue.appendleft(new)
         # render_maze_frame(visited, step)
+
+    return visited
+
+
+def main(program: List[int]) -> int:
+    maze = explore_maze(program)
+    distance_to_system = bfs_distance(maze)
+
+    return distance_to_system
 
 
 # def render_maze_frame(maze: Dict[Position, Tile], suffix: int) -> None:
@@ -141,4 +177,12 @@ def main(program: List[int]) -> None:
 
 
 if __name__ == "__main__":
-    main(parse_program(aoc_common.load_puzzle_input(DAY)))
+    part_one_solution = main(parse_program(aoc_common.load_puzzle_input(DAY)))
+
+    assert (
+        part_one_solution == 244
+    ), "Part one solution doesn't match known-correct answer."
+
+    aoc_common.report_solution(
+        puzzle_title=__doc__, part_one_solution=part_one_solution
+    )
