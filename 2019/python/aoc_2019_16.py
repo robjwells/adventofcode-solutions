@@ -56,16 +56,26 @@ def repeat_fft(signal: List[int], phases: int) -> List[int]:
     return signal
 
 
-def rejoin_place_list(digits: List[int]) -> int:
-    rejoined = 0
-    for p10, digit in enumerate(reversed(digits)):
-        rejoined += digit * 10 ** p10
-    return rejoined
+@pytest.mark.parametrize(
+    "signal,phases,first_eight_string",
+    [
+        (12345678, 1, "48226158"),
+        (12345678, 2, "34040438"),
+        (12345678, 3, "03415518"),
+        (12345678, 4, "01029498"),
+        (80871224585914546619083218645595, 100, "24176176"),
+        (19617804207202209144916044189917, 100, "73745418"),
+        (69317163492948606335995924319873, 100, "52432133"),
+    ],
+)
+def test_fft(signal: int, phases: int, first_eight_string: str) -> None:
+    result_signal = repeat_fft(aoc_common.split_number_by_places(signal), phases)
+    assert "".join(map(str, result_signal[:8])) == first_eight_string
 
 
-def main(signal: List[int]) -> int:
+def main(signal: List[int]) -> str:
     after_100_phases = repeat_fft(signal, phases=100)
-    after_100_first_eight = rejoin_place_list(after_100_phases[:8])
+    after_100_first_eight = "".join(map(str, after_100_phases[:8]))
     return after_100_first_eight
 
 
@@ -74,7 +84,7 @@ if __name__ == "__main__":
     part_one_solution = main(signal)
 
     assert (
-        part_one_solution == 76795888
+        part_one_solution == "76795888"
     ), "Part one solution doesn't match known-correct answer."
 
     aoc_common.report_solution(
