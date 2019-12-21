@@ -3,12 +3,25 @@ from __future__ import annotations
 
 from collections import deque
 from enum import Enum
+# from pathlib import Path
 from typing import Deque, Dict, List, Tuple
 
 import aoc_common
 from intcode import IntCode, parse_program
 
+# import png
+# from PIL import Image
+
+
 DAY = 15
+
+# X_RANGE = range(-21, 20)
+# Y_RANGE = range(-19, 22)
+
+# BLACK = (0, 0, 0)
+# WHITE = (255, 255, 255)
+# BLUE = (0, 0, 255)
+# RED = (255, 0, 0)
 
 Position = Tuple[int, int]
 
@@ -73,7 +86,9 @@ def main(program: List[int]) -> None:
     queue.append(origin)
     visited[origin.position] = Tile.Origin
 
+    # step = 0
     while queue:
+        # step += 1
         current = queue.pop()
         for direction in Direction:
             new = current.clone()
@@ -88,7 +103,41 @@ def main(program: List[int]) -> None:
                 visited[new.position] = Tile.Target
 
             if result in (MoveResult.Moved, MoveResult.FoundTarget):
-                queue.append(new)
+                queue.appendleft(new)
+        # render_maze_frame(visited, step)
+
+
+# def render_maze_frame(maze: Dict[Position, Tile], suffix: int) -> None:
+#     image = []
+#     writer = png.Writer(len(X_RANGE), len(Y_RANGE), greyscale=False)
+
+#     for y in Y_RANGE:
+#         row = []
+#         for x in X_RANGE:
+#             tile = maze.get((x, y), Tile.Wall)
+#             if tile is Tile.Blank:
+#                 row.extend(WHITE)
+#             elif tile is Tile.Wall:
+#                 row.extend(BLACK)
+#             elif tile is Tile.Origin:
+#                 row.extend(BLUE)
+#             elif tile is Tile.Target:
+#                 row.extend(RED)
+#             else:
+#                 assert False, "Should be unreachable"
+#         image.append(row)
+
+#     subdir = Path("aoc_2019_15_maze")
+#     subdir.mkdir(exist_ok=True)
+#     filename = f"{subdir}/{suffix:03}.png-s"
+#     with open(filename, "wb") as png_file:
+#         writer.write(png_file, image)
+
+#     saved = Image.open(filename)
+#     resized = saved.resize((saved.size[0] * 12, saved.size[1] * 12))
+#     resized.save(filename[:-2])
+
+#     Path(filename).unlink()
 
 
 if __name__ == "__main__":
