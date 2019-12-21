@@ -17,23 +17,28 @@ def pattern(place: int = 1) -> Iterator[int]:
     return chain(output[1:], cycle(output))
 
 
-@pytest.mark.parametrize("place,first_eight_digits", [
-    (1, [1, 0, -1, 0, 1, 0, -1, 0]),
-    (2, [0, 1, 1, 0, 0, -1, -1, 0]),
-    (3, [0, 0, 1, 1, 1, 0, 0, 0]),
-    (4, [0, 0, 0, 1, 1, 1, 1, 0]),
-    (5, [0, 0, 0, 0, 1, 1, 1, 1]),
-    (6, [0, 0, 0, 0, 0, 1, 1, 1]),
-    (7, [0, 0, 0, 0, 0, 0, 1, 1]),
-    (8, [0, 0, 0, 0, 0, 0, 0, 1]),
-])
+@pytest.mark.parametrize(
+    "place,first_eight_digits",
+    [
+        (1, [1, 0, -1, 0, 1, 0, -1, 0]),
+        (2, [0, 1, 1, 0, 0, -1, -1, 0]),
+        (3, [0, 0, 1, 1, 1, 0, 0, 0]),
+        (4, [0, 0, 0, 1, 1, 1, 1, 0]),
+        (5, [0, 0, 0, 0, 1, 1, 1, 1]),
+        (6, [0, 0, 0, 0, 0, 1, 1, 1]),
+        (7, [0, 0, 0, 0, 0, 0, 1, 1]),
+        (8, [0, 0, 0, 0, 0, 0, 0, 1]),
+    ],
+)
 def test_pattern(place: int, first_eight_digits: List[int]) -> None:
-    assert [p for p, _ in zip(pattern(place), range(8))] == first_eight_digits
+    assert all(
+        expected == actual
+        for expected, actual in zip(first_eight_digits, pattern(place))
+    )
 
 
 def main(signal: List[int]) -> None:
     pass
-
 
 
 if __name__ == "__main__":
