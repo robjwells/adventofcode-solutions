@@ -3,15 +3,14 @@ from __future__ import annotations
 
 from collections import deque
 from enum import Enum
-# from pathlib import Path
 from typing import Deque, Dict, List, Tuple
 
 import aoc_common
 from intcode import IntCode, parse_program
 
+# from pathlib import Path
 # import png
 # from PIL import Image
-
 
 DAY = 15
 
@@ -74,34 +73,30 @@ class Droid:
             self.computer.step()
         return MoveResult(self.computer.read_output())
 
-    def clone(self):
+    def clone(self) -> Droid:
         return Droid(computer=self.computer.clone(), position=self.position)
 
 
-def bfs_distance(maze: Dict[Position, Tile], start: Position = (0, 0)) -> int:
-    queue = deque()
+def bfs_distance(
+    maze: Dict[Position, Tile], target: Position, start: Position = (0, 0)
+) -> int:
     deltas = [(0, 1), (0, -1), (-1, 0), (1, 0)]
-    queue.extend(
-        [
-            (1, pos)
-            for pos in deltas
-            if maze.get(pos, Tile.Wall) in (Tile.Blank, Tile.Target)
-        ]
+    queue: Deque[Tuple[int, Position]] = deque(
+        (1, (start[0] + pos[0], start[1] + pos[1]))
+        for pos in deltas
+        if maze.get(pos, Tile.Wall) is not Tile.Wall
     )
-    visited = {(0, 0)}
+    visited = {start}
     while queue:
         distance, position = queue.popleft()
         visited.add(position)
-        if maze[position] is Tile.Target:
+        if position == target:
             return distance
         x, y = position
         for dx, dy in deltas:
-            nx, ny = x + dx, y + dy
-            if (nx, ny) not in visited and maze.get((nx, ny), Tile.Wall) in (
-                Tile.Blank,
-                Tile.Target,
-            ):
-                queue.append((distance + 1, (nx, ny)))
+            new_pos = (x + dx, y + dy)
+            if new_pos not in visited and maze.get(new_pos, Tile.Wall) is not Tile.Wall:
+                queue.append((distance + 1, new_pos))
     return -1
 
 
@@ -138,7 +133,8 @@ def explore_maze(program: List[int]) -> Dict[Position, Tile]:
 
 def main(program: List[int]) -> int:
     maze = explore_maze(program)
-    distance_to_system = bfs_distance(maze)
+    system_position = next(p for p, t in maze.items() if t is Tile.Target)
+    distance_to_system = bfs_distance(maze, target=system_position)
 
     return distance_to_system
 
