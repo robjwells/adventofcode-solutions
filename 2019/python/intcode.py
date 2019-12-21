@@ -225,8 +225,6 @@ class IntCode:
     def clone(self) -> IntCode:
         new = IntCode(
             program=[],
-            input_action=self.input_action,
-            output_action=self.output_action,
             description=self._description,
         )
         new._memory = self._memory[:]
@@ -236,7 +234,9 @@ class IntCode:
         new._relative_addressing_base = self._relative_addressing_base
         new._has_halted = self._has_halted
         new.input_queue = deque(self.input_queue)
+        new.input_action = new.input_queue.popleft
         new.output_queue = deque(self.output_queue)
+        new.output_action = new.output_queue.append
 
         return new
 
