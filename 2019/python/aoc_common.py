@@ -18,7 +18,7 @@ def load_puzzle_input(day: int) -> str:
 def report_solution(
     *,
     puzzle_title: str,
-    part_one_solution: int,
+    part_one_solution: Union[int, str],
     part_two_solution: Optional[Union[int, str]] = None,
 ) -> None:
     print(puzzle_title)
