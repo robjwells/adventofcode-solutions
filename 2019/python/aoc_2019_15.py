@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from collections import deque
 from enum import Enum
-from typing import Deque, Dict, List, Tuple
+from typing import Deque, Dict, Iterator, List, Tuple
 
 import aoc_common
 from intcode import IntCode, parse_program
@@ -131,12 +131,23 @@ def explore_maze(program: List[int]) -> Dict[Position, Tile]:
     return visited
 
 
-def main(program: List[int]) -> int:
+def oxygen_propagation_times(
+    maze: Dict[Position, Tile], system_position: Position
+) -> Iterator[int]:
+    open_locations = (pos for pos, tile in maze.items() if tile is not Tile.Wall)
+    # Inefficient but not too slow with my input.
+    for location in open_locations:
+        yield bfs_distance(maze, target=location, start=system_position)
+
+
+def main(program: List[int]) -> Tuple[int, int]:
     maze = explore_maze(program)
     system_position = next(p for p, t in maze.items() if t is Tile.Target)
     distance_to_system = bfs_distance(maze, target=system_position)
 
-    return distance_to_system
+    oxygen_fill_time = max(oxygen_propagation_times(maze, system_position))
+
+    return distance_to_system, oxygen_fill_time
 
 
 # def render_maze_frame(maze: Dict[Position, Tile], suffix: int) -> None:
@@ -173,12 +184,20 @@ def main(program: List[int]) -> int:
 
 
 if __name__ == "__main__":
-    part_one_solution = main(parse_program(aoc_common.load_puzzle_input(DAY)))
+    part_one_solution, part_two_solution = main(
+        parse_program(aoc_common.load_puzzle_input(DAY))
+    )
 
     assert (
         part_one_solution == 244
     ), "Part one solution doesn't match known-correct answer."
 
+    assert (
+        part_two_solution == 278
+    ), "Part one solution doesn't match known-correct answer."
+
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
     )
