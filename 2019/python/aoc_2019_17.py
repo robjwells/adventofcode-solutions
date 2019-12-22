@@ -104,6 +104,14 @@ def main(program: List[int]) -> Tuple[int, int]:
 if __name__ == "__main__":
     program = parse_program(aoc_common.load_puzzle_input(DAY))
     part_one_solution, part_two_solution = main(program)
+
+    assert (
+        part_one_solution == 6024
+    ), "Part one solution doesn't match known-correct answer."
+    assert (
+        part_two_solution == 897344
+    ), "Part two solution doesn't match known-correct answer."
+
     aoc_common.report_solution(
         puzzle_title=__doc__,
         part_one_solution=part_one_solution,
