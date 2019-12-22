@@ -37,12 +37,33 @@ def test_pattern(place: int, first_eight_digits: List[int]) -> None:
     )
 
 
-def fft(signal: List[int]) -> List[int]:
+def create_pattern_table(num_elements: int) -> List[List[int]]:
+    return [
+        [p for p, _ in zip(pattern(place), range(num_elements))]
+        for place in range(1, num_elements + 1)
+    ]
+
+
+def test_create_pattern_table() -> None:
+    expected = [
+        [1, 0, -1, 0, 1, 0, -1, 0],
+        [0, 1, 1, 0, 0, -1, -1, 0],
+        [0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 0],
+        [0, 0, 0, 0, 1, 1, 1, 1],
+        [0, 0, 0, 0, 0, 1, 1, 1],
+        [0, 0, 0, 0, 0, 0, 1, 1],
+        [0, 0, 0, 0, 0, 0, 0, 1],
+    ]
+    assert create_pattern_table(8) == expected
+
+
+def fft(signal: List[int], pattern_table: List[List[int]]) -> List[int]:
     output: List[int] = []
-    for place in range(1, len(signal) + 1):
+    for single_pattern in pattern_table:
         sum_of_products = sum(
             signal_digit * pattern_digit
-            for signal_digit, pattern_digit in zip(signal, pattern(place))
+            for signal_digit, pattern_digit in zip(signal, single_pattern)
             if pattern_digit
         )
         new_digit = abs(sum_of_products) % 10
@@ -51,8 +72,9 @@ def fft(signal: List[int]) -> List[int]:
 
 
 def repeat_fft(signal: List[int], phases: int) -> List[int]:
+    pattern_table = create_pattern_table(len(signal))
     for _ in range(phases):
-        signal = fft(signal)
+        signal = fft(signal, pattern_table)
     return signal
 
 
