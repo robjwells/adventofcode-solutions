@@ -108,6 +108,21 @@ def cheating_fft(signal: List[int], offset: int) -> List[int]:
     return relevant
 
 
+@pytest.mark.parametrize(
+    "signal_string,first_eight",
+    [
+        ("03036732577212944063491565474664", "84462026"),
+        ("02935109699940807407585447034323", "78725270"),
+        ("03081770884921959731165446850517", "53553731"),
+    ],
+)
+def test_cheating_fft(signal_string: str, first_eight: str) -> None:
+    real_signal = (list(map(int, signal_string))) * 10_000
+    offset = int("".join(map(str, real_signal[:7])))
+    result = cheating_fft(real_signal, offset)
+    assert "".join(map(str, result[:8])) == first_eight
+
+
 def main(signal: List[int]) -> Tuple[str, str]:
     after_100_phases = repeat_fft(signal, phases=100)
     after_100_first_eight = "".join(map(str, after_100_phases[:8]))
