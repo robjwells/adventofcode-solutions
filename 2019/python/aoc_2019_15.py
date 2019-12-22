@@ -142,15 +142,6 @@ def explore_maze(program: List[int]) -> Dict[Position, Tile]:
 def oxygen_propagation_times(
     maze: Dict[Position, Tile], system_position: Position
 ) -> Iterator[int]:
-    open_locations = (pos for pos, tile in maze.items() if tile is not Tile.Wall)
-    # Inefficient but not too slow with my input.
-    for location in open_locations:
-        yield bfs_distance(maze, target=location, start=system_position)
-
-
-def oxygen_propagation_times_bfs(
-    maze: Dict[Position, Tile], system_position: Position
-) -> Iterator[int]:
     visited: Set[Position] = set()
     queue: Deque[Tuple[Position, int]] = deque()
     queue.append((system_position, 0))
@@ -177,8 +168,7 @@ def main(program: List[int]) -> Tuple[int, int]:
     system_position = next(p for p, t in maze.items() if t is Tile.Target)
     distance_to_system = bfs_distance(maze, target=system_position)
 
-    # oxygen_fill_time = max(oxygen_propagation_times(maze, system_position))
-    oxygen_fill_time = max(oxygen_propagation_times_bfs(maze, system_position))
+    oxygen_fill_time = max(oxygen_propagation_times(maze, system_position))
 
     return distance_to_system, oxygen_fill_time
 
