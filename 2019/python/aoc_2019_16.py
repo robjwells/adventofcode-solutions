@@ -60,14 +60,17 @@ def test_create_pattern_table() -> None:
 
 def fft(signal: List[int], pattern_table: List[List[int]]) -> List[int]:
     output: List[int] = []
-    for single_pattern in pattern_table:
-        sum_of_products = sum(
-            signal_digit * pattern_digit
-            for signal_digit, pattern_digit in zip(signal, single_pattern)
-            if pattern_digit
-        )
-        new_digit = abs(sum_of_products) % 10
-        output.append(new_digit)
+    midpoint = len(signal) // 2
+    for index, single_pattern in enumerate(pattern_table):
+        if index < midpoint:
+            total = sum(
+                signal_digit * pattern_digit
+                for signal_digit, pattern_digit in zip(signal, single_pattern)
+                if pattern_digit
+            )
+        else:
+            total = sum(signal[index:])
+        output.append(abs(total) % 10)
     return output
 
 
