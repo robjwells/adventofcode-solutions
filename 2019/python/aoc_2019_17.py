@@ -1,39 +1,12 @@
 """Day 17: Set and Forget"""
 
-from enum import Enum
-from itertools import chain, islice, repeat
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from itertools import chain
+from typing import Dict, Iterable, List, Optional, Tuple
 
 import aoc_common
 from intcode import IntCode, parse_program
 
 DAY = 17
-
-
-SCAFFOLD = "#"
-EMPTY = "."
-ROBOT_CHARS = ("^", "v", "<", ">")
-
-SENTINEL = object()
-
-
-def chunked(iterable: Iterable[Any], count: int, *, fill: Any = SENTINEL):
-    """Yield count-long chunks from iterable.
-
-    If the length of the iterable is not a multiple of count,
-    the final chunk will be short, unless `fill` is provided
-    as a keyword argument, in which case the final chunk will
-    be filled with the given value.
-    """
-    iterator = iter(iterable)
-    should_fill = fill is not SENTINEL
-    while True:
-        chunk = list(islice(iterator, count))
-        if not chunk:
-            return
-        if len(chunk) < count and should_fill:
-            chunk += repeat(fill, count - len(chunk))
-        yield chunk
 
 
 def create_grid(ascii: Iterable[int]) -> Dict[Tuple[int, int], str]:
@@ -71,7 +44,7 @@ def print_grid(
         intersections = []
     line_length = max(x for x, y in grid) + 1
 
-    for line in chunked(grid.items(), count=line_length):
+    for line in aoc_common.chunked(grid.items(), count=line_length):
         for pos, tile in line:
             if pos in intersections:
                 print("O", end="")
@@ -92,14 +65,7 @@ def parse_ascii_instructions(text: str) -> List[int]:
     return output
 
 
-def main(program: List[int]) -> Tuple[int, int]:
-    computer = IntCode(program)
-    computer.run_until_halt()
-    grid = create_grid(computer.output_queue)
-    intersections = find_intersections(grid)
-    print_grid(grid, intersections)
-    alignment_params = [x * y for x, y in intersections]
-
+def move_vacuum_robot(program: List[int]) -> int:
     instructions = {
         routine_name: parse_ascii_instructions(instructions)
         for routine_name, instructions in [
@@ -108,24 +74,29 @@ def main(program: List[int]) -> Tuple[int, int]:
             ("C", "L 12 R 6 L 8"),
         ]
     }
-
     main_program = parse_ascii_instructions("A B A B C C B A B C")
+    decline_video = parse_ascii_instructions("n\n")
 
     patched = program
     patched[0] = 2
     robot = IntCode(program)
-    for ascii_code in chain(main_program, *instructions.values()):
+    for ascii_code in chain(main_program, *instructions.values(), decline_video):
         robot.pass_input(ascii_code)
-    robot.pass_input(ord("n"))
-    robot.pass_input(10)
     robot.run_until_halt()
-    for codepoint in robot.output_queue:
-        if codepoint < 128:
-            print(chr(codepoint), end="")
-        else:
-            print(codepoint)
+    return robot.output_queue.pop()
 
-    space_dust = robot.output_queue.pop()
+
+def main(program: List[int]) -> Tuple[int, int]:
+    # Part one
+    cameras = IntCode(program)
+    cameras.run_until_halt()
+    grid = create_grid(cameras.output_queue)
+    intersections = find_intersections(grid)
+    # print_grid(grid, intersections)
+    alignment_params = [x * y for x, y in intersections]
+
+    # Part two
+    space_dust = move_vacuum_robot(program)
 
     return sum(alignment_params), space_dust
 
