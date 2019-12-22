@@ -71,8 +71,7 @@ def fft(signal: List[int], pattern_table: List[List[int]]) -> List[int]:
     # After the pattern row with the index `midpoint`, the elements in the
     # pattern row from `midpoint` are all 1 and can just be summed.
     output.extend(
-        abs(sum(signal[index:])) % 10
-        for index in range(midpoint, len(signal))
+        abs(sum(signal[index:])) % 10 for index in range(midpoint, len(signal))
     )
     return output
 
