@@ -1,6 +1,7 @@
 """Day 16: Flawed Frequency Transmission"""
 from itertools import chain, cycle
 from typing import Iterator, List, Tuple
+from itertools import accumulate
 
 import aoc_common
 
@@ -103,11 +104,8 @@ def test_fft(signal: int, phases: int, first_eight_string: str) -> None:
 def cheating_fft(signal: List[int], offset: int) -> List[int]:
     relevant = signal[offset:]
     for phase in range(100):
-        r_cumulative = [relevant[-1]]
-        for cidx, element in enumerate(relevant[-2::-1]):
-            r_cumulative.append(element + r_cumulative[cidx])
-        cumulative = list(reversed(r_cumulative))
-        relevant = [total % 10 for total in cumulative]
+        r_cumulative = accumulate(reversed(relevant))
+        relevant = [total % 10 for total in reversed(list(r_cumulative))]
     return relevant
 
 
