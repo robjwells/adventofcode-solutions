@@ -3,24 +3,29 @@ from __future__ import annotations
 
 from collections import deque
 from enum import Enum
-from typing import Deque, Dict, Iterator, List, Tuple
+from pathlib import Path
+from typing import Deque, Dict, Iterator, List, Set, Tuple
+
+import png
+from PIL import Image
 
 import aoc_common
 from intcode import IntCode, parse_program
 
-# from pathlib import Path
-# import png
-# from PIL import Image
-
 DAY = 15
 
-# X_RANGE = range(-21, 20)
-# Y_RANGE = range(-19, 22)
+VISUALISE = False
 
-# BLACK = (0, 0, 0)
-# WHITE = (255, 255, 255)
-# BLUE = (0, 0, 255)
-# RED = (255, 0, 0)
+X_RANGE = range(-21, 20)
+Y_RANGE = range(-19, 22)
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+FRAME = 0
 
 Position = Tuple[int, int]
 
@@ -30,6 +35,7 @@ class Tile(Enum):
     Blank = 1
     Target = 2
     Origin = -1
+    Oxygen = -2
 
 
 class MoveResult(Enum):
@@ -108,25 +114,27 @@ def explore_maze(program: List[int]) -> Dict[Position, Tile]:
     queue.append(origin)
     visited[origin.position] = Tile.Origin
 
-    # step = 0
     while queue:
-        # step += 1
-        current = queue.pop()
-        for direction in Direction:
-            new = current.clone()
-            result = new.move(direction)
-            if new.position in visited:
-                continue
-            if result is MoveResult.Moved:
-                visited[new.position] = Tile.Blank
-            elif result is MoveResult.HitWall:
-                visited[new.position] = Tile.Wall
-            elif result is MoveResult.FoundTarget:
-                visited[new.position] = Tile.Target
+        buffer = []
+        while queue:
+            current = queue.pop()
+            for direction in Direction:
+                new = current.clone()
+                result = new.move(direction)
+                if new.position in visited:
+                    continue
+                if result is MoveResult.Moved:
+                    visited[new.position] = Tile.Blank
+                elif result is MoveResult.HitWall:
+                    visited[new.position] = Tile.Wall
+                elif result is MoveResult.FoundTarget:
+                    visited[new.position] = Tile.Target
 
-            if result in (MoveResult.Moved, MoveResult.FoundTarget):
-                queue.appendleft(new)
-        # render_maze_frame(visited, step)
+                if result in (MoveResult.Moved, MoveResult.FoundTarget):
+                    buffer.append(new)
+        queue.extend(buffer)
+        if VISUALISE:
+            render_maze_frame(visited)
 
     return visited
 
@@ -140,47 +148,77 @@ def oxygen_propagation_times(
         yield bfs_distance(maze, target=location, start=system_position)
 
 
+def oxygen_propagation_times_bfs(
+    maze: Dict[Position, Tile], system_position: Position
+) -> Iterator[int]:
+    visited: Set[Position] = set()
+    queue: Deque[Tuple[Position, int]] = deque()
+    queue.append((system_position, 0))
+
+    while queue:
+        buffer = []
+        while queue:
+            current_position, current_distance = queue.pop()
+            maze[current_position] = Tile.Oxygen
+            visited.add(current_position)
+            yield current_distance
+
+            for direction in Direction:
+                new_position = Direction.new_position(current_position, direction)
+                if new_position not in visited and maze[new_position] is not Tile.Wall:
+                    buffer.append((new_position, current_distance + 1))
+        queue.extend(buffer)
+        if VISUALISE:
+            render_maze_frame(maze)
+
+
 def main(program: List[int]) -> Tuple[int, int]:
     maze = explore_maze(program)
     system_position = next(p for p, t in maze.items() if t is Tile.Target)
     distance_to_system = bfs_distance(maze, target=system_position)
 
-    oxygen_fill_time = max(oxygen_propagation_times(maze, system_position))
+    # oxygen_fill_time = max(oxygen_propagation_times(maze, system_position))
+    oxygen_fill_time = max(oxygen_propagation_times_bfs(maze, system_position))
 
     return distance_to_system, oxygen_fill_time
 
 
-# def render_maze_frame(maze: Dict[Position, Tile], suffix: int) -> None:
-#     image = []
-#     writer = png.Writer(len(X_RANGE), len(Y_RANGE), greyscale=False)
+def render_maze_frame(maze: Dict[Position, Tile]) -> None:
+    global FRAME
 
-#     for y in Y_RANGE:
-#         row = []
-#         for x in X_RANGE:
-#             tile = maze.get((x, y), Tile.Wall)
-#             if tile is Tile.Blank:
-#                 row.extend(WHITE)
-#             elif tile is Tile.Wall:
-#                 row.extend(BLACK)
-#             elif tile is Tile.Origin:
-#                 row.extend(BLUE)
-#             elif tile is Tile.Target:
-#                 row.extend(RED)
-#             else:
-#                 assert False, "Should be unreachable"
-#         image.append(row)
+    image = []
+    writer = png.Writer(len(X_RANGE), len(Y_RANGE), greyscale=False)
 
-#     subdir = Path("aoc_2019_15_maze")
-#     subdir.mkdir(exist_ok=True)
-#     filename = f"{subdir}/{suffix:03}.png-s"
-#     with open(filename, "wb") as png_file:
-#         writer.write(png_file, image)
+    for y in Y_RANGE:
+        row: List[int] = []
+        for x in X_RANGE:
+            tile = maze.get((x, y), Tile.Wall)
+            if tile is Tile.Blank:
+                row.extend(WHITE)
+            elif tile is Tile.Wall:
+                row.extend(BLACK)
+            elif tile is Tile.Origin:
+                row.extend(BLUE)
+            elif tile is Tile.Target:
+                row.extend(RED)
+            elif tile is Tile.Oxygen:
+                row.extend(GREEN)
+            else:
+                assert False, "Should be unreachable"
+        image.append(row)
 
-#     saved = Image.open(filename)
-#     resized = saved.resize((saved.size[0] * 12, saved.size[1] * 12))
-#     resized.save(filename[:-2])
+    subdir = Path("aoc_2019_15_maze")
+    subdir.mkdir(exist_ok=True)
+    filename = f"{subdir}/{FRAME:03}.png-s"
+    FRAME += 1
+    with open(filename, "wb") as png_file:
+        writer.write(png_file, image)
 
-#     Path(filename).unlink()
+    saved = Image.open(filename)
+    resized = saved.resize((saved.size[0] * 12, saved.size[1] * 12))
+    resized.save(filename[:-2])
+
+    Path(filename).unlink()
 
 
 if __name__ == "__main__":
