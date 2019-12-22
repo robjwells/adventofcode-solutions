@@ -1,11 +1,10 @@
 """Day 16: Flawed Frequency Transmission"""
-from itertools import chain, cycle
+from itertools import accumulate, chain, cycle
 from typing import Iterator, List, Tuple
-from itertools import accumulate
-
-import aoc_common
 
 import pytest
+
+import aoc_common
 
 DAY = 16
 
