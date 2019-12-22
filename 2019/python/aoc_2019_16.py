@@ -1,6 +1,6 @@
 """Day 16: Flawed Frequency Transmission"""
 from itertools import chain, cycle
-from typing import Iterator, List
+from typing import Iterator, List, Tuple
 
 import aoc_common
 
@@ -100,20 +100,43 @@ def test_fft(signal: int, phases: int, first_eight_string: str) -> None:
     assert "".join(map(str, result_signal[:8])) == first_eight_string
 
 
-def main(signal: List[int]) -> str:
+def cheating_fft(signal: List[int], offset: int) -> List[int]:
+    relevant = signal[offset:]
+    for phase in range(100):
+        r_cumulative = [relevant[-1]]
+        for cidx, element in enumerate(relevant[-2::-1]):
+            r_cumulative.append(element + r_cumulative[cidx])
+        cumulative = list(reversed(r_cumulative))
+        relevant = [cumulative[index] % 10 for index in range(len(relevant))]
+    return relevant
+
+
+def main(signal: List[int]) -> Tuple[str, str]:
     after_100_phases = repeat_fft(signal, phases=100)
     after_100_first_eight = "".join(map(str, after_100_phases[:8]))
-    return after_100_first_eight
+
+    real_signal = signal * 10_000
+    offset = int("".join(map(str, signal[:7])))
+    real_after_100_phases = cheating_fft(real_signal, offset)
+    real_after_100_first_eight = "".join(map(str, real_after_100_phases[:8]))
+
+    return after_100_first_eight, real_after_100_first_eight
 
 
 if __name__ == "__main__":
     signal = aoc_common.split_number_by_places(int(aoc_common.load_puzzle_input(DAY)))
-    part_one_solution = main(signal)
+    part_one_solution, part_two_solution = main(signal)
 
     assert (
         part_one_solution == "76795888"
     ), "Part one solution doesn't match known-correct answer."
 
+    assert (
+        part_two_solution == "84024125"
+    ), "Part two solution doesn't match known-correct answer."
+
     aoc_common.report_solution(
-        puzzle_title=__doc__, part_one_solution=part_one_solution
+        puzzle_title=__doc__,
+        part_one_solution=part_one_solution,
+        part_two_solution=part_two_solution,
     )
