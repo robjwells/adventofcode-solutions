@@ -107,7 +107,7 @@ def cheating_fft(signal: List[int], offset: int) -> List[int]:
         for cidx, element in enumerate(relevant[-2::-1]):
             r_cumulative.append(element + r_cumulative[cidx])
         cumulative = list(reversed(r_cumulative))
-        relevant = [cumulative[index] % 10 for index in range(len(relevant))]
+        relevant = [total % 10 for total in cumulative]
     return relevant
 
 
