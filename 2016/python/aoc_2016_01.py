@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from aoc_common import load_puzzle_input, report_solution
 from dataclasses import dataclass
-from enum import auto, Enum
-from functools import reduce
-from typing import Iterator, List, Optional, Set, Tuple
+from enum import Enum, auto
+from itertools import accumulate, chain
+from typing import Iterable, List, Optional, Set
+
+from aoc_common import load_puzzle_input, report_solution
+
 
 @dataclass
 class Point:
@@ -31,113 +33,105 @@ class Point:
         return (self.x, self.y).__hash__()
 
 
+class Instruction(Enum):
+    TURN_LEFT = auto()
+    TURN_RIGHT = auto()
+    STEP_FORWARD = auto()
+
+    @classmethod
+    def parse(cls, s: str) -> Iterable[Instruction]:
+        if s[0] == "L":
+            yield cls.TURN_LEFT
+        elif s[0] == "R":
+            yield cls.TURN_RIGHT
+        else:
+            raise ValueError("Invalue turn direction, must be L or R.")
+
+        for _ in range(int(s[1:])):
+            yield cls.STEP_FORWARD
+
+
 class Direction(Enum):
     NORTH = Point(0, 1)
     EAST = Point(1, 0)
     SOUTH = Point(0, -1)
     WEST = Point(-1, 0)
 
-    def turn(self, turn: Turn) -> Direction:
-        if turn is Turn.LEFT:
-            if self is self.NORTH:
-                return self.WEST
-            if self is self.WEST:
-                return self.SOUTH
-            if self is self.SOUTH:
-                return self.EAST
-            if self is self.EAST:
-                return self.NORTH
-        if turn is Turn.RIGHT:
-            if self is self.NORTH:
-                return self.EAST
-            if self is self.EAST:
-                return self.SOUTH
-            if self is self.SOUTH:
-                return self.WEST
-            if self is self.WEST:
-                return self.NORTH
+    def turn(self, turn: Instruction) -> Direction:
+        if turn is Instruction.STEP_FORWARD:
+            raise ValueError("'turn' must be TURN_LEFT or TURN_RIGHT.")
+
+        if turn is Instruction.TURN_LEFT:
+            if self is Direction.NORTH:
+                return Direction.WEST
+            if self is Direction.WEST:
+                return Direction.SOUTH
+            if self is Direction.SOUTH:
+                return Direction.EAST
+            if self is Direction.EAST:
+                return Direction.NORTH
+
+        if turn is Instruction.TURN_RIGHT:
+            if self is Direction.NORTH:
+                return Direction.EAST
+            if self is Direction.EAST:
+                return Direction.SOUTH
+            if self is Direction.SOUTH:
+                return Direction.WEST
+            if self is Direction.WEST:
+                return Direction.NORTH
+
         raise Exception("Unreachable.")
-
-
-class Turn(Enum):
-    LEFT = auto()
-    RIGHT = auto()
-
-    @classmethod
-    def parse(cls, s: str) -> Turn:
-        if s == "L":
-            return cls.LEFT
-        if s == "R":
-            return cls.RIGHT
-        raise ValueError("Invalue turn direction, must be L or R.")
-
-
-@dataclass
-class Instruction:
-    turn: Turn
-    steps: int
-
-    def __iter__(self):
-        yield from (self.turn, self.steps)
 
 
 @dataclass
 class State:
     position: Point = Point()
     heading: Direction = Direction.NORTH
+    last_action: Optional[Instruction] = None
 
-    def move(self, instruction: Instruction) -> State:
-        new_heading = self.heading.turn(instruction.turn)
-        delta: Point = new_heading.value * instruction.steps
-        new_position = self.position + delta
-        return State(position=new_position, heading=new_heading)
+    def perform_instruction(self, instruction: Instruction) -> State:
+        if instruction is Instruction.STEP_FORWARD:
+            position = self.position + self.heading.value
+            heading = self.heading
+        else:
+            position = self.position
+            heading = self.heading.turn(instruction)
 
-
-class EarlyHaltingState:
-    position: Point = Point()
-    heading: Direction = Direction.NORTH
-    visited: Set[Point] = set()
-
-    def move(self, instruction: Instruction) -> Tuple[Optional[EarlyHaltingState], Optional[Point]]:
-        self.heading = self.heading.turn(instruction.turn)
-        for _ in range(instruction.steps):
-            self.position = self.position + self.heading.value
-            if self.position in self.visited:
-                return (None, self.position)
-            self.visited.add(self.position)
-        return (self, None)
+        return State(position, heading, instruction)
 
 
 def parse_instructions(strings: List[str]) -> List[Instruction]:
-    return [
-        Instruction(Turn.parse(string[0]), int(string[1:]))
-        for string in strings
-    ]
+    return list(chain(*[Instruction.parse(s) for s in strings]))
 
 
-def follow_all_instructions(instructions: List[Instruction]) -> Point:
-    return reduce(
-        lambda state, i: state.move(i),
-        instructions,
-        State()
-    ).position
+def follow_all_instructions(instructions: List[Instruction]) -> Iterable[Point]:
+    return (
+        state.position
+        for state in accumulate(
+            instructions, lambda state, i: state.perform_instruction(i), initial=State()
+        )
+        if state.last_action is Instruction.STEP_FORWARD
+    )
 
 
-def find_first_repeat_location(instructions: List[Instruction]) -> Point:
-    state = EarlyHaltingState()
-    for i in instructions:
-        state, repeat_location = state.move(i)
-        if repeat_location is not None:
-            return repeat_location
-    raise Exception("Unreachable.")
+def find_first_repeat_location(
+    all_positions: Iterable[Point], seen: Set[Point] = set()
+) -> Point:
+    if not all_positions:
+        raise ValueError("No repeated position found.")
+
+    first, *rest = all_positions
+    return first if first in seen else find_first_repeat_location(rest, seen | {first})
 
 
 if __name__ == "__main__":
     instructions = parse_instructions(load_puzzle_input(1).split(", "))
-    end_position = follow_all_instructions(instructions)
-    first_repeat = find_first_repeat_location(instructions)
+    all_positions = list(follow_all_instructions(instructions))
+    end_position = all_positions[-1]
+    first_repeat = find_first_repeat_location(all_positions)
     report_solution(
         puzzle_title="Day 1: No Time for a Taxicab",
         part_one_solution=end_position.manhattan_distance_from_origin,
-        part_two_solution=first_repeat.manhattan_distance_from_origin
+        part_two_solution=first_repeat.manhattan_distance_from_origin,
     )
