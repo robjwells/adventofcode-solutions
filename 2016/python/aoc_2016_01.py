@@ -61,25 +61,13 @@ class Direction(Enum):
         if turn is Instruction.STEP_FORWARD:
             raise ValueError("'turn' must be TURN_LEFT or TURN_RIGHT.")
 
-        if turn is Instruction.TURN_LEFT:
-            if self is Direction.NORTH:
-                return Direction.WEST
-            if self is Direction.WEST:
-                return Direction.SOUTH
-            if self is Direction.SOUTH:
-                return Direction.EAST
-            if self is Direction.EAST:
-                return Direction.NORTH
+        cw = [Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST]
+        acw = cw[::-1]
 
+        if turn is Instruction.TURN_LEFT:
+            return dict(zip(acw, acw[1:] + [acw[0]]))[self]
         if turn is Instruction.TURN_RIGHT:
-            if self is Direction.NORTH:
-                return Direction.EAST
-            if self is Direction.EAST:
-                return Direction.SOUTH
-            if self is Direction.SOUTH:
-                return Direction.WEST
-            if self is Direction.WEST:
-                return Direction.NORTH
+            return dict(zip(cw, cw[1:] + [cw[0]]))[self]
 
         raise Exception("Unreachable.")
 
