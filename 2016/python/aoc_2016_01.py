@@ -102,7 +102,7 @@ class State:
 
 
 def parse_instructions(strings: List[str]) -> List[Instruction]:
-    return list(chain(*[Instruction.parse(s) for s in strings]))
+    return list(chain.from_iterable(Instruction.parse(s) for s in strings))
 
 
 def follow_all_instructions(instructions: List[Instruction]) -> Iterable[Point]:
