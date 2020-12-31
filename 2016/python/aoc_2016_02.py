@@ -3,15 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
-from itertools import count
-from typing import List, NamedTuple, Tuple, cast
+from typing import Generic, List, NamedTuple, Optional, Tuple, cast
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc_common import T, load_puzzle_input, report_solution
 
 
 class Location(NamedTuple):
-    x: int
-    y: int
+    row: int
+    column: int
 
 
 class Direction(Tuple[int, int], Enum):
@@ -34,61 +33,100 @@ class Direction(Tuple[int, int], Enum):
 
 
 @dataclass
-class Grid2D:
-    grid: List[List[int]]
+class Grid2D(Generic[T]):
+    grid: List[List[T]]
     width: int
     height: int
     cursor_index: Location
 
     def __init__(
-        self, width: int, height: int, start_index: Location, fill_from: int = 1
-    ):
-        counter = count(start=fill_from)
-        self.grid = [[next(counter) for _ in range(width)] for _ in range(height)]
+        self, width: int, height: int, start_index: Location, grid: List[List[T]]
+    ) -> None:
+        self.grid = grid
         self.width = width
         self.height = height
         self.cursor_index = start_index
 
     @property
-    def cursor_digit(self) -> int:
+    def cursor_item(self) -> T:
         row, column = self.cursor_index
         return self.grid[row][column]
 
     def __str__(self) -> str:
-        return f"Cursor at: {self.cursor_index} ({self.cursor_digit})\t{self.grid}"
+        return f"Cursor at: {self.cursor_index} ({self.cursor_item})\t{self.grid}"
 
     def _new_location_is_valid(self, new_x: int, new_y: int) -> bool:
         return 0 <= new_x < self.width and 0 <= new_y < self.height
 
-    def move(self, direction: Direction) -> Grid2D:
-        dx, dy = cast(Tuple[int, int], direction.value)
-        nx, ny = self.cursor_index.x + dx, self.cursor_index.y + dy
-        if self._new_location_is_valid(nx, ny):
-            return Grid2D(self.width, self.height, Location(nx, ny))
+    def move(self, direction: Direction) -> Grid2D[T]:
+        drow, dcol = cast(Tuple[int, int], direction.value)
+        nrow, ncol = self.cursor_index.row + drow, self.cursor_index.column + dcol
+        if self._new_location_is_valid(nrow, ncol):
+            return type(self)(self.width, self.height, Location(nrow, ncol), self.grid)
         else:
             return self
+
+
+class SquareKeypad(Grid2D[int]):
+    def __init__(
+        self,
+        width: int = 3,
+        height: int = 3,
+        start_index: Location = Location(1, 1),
+        grid: List[List[int]] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+    ) -> None:
+        super().__init__(width, height, start_index, grid)
+
+
+class DiamondKeypad(Grid2D[Optional[str]]):
+    # fmt:off
+    _DIAMOND_GRID: List[List[Optional[str]]] = [
+        [None, None, "1", None, None],
+         [None, "2", "3", "4", None, None],
+          ["5", "6", "7", "8", "9"],
+         [None, "A", "B", "C", None],
+        [None, None, "D", None, None],
+    ]
+    # fmt:on
+
+    def __init__(
+        self,
+        width: int = 5,
+        height: int = 5,
+        start_index: Location = Location(2, 0),
+        grid: Optional[List[List[Optional[str]]]] = None,
+    ) -> None:
+        if grid is None:
+            grid = self._DIAMOND_GRID
+        super().__init__(width, height, start_index, grid)
+
+    def _new_location_is_valid(self, row: int, column: int) -> bool:
+        return (
+            super()._new_location_is_valid(row, column)
+            and self.grid[row][column] is not None
+        )
 
 
 def parse_instructions(string: str) -> List[List[Direction]]:
     return [[Direction.parse(c) for c in line] for line in string.splitlines()]
 
 
-def follow_all_instructions(instructions: List[List[Direction]]) -> List[Grid2D]:
-    return [
-        reduce(lambda grid, d: grid.move(d), group, Grid2D(3, 3, Location(1, 1)))
-        for group in instructions
-    ]
+def follow_all_instructions(
+    instructions: List[List[Direction]], grid: Grid2D[T]
+) -> List[Grid2D[T]]:
+    return [reduce(lambda grid, d: grid.move(d), group, grid) for group in instructions]
 
 
-def find_square_grid_code(instructions: List[List[Direction]]) -> str:
+def find_grid_code(instructions: List[List[Direction]], grid: Grid2D[T]) -> str:
     return "".join(
-        [str(grid.cursor_digit) for grid in follow_all_instructions(instructions)]
+        [str(grid.cursor_item) for grid in follow_all_instructions(instructions, grid)]
     )
 
 
 if __name__ == "__main__":
     instructions = parse_instructions(load_puzzle_input(day=2))
-    square_grid_code = find_square_grid_code(instructions)
     report_solution(
-        puzzle_title="Day 2: Bathroom Security", part_one_solution=square_grid_code
+        puzzle_title="Day 2: Bathroom Security",
+        part_one_solution=find_grid_code(instructions, SquareKeypad()),
+        part_two_solution=find_grid_code(instructions, DiamondKeypad()),
     )
