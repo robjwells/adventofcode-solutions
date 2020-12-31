@@ -1,21 +1,31 @@
 import hashlib
 from itertools import count, islice
-from typing import Dict, Iterator
+from typing import Dict, Iterator, Tuple
 
 from aoc_common import load_puzzle_input, report_solution
 
 
-def stream_md5_hash_digests(door_id: str, prefix: str = "00000") -> Iterator[str]:
+def stream_md5_hash_digests(door_id: str) -> Iterator[str]:
     for index in count():
-        hash = hashlib.new("md5")
-        hash.update(f"{door_id}{index}".encode())
-        digest = hash.hexdigest()
-        if digest.startswith(prefix):
-            yield hash.hexdigest()
+        h = hashlib.new("md5")
+        h.update(f"{door_id}{index}".encode())
+        yield h.hexdigest()
+
+
+def stream_digests_with_five_leading_zeroes(door_id: str) -> Iterator[str]:
+    for digest in stream_md5_hash_digests(door_id):
+        if digest.startswith("00000"):
+            yield digest
+
+
+def stream_digest_positions_and_characters(door_id: str) -> Iterator[Tuple[int, str]]:
+    for digest in stream_digests_with_five_leading_zeroes(door_id):
+        if digest[5] in "01234567":
+            yield (int(digest[5]), digest[6])
 
 
 def find_password_in_order(door_id: str) -> str:
-    digests = islice(stream_md5_hash_digests(door_id), 8)
+    digests = islice(stream_digests_with_five_leading_zeroes(door_id), 8)
     password = "".join(digest[5] for digest in digests)
     return password
 
@@ -27,15 +37,12 @@ def format_password(characters: Dict[int, str]) -> str:
 
 def find_password_by_position(door_id: str) -> str:
     found_characters: Dict[int, str] = {}
-    digests = stream_md5_hash_digests(door_id)
+    digests = stream_digest_positions_and_characters(door_id)
     while len(found_characters) < 8:
-        digest = next(digests)
-        pos_str = digest[5]
-        if pos_str.isdigit():
-            position = int(pos_str)
-            if 0 <= position <= 7 and position not in found_characters:
-                found_characters[position] = digest[6]
-                # print(format_password(found_characters))  # Fun!
+        position, character = next(digests)
+        if position not in found_characters:
+            found_characters[position] = character
+            # print(format_password(found_characters))  # Fun!
     return format_password(found_characters)
 
 
