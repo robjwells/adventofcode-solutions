@@ -27,7 +27,7 @@ class Room:
 
     @classmethod
     def from_string(cls, s: str) -> Optional[Room]:
-        if not (match := cls._room_regex.match(s.strip())):
+        if not (match := cls._room_regex.match(s)):
             return None
 
         name = match["name"]
