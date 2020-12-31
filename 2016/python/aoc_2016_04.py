@@ -15,7 +15,7 @@ class Room:
     checksum: str
 
     _room_regex = re.compile(
-        r"^(?P<name>[a-z-]+)(?P<sector>\d+)\[(?P<checksum>[a-z]+)\]$"
+        r"^(?P<name>[a-z-]+)-(?P<sector>\d+)\[(?P<checksum>[a-z]+)\]$"
     )
 
     @staticmethod
