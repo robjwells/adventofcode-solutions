@@ -37,7 +37,7 @@ class Room:
         if not cls._name_is_valid(name, checksum):
             return None
 
-        return Room(name, sector, checksum)
+        return cls(name, sector, checksum)
 
 
 if __name__ == "__main__":
