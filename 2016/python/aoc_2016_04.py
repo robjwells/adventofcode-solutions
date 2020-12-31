@@ -30,9 +30,8 @@ def shift_cypher(string: str, amount: int) -> str:
 def _shift(letter: str, amount: int) -> str:
     if letter == "-":
         return " "
-    start = ord(letter) - 96
-    real_shift = ((start + amount) % 26) or 26  # 'or 26' accounts for shifts to 'z'
-    return chr(96 + real_shift)
+    distance_from_a = (ord(letter) - ord("a") + amount) % 26
+    return chr(ord("a") + distance_from_a)
 
 
 @dataclass
