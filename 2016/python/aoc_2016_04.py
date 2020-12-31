@@ -24,7 +24,7 @@ def test_shift(string: str, amount: int, expected: str) -> None:
 
 
 def shift_cypher(string: str, amount: int) -> str:
-    return "".join([_shift(letter, amount) for letter in string])
+    return "".join(_shift(letter, amount) for letter in string)
 
 
 def _shift(letter: str, amount: int) -> str:
@@ -48,7 +48,7 @@ class Room:
     def _name_is_valid(name: str, checksum: str) -> bool:
         counter = Counter(name.replace("-", ""))
         top_five = sorted(counter.most_common(), key=lambda t: (-t[1], t[0]))[:5]
-        joined = "".join([letter for letter, count in top_five])
+        joined = "".join(letter for letter, count in top_five)
         return joined == checksum
 
     @classmethod
