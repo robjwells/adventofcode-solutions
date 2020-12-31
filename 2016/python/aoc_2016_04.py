@@ -7,6 +7,33 @@ from typing import Optional
 
 from aoc_common import load_puzzle_input, report_solution
 
+import pytest
+
+
+@pytest.mark.parametrize(
+    "string,amount,expected",
+    [
+        ("a", 1, "b"),
+        ("b", 1, "c"),
+        ("z", 1, "a"),
+        ("qzmt-zixmtkozy-ivhz", 343, "very encrypted name"),
+    ],
+)
+def test_shift(string: str, amount: int, expected: str) -> None:
+    assert shift_cypher(string, amount) == expected
+
+
+def shift_cypher(string: str, amount: int) -> str:
+    return "".join([_shift(letter, amount) for letter in string])
+
+
+def _shift(letter: str, amount: int) -> str:
+    if letter == "-":
+        return " "
+    start = ord(letter) - 96
+    real_shift = ((start + amount) % 26) or 26  # 'or 26' accounts for shifts to 'z'
+    return chr(96 + real_shift)
+
 
 @dataclass
 class Room:
@@ -39,6 +66,10 @@ class Room:
 
         return cls(name, sector, checksum)
 
+    @property
+    def decrypted_name(self) -> str:
+        return shift_cypher(self.encrypted_name, self.sector)
+
 
 if __name__ == "__main__":
     room_details = load_puzzle_input(day=4).splitlines()
@@ -46,7 +77,14 @@ if __name__ == "__main__":
         r for r in [Room.from_string(line) for line in room_details] if r is not None
     ]
     sum_of_sector_ids = sum(room.sector for room in valid_rooms)
+    northpole_room = next(
+        room
+        for room in valid_rooms
+        if room.decrypted_name == "northpole object storage"
+    )
+
     report_solution(
         puzzle_title="Day 4: Security Through Obscurity",
         part_one_solution=sum_of_sector_ids,
+        part_two_solution=northpole_room.sector,
     )
