@@ -51,7 +51,7 @@ class _T(Transformer[Instruction]):
         return Exchange(source=args[0], gets_low=args[1], gets_high=args[2])
 
 
-_parse = Lark(grammar, parser="lalr").parse
+_parse = Lark(grammar).parse
 _transform = _T().transform
 
 
