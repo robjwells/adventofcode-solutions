@@ -99,12 +99,15 @@ class Bot:
     def receive(self, chip: int) -> Bot:
         return Bot(self.name, self.chips.append(chip))
 
+    def _without_chip(self, chip: int) -> Bot:
+        return Bot(self.name, self.chips.remove(chip))
+
     @staticmethod
     def _give(giver: Bot, receiver: Bot, selector: Selector) -> ExchangeResult:
         chip = selector(giver.chips)
-        new_giver = Bot(giver.name, giver.chips.remove(chip))
-        new_receiver = receiver.receive(chip)
-        return ExchangeResult(giver=new_giver, receiver=new_receiver)
+        g = giver._without_chip(chip)
+        r = receiver.receive(chip)
+        return ExchangeResult(giver=g, receiver=r)
 
     def give_low(self, other: Bot) -> ExchangeResult:
         """Return the states of (self, other) after transferring the low-value chip."""
