@@ -119,19 +119,15 @@ class Bot:
 class State:
     current: PMap[str, Bot] = m()
     giver_history: PVector[Bot] = v()
-    unapplied_instructions: PVector[Instruction] = v()
+    failed_instructions: PVector[Instruction] = v()
 
     def _initialise(self, instruction: Initialise) -> State:
         name = instruction.receiver
         value = instruction.value
 
-        if name in self.current:
-            actor = self.current[name].receive(value)
-        else:
-            actor = Bot(name, v(value))
-
-        current = self.current.set(name, actor)
-        return State(current, self.giver_history, self.unapplied_instructions)
+        bot = self.current.get(name, Bot(name))
+        new_current = self.current.set(name, bot.receive(value))
+        return State(new_current, self.giver_history, self.failed_instructions)
 
     def _exchange(self, instruction: Exchange) -> State:
         giver = self.current[instruction.source]
@@ -149,7 +145,14 @@ class State:
         changes = {a.name: a for a in [giver, low_receiver, high_receiver]}
         new_current = self.current.update(changes)
 
-        return State(new_current, new_history, self.unapplied_instructions)
+        return State(new_current, new_history, self.failed_instructions)
+
+    def _with_failed_instruction(self, instruction: Instruction) -> State:
+        return State(
+            self.current,
+            self.giver_history,
+            self.failed_instructions.append(instruction),
+        )
 
     def process(self, instruction: Instruction) -> State:
         if isinstance(instruction, Initialise):
@@ -158,11 +161,7 @@ class State:
             try:
                 return self._exchange(instruction)
             except (KeyError, ValueError):
-                return State(
-                    self.current,
-                    self.giver_history,
-                    self.unapplied_instructions.append(instruction),
-                )
+                return self._with_failed_instruction(instruction)
         raise ValueError(f"Unknown instruction {instruction}.")
 
     @classmethod
@@ -173,9 +172,9 @@ class State:
             state = cls()
 
         final_state = reduce(lambda s, i: s.process(i), instructions, state)
-        if final_state.unapplied_instructions:
+        if final_state.failed_instructions:
             return cls.process_all(
-                final_state.unapplied_instructions,
+                final_state.failed_instructions,
                 cls(final_state.current, final_state.giver_history, v()),
             )
         else:
