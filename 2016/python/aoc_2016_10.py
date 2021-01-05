@@ -6,7 +6,8 @@ from typing import Callable, Iterable, NamedTuple, Optional, Tuple
 
 import pytest
 from lark import Lark, Transformer
-from pyrsistent import PMap, PVector, m, v
+from pyrsistent import m, v
+from pyrsistent.typing import PMap, PVector
 
 from aoc_common import load_puzzle_input, report_solution
 
