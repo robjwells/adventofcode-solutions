@@ -1,0 +1,16 @@
+?start: floor
+
+floor: "The " nth " floor contains " (object+ | nothing)
+
+nth: WORD
+
+?object: "a " (generator | microchip) _SEP
+generator: ELEMENT " generator"
+microchip: ELEMENT "-compatible microchip"
+
+ELEMENT: WORD
+_SEP: (","? " and " | ", " | ".")
+
+nothing: "nothing relevant" _SEP
+
+%import common.WORD
