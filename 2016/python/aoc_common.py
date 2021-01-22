@@ -2,10 +2,11 @@
 
 Common utility functions for Advent of Code solutions
 """
+from __future__ import annotations
 
 import pathlib
 from itertools import islice, repeat
-from typing import Iterable, List, Optional, TypeVar, Union
+from typing import Iterable, TypeVar
 
 
 def load_puzzle_input(day: int) -> str:
@@ -19,8 +20,8 @@ def load_puzzle_input(day: int) -> str:
 def report_solution(
     *,
     puzzle_title: str,
-    part_one_solution: Union[int, str],
-    part_two_solution: Optional[Union[int, str]] = None,
+    part_one_solution: int | str,
+    part_two_solution: int | str | None = None,
 ) -> None:
     print(puzzle_title)
     print("=" * len(puzzle_title))
@@ -29,7 +30,7 @@ def report_solution(
         print(f"Part two solution:    {part_two_solution}")
 
 
-def split_number_by_places(number: int) -> List[int]:
+def split_number_by_places(number: int) -> list[int]:
     places = []
     while number:
         places.append(number % 10)
@@ -45,8 +46,8 @@ T = TypeVar("T")
 
 
 def chunked(
-    iterable: Iterable[T], count: int, *, fill: Union[T, Sentinel] = Sentinel()
-) -> Iterable[List[T]]:
+    iterable: Iterable[T], count: int, *, fill: T | Sentinel = Sentinel()
+) -> Iterable[list[T]]:
     """Yield count-long chunks from iterable.
 
     If the length of the iterable is not a multiple of count,
