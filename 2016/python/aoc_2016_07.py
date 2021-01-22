@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List, Sequence
+from typing import Sequence
 
 import pytest
 from more_itertools import windowed
@@ -11,8 +11,8 @@ from aoc_common import load_puzzle_input, report_solution
 
 class IPv7Address:
     full_address: str
-    ordinary_parts: List[str]
-    hypernet_parts: List[str]
+    ordinary_parts: list[str]
+    hypernet_parts: list[str]
 
     def __init__(self, ipv7_address: str) -> None:
         self.full_address = ipv7_address
@@ -38,7 +38,7 @@ class IPv7Address:
     def _is_aba(seq: Sequence[str]) -> bool:
         return len(seq) == 3 and seq[0] == seq[2] and seq[0] != seq[1]
 
-    def _find_aba(self) -> List[str]:
+    def _find_aba(self) -> list[str]:
         return [
             "".join(triple)
             for part in self.ordinary_parts
@@ -46,7 +46,7 @@ class IPv7Address:
             if self._is_aba(triple)
         ]
 
-    def _find_bab(self, abas: List[str]) -> List[str]:
+    def _find_bab(self, abas: list[str]) -> list[str]:
         return [
             "".join(triple)
             for part in self.hypernet_parts
@@ -72,7 +72,7 @@ class IPv7Address:
     ],
 )
 def test_ipv7(
-    full_address: str, ordinary_parts: List[str], hypernet_parts: List[str]
+    full_address: str, ordinary_parts: list[str], hypernet_parts: list[str]
 ) -> None:
     sut = IPv7Address(full_address)
 

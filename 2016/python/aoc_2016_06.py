@@ -4,7 +4,6 @@ from collections import Counter
 from functools import reduce
 from typing import Callable
 from typing import Counter as TCounter
-from typing import List
 
 import pytest
 
@@ -12,8 +11,8 @@ from aoc_common import T, load_puzzle_input, report_solution
 
 
 def update_counters_with_characters(
-    counters: List[TCounter[str]], string: str
-) -> List[TCounter[str]]:
+    counters: list[TCounter[str]], string: str
+) -> list[TCounter[str]]:
     for counter, character in zip(counters, string):
         counter.update(character)
     return counters
@@ -35,8 +34,8 @@ def least_common_counter_element(counter: TCounter[T]) -> T:
 Selector = Callable[[TCounter[T]], T]
 
 
-def most_likely_message(signals: List[str], selector: Selector[str]) -> str:
-    counters: List[TCounter[str]] = [Counter() for _ in range(len(signals[0]))]
+def most_likely_message(signals: list[str], selector: Selector[str]) -> str:
+    counters: list[TCounter[str]] = [Counter() for _ in range(len(signals[0]))]
     _ = reduce(update_counters_with_characters, signals, counters)
     most_likely = [selector(c) for c in counters]
     return "".join(most_likely)

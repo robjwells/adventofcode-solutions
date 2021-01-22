@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import reduce
-from typing import Callable, Iterable, NamedTuple, Optional, Tuple
+from typing import Callable, Iterable, NamedTuple
 
 import pytest
 from lark import Lark, Transformer
@@ -46,11 +46,11 @@ class _T(Transformer[Instruction]):
     NAME = str
 
     @staticmethod
-    def init(args: Tuple[int, str]) -> Initialise:
+    def init(args: tuple[int, str]) -> Initialise:
         return Initialise(value=args[0], receiver=args[1])
 
     @staticmethod
-    def exchange(args: Tuple[str, str, str]) -> Exchange:
+    def exchange(args: tuple[str, str, str]) -> Exchange:
         return Exchange(source=args[0], gets_low=args[1], gets_high=args[2])
 
 
@@ -172,7 +172,7 @@ class State:
 
     @classmethod
     def process_all(
-        cls, instructions: Iterable[Instruction], state: Optional[State] = None
+        cls, instructions: Iterable[Instruction], state: State | None = None
     ) -> State:
         if state is None:
             state = cls()

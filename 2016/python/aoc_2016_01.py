@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, auto
 from itertools import accumulate, chain
-from typing import FrozenSet, Iterable, List, Optional
+from typing import Iterable
 
 from aoc_common import load_puzzle_input, report_solution
 
@@ -76,7 +76,7 @@ class Direction(Enum):
 class State:
     position: Point = Point()
     heading: Direction = Direction.NORTH
-    last_action: Optional[Instruction] = None
+    last_action: Instruction | None = None
 
     def perform_instruction(self, instruction: Instruction) -> State:
         if instruction is Instruction.STEP_FORWARD:
@@ -89,11 +89,11 @@ class State:
         return State(position, heading, instruction)
 
 
-def parse_instructions(strings: List[str]) -> List[Instruction]:
+def parse_instructions(strings: list[str]) -> list[Instruction]:
     return list(chain.from_iterable(Instruction.parse(s) for s in strings))
 
 
-def follow_all_instructions(instructions: List[Instruction]) -> Iterable[Point]:
+def follow_all_instructions(instructions: list[Instruction]) -> Iterable[Point]:
     return (
         state.position
         for state in accumulate(
@@ -104,7 +104,7 @@ def follow_all_instructions(instructions: List[Instruction]) -> Iterable[Point]:
 
 
 def find_first_repeat_location(
-    all_positions: Iterable[Point], seen: FrozenSet[Point] = frozenset()
+    all_positions: Iterable[Point], seen: frozenset[Point] = frozenset()
 ) -> Point:
     if not all_positions:
         raise ValueError("No repeated position found.")

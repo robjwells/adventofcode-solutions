@@ -3,7 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import reduce
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable
 
 import pytest
 from lark import Lark, Transformer
@@ -51,15 +51,15 @@ class _Transformer(Transformer[Instruction]):
     INT = int
 
     @staticmethod
-    def turn_on(args: Tuple[int, int]) -> TurnOn:
+    def turn_on(args: tuple[int, int]) -> TurnOn:
         return TurnOn(*args)
 
     @staticmethod
-    def rotate_row(args: Tuple[int, int]) -> RotateRow:
+    def rotate_row(args: tuple[int, int]) -> RotateRow:
         return RotateRow(*args)
 
     @staticmethod
-    def rotate_column(args: Tuple[int, int]) -> RotateColumn:
+    def rotate_column(args: tuple[int, int]) -> RotateColumn:
         return RotateColumn(*args)
 
 
@@ -83,8 +83,8 @@ def test_parser(string: str, expected: Instruction) -> None:
     assert parse(string) == expected
 
 
-Row = List[str]
-Grid = List[Row]
+Row = list[str]
+Grid = list[Row]
 
 
 @dataclass(frozen=True, init=False)
@@ -97,7 +97,7 @@ class Screen:
     _ON = "█"
 
     def __init__(
-        self, width: int = 50, height: int = 6, grid: Optional[Grid] = None
+        self, width: int = 50, height: int = 6, grid: Grid | None = None
     ) -> None:
         object.__setattr__(self, "width", width)
         object.__setattr__(self, "height", height)

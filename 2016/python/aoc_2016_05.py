@@ -1,6 +1,6 @@
 import hashlib
 from itertools import count, islice
-from typing import Dict, Iterator, Tuple
+from typing import Iterator, Tuple
 
 from aoc_common import load_puzzle_input, report_solution
 
@@ -30,13 +30,13 @@ def find_password_in_order(door_id: str) -> str:
     return password
 
 
-def format_password(characters: Dict[int, str]) -> str:
+def format_password(characters: dict[int, str]) -> str:
     chars = [characters.get(position, "_") for position in range(8)]
     return "".join(chars)
 
 
 def find_password_by_position(door_id: str) -> str:
-    found_characters: Dict[int, str] = {}
+    found_characters: dict[int, str] = {}
     digests = stream_digest_positions_and_characters(door_id)
     while len(found_characters) < 8:
         position, character = next(digests)

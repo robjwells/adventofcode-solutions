@@ -44,28 +44,28 @@ class _T(Transformer[Floor]):
     ELEMENT = str
 
     @staticmethod
-    def nth(args: Tuple[str]) -> int:
+    def nth(args: tuple[str]) -> int:
         idx = ["first", "second", "third", "fourth"].index(args[0])
         return idx
 
     @staticmethod
-    def generator(args: Tuple[str]) -> Item:
+    def generator(args: tuple[str]) -> Item:
         return Item(args[0], kind=ItemKind.GENERATOR)
 
     @staticmethod
-    def microchip(args: Tuple[str]) -> Item:
+    def microchip(args: tuple[str]) -> Item:
         return Item(args[0], kind=ItemKind.MICROCHIP)
 
     @staticmethod
-    def nothing(_args: List[str]) -> None:
+    def nothing(_args: list[str]) -> None:
         return None
 
     @staticmethod
-    def floor(args: Tuple[Any, ...]) -> Floor:
+    def floor(args: tuple[Any, ...]) -> Floor:
         if args[1] is None:
             args = (args[0],)
         floor = cast(int, args[0])
-        items = cast(List[Item], args[1:])
+        items = cast(list[Item], args[1:])
         return Floor(floor, pvector(items))
 
 
