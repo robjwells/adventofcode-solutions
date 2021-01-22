@@ -5,9 +5,9 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Optional
 
-from aoc_common import load_puzzle_input, report_solution
-
 import pytest
+
+from aoc_common import load_puzzle_input, report_solution
 
 
 @pytest.mark.parametrize(
