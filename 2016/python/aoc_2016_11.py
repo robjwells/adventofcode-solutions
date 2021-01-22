@@ -19,7 +19,7 @@ class ItemKind(Enum):
     MICROCHIP = auto()
 
     def __repr__(self) -> str:
-        return self.name.lower()
+        return self.name.lower()  # pylint: disable=no-member
 
 
 @dataclass(frozen=True)
@@ -43,20 +43,25 @@ class Floor:
 class _T(Transformer[Floor]):
     ELEMENT = str
 
-    def nth(self, args: Tuple[str]) -> int:
+    @staticmethod
+    def nth(args: Tuple[str]) -> int:
         idx = ["first", "second", "third", "fourth"].index(args[0])
         return idx
 
-    def generator(self, args: Tuple[str]) -> Item:
+    @staticmethod
+    def generator(args: Tuple[str]) -> Item:
         return Item(args[0], kind=ItemKind.GENERATOR)
 
-    def microchip(self, args: Tuple[str]) -> Item:
+    @staticmethod
+    def microchip(args: Tuple[str]) -> Item:
         return Item(args[0], kind=ItemKind.MICROCHIP)
 
-    def nothing(self, args: Tuple[str]) -> None:
+    @staticmethod
+    def nothing(_args: List[str]) -> None:
         return None
 
-    def floor(self, args: Tuple[Any, ...]) -> Floor:
+    @staticmethod
+    def floor(args: Tuple[Any, ...]) -> Floor:
         if args[1] is None:
             args = (args[0],)
         floor = cast(int, args[0])

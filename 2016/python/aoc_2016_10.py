@@ -45,10 +45,12 @@ class _T(Transformer[Instruction]):
     INT = int
     NAME = str
 
-    def init(self, args: Tuple[int, str]) -> Initialise:
+    @staticmethod
+    def init(args: Tuple[int, str]) -> Initialise:
         return Initialise(value=args[0], receiver=args[1])
 
-    def exchange(self, args: Tuple[str, str, str]) -> Exchange:
+    @staticmethod
+    def exchange(args: Tuple[str, str, str]) -> Exchange:
         return Exchange(source=args[0], gets_low=args[1], gets_high=args[2])
 
 
@@ -100,13 +102,13 @@ class Bot:
     def receive(self, chip: int) -> Bot:
         return Bot(self.name, self.chips.append(chip))
 
-    def _without_chip(self, chip: int) -> Bot:
+    def without_chip(self, chip: int) -> Bot:
         return Bot(self.name, self.chips.remove(chip))
 
     @staticmethod
     def _give(giver: Bot, receiver: Bot, selector: Selector) -> ExchangeResult:
         chip = selector(giver.chips)
-        g = giver._without_chip(chip)
+        g = giver.without_chip(chip)
         r = receiver.receive(chip)
         return ExchangeResult(giver=g, receiver=r)
 
@@ -181,14 +183,13 @@ class State:
                 final_state.failed_instructions,
                 cls(final_state.current, final_state.giver_history, v()),
             )
-        else:
-            return final_state
+        return final_state
 
     def find_bot_that_handled_chip_values(self, v1: int, v2: int) -> Bot:
-        try:
-            return next(s for s in self.giver_history if set(s.chips) == {v1, v2})
-        except StopIteration:
+        bot = next((s for s in self.giver_history if set(s.chips) == {v1, v2}), None)
+        if bot is None:
             raise ValueError(f"No bot in giving history with chips {v1} and {v2}.")
+        return bot
 
 
 def test_state() -> None:

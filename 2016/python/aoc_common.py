@@ -5,7 +5,7 @@ Common utility functions for Advent of Code solutions
 
 import pathlib
 from itertools import islice, repeat
-from typing import Iterable, Iterator, List, Optional, TypeVar, Union
+from typing import Iterable, List, Optional, TypeVar, Union
 
 
 def load_puzzle_input(day: int) -> str:

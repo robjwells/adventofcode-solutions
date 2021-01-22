@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
-from typing import Generic, List, NamedTuple, Optional, Tuple, cast
+from typing import Any, Generic, List, NamedTuple, Optional, Tuple, cast
 
 from aoc_common import T, load_puzzle_input, report_solution
 
@@ -55,16 +55,15 @@ class Grid2D(Generic[T]):
     def __str__(self) -> str:
         return f"Cursor at: {self.cursor_index} ({self.cursor_item})\t{self.grid}"
 
-    def _new_location_is_valid(self, new_x: int, new_y: int) -> bool:
-        return 0 <= new_x < self.width and 0 <= new_y < self.height
+    def _new_location_is_valid(self, new_row: int, new_col: int) -> bool:
+        return 0 <= new_row < self.width and 0 <= new_col < self.height
 
     def move(self, direction: Direction) -> Grid2D[T]:
         drow, dcol = cast(Tuple[int, int], direction.value)
         nrow, ncol = self.cursor_index.row + drow, self.cursor_index.column + dcol
         if self._new_location_is_valid(nrow, ncol):
             return type(self)(self.width, self.height, Location(nrow, ncol), self.grid)
-        else:
-            return self
+        return self
 
 
 class SquareKeypad(Grid2D[int]):
@@ -73,8 +72,10 @@ class SquareKeypad(Grid2D[int]):
         width: int = 3,
         height: int = 3,
         start_index: Location = Location(1, 1),
-        grid: List[List[int]] = [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+        grid: Optional[List[List[int]]] = None,
     ) -> None:
+        if grid is None:
+            grid = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
         super().__init__(width, height, start_index, grid)
 
 
@@ -100,10 +101,10 @@ class DiamondKeypad(Grid2D[Optional[str]]):
             grid = self._DIAMOND_GRID
         super().__init__(width, height, start_index, grid)
 
-    def _new_location_is_valid(self, row: int, column: int) -> bool:
+    def _new_location_is_valid(self, new_row: int, new_col: int) -> bool:
         return (
-            super()._new_location_is_valid(row, column)
-            and self.grid[row][column] is not None
+            super()._new_location_is_valid(new_row, new_col)
+            and self.grid[new_row][new_col] is not None
         )
 
 
@@ -117,7 +118,7 @@ def follow_all_instructions(
     return [reduce(lambda grid, d: grid.move(d), group, grid) for group in instructions]
 
 
-def find_grid_code(instructions: List[List[Direction]], grid: Grid2D[T]) -> str:
+def find_grid_code(instructions: List[List[Direction]], grid: Grid2D[Any]) -> str:
     return "".join(
         [str(grid.cursor_item) for grid in follow_all_instructions(instructions, grid)]
     )

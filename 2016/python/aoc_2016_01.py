@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum, auto
 from itertools import accumulate, chain
-from typing import Iterable, List, Optional, Set
+from typing import FrozenSet, Iterable, List, Optional
 
 from aoc_common import load_puzzle_input, report_solution
 
@@ -104,7 +104,7 @@ def follow_all_instructions(instructions: List[Instruction]) -> Iterable[Point]:
 
 
 def find_first_repeat_location(
-    all_positions: Iterable[Point], seen: Set[Point] = set()
+    all_positions: Iterable[Point], seen: FrozenSet[Point] = frozenset()
 ) -> Point:
     if not all_positions:
         raise ValueError("No repeated position found.")

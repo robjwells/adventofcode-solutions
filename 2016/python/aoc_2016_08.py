@@ -50,13 +50,16 @@ class RotateColumn(Rotate):
 class _Transformer(Transformer[Instruction]):
     INT = int
 
-    def turn_on(self, args: Tuple[int, int]) -> TurnOn:
+    @staticmethod
+    def turn_on(args: Tuple[int, int]) -> TurnOn:
         return TurnOn(*args)
 
-    def rotate_row(self, args: Tuple[int, int]) -> RotateRow:
+    @staticmethod
+    def rotate_row(args: Tuple[int, int]) -> RotateRow:
         return RotateRow(*args)
 
-    def rotate_column(self, args: Tuple[int, int]) -> RotateColumn:
+    @staticmethod
+    def rotate_column(args: Tuple[int, int]) -> RotateColumn:
         return RotateColumn(*args)
 
 
