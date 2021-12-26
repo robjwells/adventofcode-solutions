@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from functools import reduce
 from pathlib import Path
 from typing import Literal, TypeGuard, TypeAlias, NoReturn
 
@@ -70,10 +71,7 @@ class AimedPosition(Position):
 
 
 def find_final_position(start: Position, commands: list[Command]) -> Position:
-    current = start
-    for command in commands:
-        current = current.move_by(command)
-    return current
+    return reduce(lambda pos, cmd: pos.move_by(cmd), commands, start)
 
 
 def main(puzzle_input_text: str) -> tuple[int, int]:
