@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 2: I Was Told There Would Be No Math"""
 
+import aoc
 import pytest
 
 
@@ -9,8 +10,7 @@ def parse_input(text):
 
     Returns a list of lists of ints [[L, W, H]].
     """
-    return [[int(i) for i in line.split('x')]
-            for line in text.splitlines()]
+    return [[int(i) for i in line.split("x")] for line in text.splitlines()]
 
 
 def surface_area(l, w, h):
@@ -43,24 +43,23 @@ def ribbon(dimensions):
 
 
 def test_parse():
-    dimensions = '''\
+    dimensions = """\
 2x3x4
 1x1x10
-'''
+"""
     assert parse_input(dimensions) == [[2, 3, 4], [1, 1, 10]]
 
 
 # Dimensions, wrapping total, ribbon total
-TEST_BOXES = [([2, 3, 4], 58, 34),
-              ([1, 1, 10], 43, 14)]
+TEST_BOXES = [([2, 3, 4], 58, 34), ([1, 1, 10], 43, 14)]
 
 
-@pytest.mark.parametrize('dimensions,wrapping_tot,_', TEST_BOXES)
+@pytest.mark.parametrize("dimensions,wrapping_tot,_", TEST_BOXES)
 def test_wrapping_paper(dimensions, wrapping_tot, _):
     assert wrapping_paper(dimensions) == wrapping_tot
 
 
-@pytest.mark.parametrize('dimensions,_,ribbon_tot', TEST_BOXES)
+@pytest.mark.parametrize("dimensions,_,ribbon_tot", TEST_BOXES)
 def test_ribbon(dimensions, _, ribbon_tot):
     assert ribbon(dimensions) == ribbon_tot
 
@@ -68,14 +67,13 @@ def test_ribbon(dimensions, _, ribbon_tot):
 def main(puzzle_input):
     # Part one
     needed_paper = sum(wrapping_paper(box) for box in puzzle_input)
-    print(f'Part one, wrapping paper: {needed_paper:,}')
+    print(f"Part one, wrapping paper: {needed_paper:,}")
 
     # Part two
     needed_ribbon = sum(ribbon(box) for box in puzzle_input)
-    print(f'Part two, ribbon: {needed_ribbon:,}')
+    print(f"Part two, ribbon: {needed_ribbon:,}")
 
 
-if __name__ == '__main__':
-    with open('../input/2015-02.txt') as input_file:
-        puzzle_input = parse_input(input_file.read())
+if __name__ == "__main__":
+    puzzle_input = parse_input(aoc.load_puzzle_input(2015, 2))
     main(puzzle_input)

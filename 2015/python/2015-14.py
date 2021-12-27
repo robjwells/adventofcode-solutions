@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 14: Reindeer Olympics"""
 
-from collections import defaultdict
-import pathlib
+import aoc
 import re
-
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day14_input.txt')
+from collections import defaultdict
 
 
 def calc_distance(race_time, speed, flight_time, rest_time):
@@ -21,20 +19,21 @@ def calc_distance(race_time, speed, flight_time, rest_time):
 
 def parse_input(text):
     regex = re.compile(
-        r'''
+        r"""
         ^
         (?P<name>\w+) \D+
         (?P<speed>\d+) \D+
         (?P<flight>\d+) \D+
         (?P<rest>\d+) \D+
-        $''',
-        flags=re.VERBOSE)
+        $""",
+        flags=re.VERBOSE,
+    )
     reindeer_dict = dict()
     for line in text.splitlines():
         match = regex.match(line)
-        name = match['name']
+        name = match["name"]
         reindeer_dict[name] = match.groupdict().copy()
-        del reindeer_dict[name]['name']
+        del reindeer_dict[name]["name"]
         for k in reindeer_dict[name]:
             reindeer_dict[name][k] = int(reindeer_dict[name][k])
     return reindeer_dict
@@ -53,25 +52,35 @@ def test_calc():
 
 
 def test_parse():
-    sample_input = '''\
+    sample_input = """\
 Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.
-Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.'''
+Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."""
     assert parse_input(sample_input) == dict(
         Comet=dict(speed=14, flight=10, rest=127),
-        Dancer=dict(speed=16, flight=11, rest=162))
+        Dancer=dict(speed=16, flight=11, rest=162),
+    )
 
 
-if __name__ == '__main__':
-    reindeers = parse_input(input_file.read_text())
+if __name__ == "__main__":
+    puzzle_input = aoc.load_puzzle_input(2015, 14)
+    reindeers = parse_input(puzzle_input)
 
     race_time = 2503
 
     # Part one
-    print(max([
-        calc_distance(race_time, reindeers[k]['speed'],
-                      reindeers[k]['flight'], reindeers[k]['rest'])
-        for k in reindeers
-        ]))
+    print(
+        max(
+            [
+                calc_distance(
+                    race_time,
+                    reindeers[k]["speed"],
+                    reindeers[k]["flight"],
+                    reindeers[k]["rest"],
+                )
+                for k in reindeers
+            ]
+        )
+    )
 
     # Part two
     reindeer_scores = defaultdict(int)
@@ -79,8 +88,11 @@ if __name__ == '__main__':
         distances = defaultdict(int)
         for r in reindeers:
             distances[r] = calc_distance(
-                time, reindeers[r]['speed'],
-                reindeers[r]['flight'], reindeers[r]['rest'])
+                time,
+                reindeers[r]["speed"],
+                reindeers[r]["flight"],
+                reindeers[r]["rest"],
+            )
         ordered = sorted(distances.items(), key=lambda x: x[1], reverse=True)
         top_score = ordered[0][1]
         leaders = [r for r, d in ordered if d == top_score]

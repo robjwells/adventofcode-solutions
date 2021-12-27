@@ -2,6 +2,7 @@
 """Advent of Code 2015, Day 1: Not Quite Lisp"""
 from itertools import accumulate
 
+import aoc
 import pytest
 
 
@@ -28,12 +29,11 @@ def first_basement_char(deltas):
     )
 
 
-def main(puzzle_input):
+def main(puzzle_input: str) -> tuple[int, int]:
     parsed = parse_input(puzzle_input)
     p1_final_floor = final_floor(parsed)
-    print(f"Part one, final floor: {p1_final_floor}")
     basement_instruction = first_basement_char(parsed)
-    print(f"Part two, first basement instruction: {basement_instruction}")
+    return p1_final_floor, basement_instruction
 
 
 @pytest.mark.parametrize(
@@ -62,6 +62,6 @@ def test_first_basement_level(instructions, expected):
 
 
 if __name__ == "__main__":
-    with open("../input/2015-01.txt") as input_file:
-        puzzle_input = input_file.read().rstrip()
-    main(puzzle_input)
+    puzzle_input = aoc.load_puzzle_input(2015, 1)
+    p1, p2 = main(puzzle_input)
+    print(aoc.format_solution(title=__doc__, part_one=p1, part_two=p2))  # type: ignore

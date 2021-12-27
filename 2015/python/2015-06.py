@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 6: Probably a Fire Hazard"""
 
+import aoc
 import pytest
 
 
@@ -15,9 +16,9 @@ class LightGrid:
 
     Light ranges can be turned on, off, or toggled.
     """
+
     def __init__(self, rows=1000, columns=1000):
-        self.matrix = [[False for _ in range(columns)]
-                       for _ in range(rows)]
+        self.matrix = [[False for _ in range(columns)] for _ in range(rows)]
 
     @staticmethod
     def _col_slice_for_coords(start_coord, end_coord):
@@ -45,7 +46,7 @@ class LightGrid:
         state of the light in question — and returns the new state.
         """
         column_slice = self._col_slice_for_coords(start_coord, end_coord)
-        for row in self.matrix[start_coord[0]:end_coord[0] + 1]:
+        for row in self.matrix[start_coord[0] : end_coord[0] + 1]:
             row[column_slice] = map(transformer, row[column_slice])
 
     def turn_on(self, start_coord, end_coord):
@@ -66,7 +67,7 @@ class LightGrid:
         Valid arguments for mode are: 'turn on', 'turn off', 'toggle'
         """
         try:
-            method = getattr(self, mode.replace(' ', '_'))
+            method = getattr(self, mode.replace(" ", "_"))
             method(start_coord, end_coord)
         except AttributeError:
             raise ValueError(f'"{mode}" is not a valid grid method')
@@ -78,14 +79,16 @@ class LightGrid:
 
 class DimmerGrid(LightGrid):
     """A grid of lights with adjustable brightness"""
+
     def turn_on(self, start_coord, end_coord):
         """Increase brightness of lights in rectangular range by 1"""
         self._manipulate(lambda state: state + 1, start_coord, end_coord)
 
     def turn_off(self, start_coord, end_coord):
         """Decrease brightness of lights in rectangular range by 1 until 0"""
-        self._manipulate(lambda state: state - 1 if state else 0,
-                         start_coord, end_coord)
+        self._manipulate(
+            lambda state: state - 1 if state else 0, start_coord, end_coord
+        )
 
     def toggle(self, start_coord, end_coord):
         """Increase brightness of lights in rectangular range by 2"""
@@ -118,10 +121,10 @@ TEST_COORD_RANGES = [
     ((0, 0), (999, 999)),
     ((0, 0), (999, 0)),
     ((499, 499), (500, 500)),
-    ]
+]
 
 
-@pytest.mark.parametrize('start_coord,end_coord', TEST_COORD_RANGES)
+@pytest.mark.parametrize("start_coord,end_coord", TEST_COORD_RANGES)
 def test_LightGrid_turn_on(start_coord, end_coord):
     """LightGrid can turn on light ranges"""
     grid = LightGrid()
@@ -137,7 +140,7 @@ def test_LightGrid_turn_on(start_coord, end_coord):
     assert grid.count_lights_on() == total_on
 
 
-@pytest.mark.parametrize('start_coord,end_coord', TEST_COORD_RANGES)
+@pytest.mark.parametrize("start_coord,end_coord", TEST_COORD_RANGES)
 def test_LightGrid_turn_off(start_coord, end_coord):
     """LightGrid can turn off light ranges"""
     grid = LightGrid()
@@ -165,8 +168,8 @@ def test_LightGrid_toggle():
     ranges_and_expected = [
         ((0, 0), (999, 999), 1_000_000),
         ((0, 0), (999, 0), 1_000_000 - 1_000),
-        ((499, 499), (500, 500), 1_000_000 - 1_000 - 4)
-        ]
+        ((499, 499), (500, 500), 1_000_000 - 1_000 - 4),
+    ]
     grid = LightGrid()
     for start_coord, end_coord, expected_lights in ranges_and_expected:
         grid.toggle(start_coord, end_coord)
@@ -208,10 +211,13 @@ def test_DimmerGrid_toggle():
         assert grid.matrix[0][0] == brightness
 
 
-@pytest.mark.parametrize('method,coords,brightness', [
-    ('turn on', [(0, 0), (0, 0)], 1),
-    ('toggle', [(0, 0), (999, 999)], 2000000),
-])
+@pytest.mark.parametrize(
+    "method,coords,brightness",
+    [
+        ("turn on", [(0, 0), (0, 0)], 1),
+        ("toggle", [(0, 0), (999, 999)], 2000000),
+    ],
+)
 def test_DimmerGrid_total_brightness(method, coords, brightness):
     """DimmerGrid correctly reports total brightness"""
     grid = DimmerGrid()
@@ -226,9 +232,9 @@ def test_apply_instruction_raises_for_unknown_mode():
     the hook as far as testing goes.
     """
     with pytest.raises(ValueError):
-        LightGrid().apply_instruction(mode='totally fake mode',
-                                      start_coord=range(0, 0),
-                                      end_coord=range(1, 1))
+        LightGrid().apply_instruction(
+            mode="totally fake mode", start_coord=range(0, 0), end_coord=range(1, 1)
+        )
 
 
 def parse_instruction(input_line):
@@ -236,22 +242,20 @@ def parse_instruction(input_line):
 
     def parse_coord_str(coordinate_string):
         """Parse a coordinate string into a tuple of ints"""
-        return tuple(int(n) for n in coordinate_string.split(','))
+        return tuple(int(n) for n in coordinate_string.split(","))
 
     action, start_coord_str, _, end_coord_str = input_line.rsplit(maxsplit=3)
-    return (action,
-            parse_coord_str(start_coord_str),
-            parse_coord_str(end_coord_str))
+    return (action, parse_coord_str(start_coord_str), parse_coord_str(end_coord_str))
 
 
-@pytest.mark.parametrize('input_line,parsed', [
-    ('turn on 0,0 through 999,999',
-        ('turn on', (0, 0), (999, 999))),
-    ('toggle 0,0 through 999,0',
-        ('toggle', (0, 0), (999, 0))),
-    ('turn off 499,499 through 500,500',
-        ('turn off', (499, 499), (500, 500))),
-    ])
+@pytest.mark.parametrize(
+    "input_line,parsed",
+    [
+        ("turn on 0,0 through 999,999", ("turn on", (0, 0), (999, 999))),
+        ("toggle 0,0 through 999,0", ("toggle", (0, 0), (999, 0))),
+        ("turn off 499,499 through 500,500", ("turn off", (499, 499), (500, 500))),
+    ],
+)
 def test_parse_instruction(input_line, parsed):
     """parse_instruction correctly interprets a single line of puzzle input"""
     assert parse_instruction(input_line) == parsed
@@ -263,11 +267,10 @@ def main(puzzle_input):
         for line in puzzle_input:
             grid.apply_instruction(*parse_instruction(line))
     p1, p2 = grids
-    print('Part one, total lights lit:', p1.count_lights_on())
-    print('Part two, total brightness:', p2.total_brightness())
+    print("Part one, total lights lit:", p1.count_lights_on())
+    print("Part two, total brightness:", p2.total_brightness())
 
 
-if __name__ == '__main__':
-    with open('../input/2015-06.txt') as f:
-        puzzle_input = f.read().splitlines()
+if __name__ == "__main__":
+    puzzle_input = aoc.load_puzzle_input(2015, 6).splitlines()
     main(puzzle_input)

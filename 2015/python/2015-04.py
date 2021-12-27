@@ -3,10 +3,11 @@
 
 import hashlib
 
+import aoc
 import pytest
 
 
-def suffix_for_md5_prefix(secret_key, char='0', length=5, starting_integer=1):
+def suffix_for_md5_prefix(secret_key, char="0", length=5, starting_integer=1):
     """Return the first integer suffix to secret_key that produces wanted hash
 
     The wanted hash is expected to have a prefix of `char`
@@ -28,23 +29,27 @@ def suffix_for_md5_prefix(secret_key, char='0', length=5, starting_integer=1):
         int_suffix += 1
 
 
-@pytest.mark.parametrize('key,int_suffix', [
-    ('abcdef', 609043),
-    ('pqrstuv', 1048970),
-    ])
+@pytest.mark.parametrize(
+    "key,int_suffix",
+    [
+        ("abcdef", 609043),
+        ("pqrstuv", 1048970),
+    ],
+)
 def test_md5_prefix(key, int_suffix):
     assert suffix_for_md5_prefix(secret_key=key) == int_suffix
 
 
 def main(secret_key):
     five_zeros_int = suffix_for_md5_prefix(secret_key=secret_key)
-    print(f'Part one, five zeroes: {five_zeros_int}')
+    print(f"Part one, five zeroes: {five_zeros_int}")
 
     six_zeroes_int = suffix_for_md5_prefix(
-        secret_key=secret_key, length=6, starting_integer=five_zeros_int)
-    print(f'Part two, six zeroes: {six_zeroes_int}')
+        secret_key=secret_key, length=6, starting_integer=five_zeros_int
+    )
+    print(f"Part two, six zeroes: {six_zeroes_int}")
 
 
-if __name__ == '__main__':
-    puzzle_input = 'ckczppom'
+if __name__ == "__main__":
+    puzzle_input = "ckczppom"
     main(puzzle_input)

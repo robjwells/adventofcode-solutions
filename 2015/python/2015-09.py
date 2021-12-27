@@ -3,6 +3,7 @@
 
 from collections import defaultdict, deque, namedtuple
 
+import aoc
 import pytest
 
 
@@ -18,6 +19,7 @@ def parse_input(text):
     Where A and B are strings and W is the weight to travel
     between them in a graph.
     """
+
     def parse_line(line):
         """Parse a single line of the input"""
         parts = line.split()
@@ -26,20 +28,20 @@ def parse_input(text):
     return [parse_line(line) for line in text.splitlines()]
 
 
-Edge = namedtuple('Edge', ('src', 'dst', 'weight'))
+Edge = namedtuple("Edge", ("src", "dst", "weight"))
 
 
 class Graph:
     """Undirected weighted graph"""
+
     def __init__(self):
         self.connections = defaultdict(list)
 
     def __str__(self):
-        output = ''
+        output = ""
         for l in self.connections.values():
-            output += '\n'.join(
-                str(e) for e in l)
-            output += '\n\n'
+            output += "\n".join(str(e) for e in l)
+            output += "\n\n"
         return output.rstrip()
 
     def add_edge(self, src: str, dst: str, weight: int):
@@ -139,17 +141,18 @@ def search_all_max(graph):
 
 
 TEST_PARSED_INSTRUCTIONS = [
-    ('London', 'Dublin', 464),
-    ('London', 'Belfast', 518),
-    ('Dublin', 'Belfast', 141)]
+    ("London", "Dublin", 464),
+    ("London", "Belfast", 518),
+    ("Dublin", "Belfast", 141),
+]
 
 
 def test_parse():
     """Test parsing of a list of destinations and weights"""
-    puzzle_input = '''\
+    puzzle_input = """\
 London to Dublin = 464
 London to Belfast = 518
-Dublin to Belfast = 141'''
+Dublin to Belfast = 141"""
     result = parse_input(puzzle_input)
     assert result == TEST_PARSED_INSTRUCTIONS
 
@@ -173,8 +176,7 @@ def test_longest(sample_graph):
 @pytest.fixture
 def real_input_graph():
     """Return a graph created from the real puzzle input"""
-    with open('../input/2015-09.txt') as f:
-        puzzle_input = f.read()
+    puzzle_input = aoc.load_puzzle_input(2015, 9)
 
     instructions = parse_input(puzzle_input)
     return create_graph(instructions)
@@ -204,11 +206,10 @@ def main(puzzle_input):
     instructions = parse_input(puzzle_input)
     graph = create_graph(instructions)
 
-    print('Shortest:', search_all_min(graph))
-    print('Longest:', search_all_max(graph))
+    print("Shortest:", search_all_min(graph))
+    print("Longest:", search_all_max(graph))
 
 
-if __name__ == '__main__':
-    with open('../input/2015-09.txt') as f:
-        puzzle_input = f.read()
+if __name__ == "__main__":
+    puzzle_input = aoc.load_puzzle_input(2015, 9)
     main(puzzle_input)

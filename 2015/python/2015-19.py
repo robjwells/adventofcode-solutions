@@ -4,14 +4,15 @@
 import pathlib
 import re
 
-input_file = pathlib.Path('../input/2015-19.txt')
+input_file = pathlib.Path("../input/2015-19.txt")
 
 
 def parse_input(text: str) -> (list, str):
     """Return a list of replacement pairs and the molecule string"""
-    replacement_block, molecule = text.rstrip().split('\n\n')
-    replacement_pairs = [tuple(line.split(' => '))
-                         for line in replacement_block.splitlines()]
+    replacement_block, molecule = text.rstrip().split("\n\n")
+    replacement_pairs = [
+        tuple(line.split(" => ")) for line in replacement_block.splitlines()
+    ]
     return replacement_pairs, molecule
 
 
@@ -28,9 +29,9 @@ def generate_replacements(molecule: str, replacements: list) -> set:
     for find_str, replace_str in replacements:
         for match in re.finditer(find_str, molecule):
             substring_start, substring_end = match.span()
-            new_molecule = (molecule[:substring_start] +
-                            replace_str +
-                            molecule[substring_end:])
+            new_molecule = (
+                molecule[:substring_start] + replace_str + molecule[substring_end:]
+            )
             generated.add(new_molecule)
 
     return generated
@@ -66,30 +67,28 @@ def steps_to_molecule(molecule: str, replacements: list):
     count = 0
 
     # e is the original molecule we're trying to reach
-    while molecule != 'e':
+    while molecule != "e":
         # Replace one molecule at a time, using the reps dictionary
         # to find the replacement string
         molecule = re.sub(
-            '|'.join(reps.keys()),
-            lambda m: reps[m.group()],
-            molecule,
-            count=1
-            )
+            "|".join(reps.keys()), lambda m: reps[m.group()], molecule, count=1
+        )
         count += 1
 
     return count
 
 
 def test_replacements():
-    test_molecule = 'HOH'
+    test_molecule = "HOH"
     test_replacements = [
-        ('H', 'HO'),
-        ('H', 'OH'),
-        ('O', 'HH'),
-        ]
-    result = generate_replacements(molecule=test_molecule,
-                                   replacements=test_replacements)
-    expected = {'HOOH', 'HOHO', 'OHOH', 'HHHH'}
+        ("H", "HO"),
+        ("H", "OH"),
+        ("O", "HH"),
+    ]
+    result = generate_replacements(
+        molecule=test_molecule, replacements=test_replacements
+    )
+    expected = {"HOOH", "HOHO", "OHOH", "HHHH"}
     assert result == expected
 
 
@@ -125,9 +124,9 @@ def count(molecule, replacements):
 
         first, second, *rest = molecule
 
-        if first in ('(', ')'):
+        if first in ("(", ")"):
             return loop(molecule[1:], tokens + 1, parens + 1, commas)
-        elif first == ',':
+        elif first == ",":
             return loop(molecule[1:], tokens + 1, parens, commas + 1)
         elif first in reps:
             return loop(molecule[1:], tokens + 1, parens, commas)
@@ -135,10 +134,7 @@ def count(molecule, replacements):
             return loop(rest, tokens + 1, parens, commas)
 
     # This looks so gross in Python
-    molecule = molecule.replace(
-        'Rn', '(').replace(
-        'Ar', ')').replace(
-        'Y', ',')
+    molecule = molecule.replace("Rn", "(").replace("Ar", ")").replace("Y", ",")
     molecule = molecule[::-1]
 
     tokens, parens, commas = loop(molecule)
@@ -148,19 +144,17 @@ def count(molecule, replacements):
 def main():
     replacement_pairs, molecule = parse_input(input_file.read_text())
     generated_molecules = generate_replacements(
-        molecule=molecule,
-        replacements=replacement_pairs)
+        molecule=molecule, replacements=replacement_pairs
+    )
     num_generated = len(generated_molecules)
-    print(f'Part one, number of molecules generated: {num_generated}')
+    print(f"Part one, number of molecules generated: {num_generated}")
 
     min_steps_to_molecule = steps_to_molecule(molecule, replacement_pairs)
-    print(f'Part two, minimum steps to molecule: {min_steps_to_molecule}'
-          ' (iter)')
+    print(f"Part two, minimum steps to molecule: {min_steps_to_molecule}" " (iter)")
 
     min_steps_by_count = count(molecule, replacement_pairs)
-    print(f'Part two, minimum steps to molecule: {min_steps_by_count}'
-          ' (count)')
+    print(f"Part two, minimum steps to molecule: {min_steps_by_count}" " (count)")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

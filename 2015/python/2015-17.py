@@ -3,8 +3,28 @@
 
 from itertools import combinations
 
-puzzle_input = [43, 3, 4, 10, 21, 44, 4, 6, 47, 41, 34,
-                17, 17, 44, 36, 31, 46, 9, 27, 38]
+puzzle_input = [
+    43,
+    3,
+    4,
+    10,
+    21,
+    44,
+    4,
+    6,
+    47,
+    41,
+    34,
+    17,
+    17,
+    44,
+    36,
+    31,
+    46,
+    9,
+    27,
+    38,
+]
 puzzle_input.sort()
 
 
@@ -13,7 +33,8 @@ def brute_force(containers, amount):
         len(c)
         for i in range(len(containers))
         for c in combinations(containers, i)
-        if sum(c) == amount]
+        if sum(c) == amount
+    ]
     number_combos = len(combo_lengths)
     min_ways = combo_lengths.count(min(combo_lengths))
     return (number_combos, min_ways)
@@ -33,7 +54,8 @@ def find_containers(containers, amount):
         for idx, container in enumerate(containers):
             if container <= amount:
                 for others in find_containers(
-                        containers[idx+1:], amount - container):
+                    containers[idx + 1 :], amount - container
+                ):
                     yield [container] + others
 
 

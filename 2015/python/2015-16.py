@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 16: Aunt Sue"""
 
+import aoc
 import itertools
 import operator
-import pathlib
-
-input_file = pathlib.Path(__file__).parent.parent.joinpath('day16_input.txt')
 
 
 def parse_input(text):
     sues = []
     for line in text.splitlines():
-        sue_num, details = line.split(': ', maxsplit=1)
+        sue_num, details = line.split(": ", maxsplit=1)
         sue_num = int(sue_num.split()[1])
-        details = [(a, int(b)) for a, b in
-                   [p.split(': ') for p in details.split(', ')]]
-        details.append(('matches', 0))
+        details = [(a, int(b)) for a, b in [p.split(": ") for p in details.split(", ")]]
+        details.append(("matches", 0))
         sues.append((sue_num, dict(details)))
     return sues
 
 
 def gift_sue():
-    text = '''children: 3
+    text = """children: 3
 cats: 7
 samoyeds: 2
 pomeranians: 3
@@ -31,10 +28,8 @@ goldfish: 5
 trees: 3
 cars: 2
 perfumes: 1
-'''
-    sue = dict(
-        (a, int(b)) for a, b in
-        (line.split(': ') for line in text.splitlines()))
+"""
+    sue = dict((a, int(b)) for a, b in (line.split(": ") for line in text.splitlines()))
     return sue
 
 
@@ -45,24 +40,25 @@ def sue_search(target_sue, all_sues, truth_functions):
         for sue_num, details in candidates:
             if quality in details:
                 if truth_functions[quality](details[quality], value):
-                    details['matches'] += 1
+                    details["matches"] += 1
                 else:
-                    details['matches'] -= 1
-    candidates.sort(key=lambda t: t[1]['matches'])
+                    details["matches"] -= 1
+    candidates.sort(key=lambda t: t[1]["matches"])
     return candidates[-1][0]
 
 
-if __name__ == '__main__':
-    all_sues = parse_input(input_file.read_text())
+if __name__ == "__main__":
+    puzzle_input = aoc.load_puzzle_input(2015, 16)
+    all_sues = parse_input(puzzle_input)
     target_sue = gift_sue()
 
     truth_functions = dict(zip(target_sue, itertools.repeat(operator.eq)))
     part_one_sue = sue_search(target_sue, all_sues, truth_functions)
-    print(f'Part one: Sue {part_one_sue}')
+    print(f"Part one: Sue {part_one_sue}")
 
-    for k in ('cats', 'trees'):
+    for k in ("cats", "trees"):
         truth_functions[k] = operator.gt
-    for k in ('pomeranians', 'goldfish'):
+    for k in ("pomeranians", "goldfish"):
         truth_functions[k] = operator.lt
     part_two_sue = sue_search(target_sue, all_sues, truth_functions)
-    print(f'Part two: Sue {part_two_sue}')
+    print(f"Part two: Sue {part_two_sue}")

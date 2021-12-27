@@ -3,6 +3,7 @@
 
 import string
 
+import aoc
 import pytest
 
 
@@ -23,10 +24,10 @@ def validate_password(password):
     Returns:
         bool: True if the password satisfies all requirements
     """
-    windowed = (''.join(t) for t in zip(password, password[1:], password[2:]))
+    windowed = ("".join(t) for t in zip(password, password[1:], password[2:]))
     contains_straight = any(w in string.ascii_lowercase for w in windowed)
 
-    no_invalid_chars = not any(char in password for char in 'iol')
+    no_invalid_chars = not any(char in password for char in "iol")
 
     pair_chars = {a for a, b in zip(password, password[1:]) if a == b}
     enough_unique_pairs = len(pair_chars) >= 2
@@ -49,7 +50,7 @@ def clean_bad_letters(password):
         xix     ->   xja
         xixyz   ->   xjaaa
     """
-    search_results = (password.find(char) for char in 'iol')
+    search_results = (password.find(char) for char in "iol")
     bad_chars = [x for x in search_results if x != -1]
     if not bad_chars:
         return password
@@ -57,7 +58,7 @@ def clean_bad_letters(password):
     cut_pos = min(bad_chars)
     new_letter = increment_letter(password[cut_pos])
     count_a_to_add = len(password[cut_pos:]) - 1
-    return password[:cut_pos] + new_letter + 'a' * count_a_to_add
+    return password[:cut_pos] + new_letter + "a" * count_a_to_add
 
 
 def increment_letter(letter):
@@ -73,11 +74,11 @@ def increment_letter(letter):
     It is, however, safe to increment those restricted letters
     using this function as a special case is made for them.
     """
-    restricted_dict = {'i': 'j', 'l': 'm', 'o': 'p'}
+    restricted_dict = {"i": "j", "l": "m", "o": "p"}
     if letter in restricted_dict:
         return restricted_dict[letter]
 
-    ok_letters = 'abcdefghjkmnpqrstuvwxyz'
+    ok_letters = "abcdefghjkmnpqrstuvwxyz"
     current_index = ok_letters.index(letter)
     is_final_index = current_index == len(ok_letters) - 1
     new_index = 0 if is_final_index else current_index + 1
@@ -98,8 +99,8 @@ def increment_password(current_pw, index=None):
     increment_index = len(pw_list) - 1 if index is None else index
     new_letter = increment_letter(pw_list[increment_index])
     pw_list[increment_index] = new_letter
-    candidate = ''.join(pw_list)
-    if new_letter == 'a' and increment_index > 0:
+    candidate = "".join(pw_list)
+    if new_letter == "a" and increment_index > 0:
         candidate = increment_password(candidate, index=increment_index - 1)
     return candidate
 
@@ -129,34 +130,43 @@ def new_password(current_password):
     return candidate
 
 
-@pytest.mark.parametrize('invalid_pass', [
-    'hijklmmn',
-    'abbceffg',
-    'abbcegjk',
-    ])
+@pytest.mark.parametrize(
+    "invalid_pass",
+    [
+        "hijklmmn",
+        "abbceffg",
+        "abbcegjk",
+    ],
+)
 def test_invalid_password(invalid_pass):
     assert not validate_password(invalid_pass)
 
 
-@pytest.mark.parametrize('valid_pass', [
-    'abcdffaa',
-    'ghjaabcc',
-    ])
+@pytest.mark.parametrize(
+    "valid_pass",
+    [
+        "abcdffaa",
+        "ghjaabcc",
+    ],
+)
 def test_valid_password(valid_pass):
     assert validate_password(valid_pass)
 
 
-@pytest.mark.parametrize('old,new', [
-    ('abcdefgh', 'abcdffaa'),
-    ('ghijklmn', 'ghjaabcc'),
-    ])
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ("abcdefgh", "abcdffaa"),
+        ("ghijklmn", "ghjaabcc"),
+    ],
+)
 def test_new_password(old, new):
     assert new_password(old) == new
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Part one
-    puzzle_input = 'vzbxkghb'
+    puzzle_input = "vzbxkghb"
     part_one_pw = new_password(puzzle_input)
     print(part_one_pw)
     # Part two

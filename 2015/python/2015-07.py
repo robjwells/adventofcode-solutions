@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 7: Some Assembly Required"""
 
+import aoc
+
 
 class Circuit:
     """A set of wires connected with bitwise logic gates"""
+
     def __init__(self, instructions):
         """Parse instructions into a circuit layout
 
@@ -12,7 +15,7 @@ class Circuit:
 
         The wire signals are not 'solved' at this stage.
         """
-        wires = [line.split(' -> ') for line in instructions.splitlines()]
+        wires = [line.split(" -> ") for line in instructions.splitlines()]
         self._wires = {w: s for s, w in wires}
 
     def _solve(self, wire):
@@ -36,19 +39,19 @@ class Circuit:
 
         parts = value.split()
         if len(parts) == 1:
-            result = self._solve(*parts)    # Another wire
+            result = self._solve(*parts)  # Another wire
         if len(parts) == 2:
             # "NOT": Invert 16-bit unsigned integer
             result = 65535 - self._solve(parts[1])
         elif len(parts) == 3:
             left, op, right = parts
-            if op == 'AND':
+            if op == "AND":
                 result = self._solve(left) & self._solve(right)
-            elif op == 'OR':
+            elif op == "OR":
                 result = self._solve(left) | self._solve(right)
-            elif op == 'LSHIFT':
+            elif op == "LSHIFT":
                 result = self._solve(left) << int(right)
-            elif op == 'RSHIFT':
+            elif op == "RSHIFT":
                 result = self._solve(left) >> int(right)
 
         self._wires[wire] = result
@@ -71,7 +74,7 @@ class Circuit:
 
 def test_circuit():
     """Test Circuit with some example instructions"""
-    instructions = '''\
+    instructions = """\
 123 -> x
 456 -> y
 x AND y -> d
@@ -80,10 +83,19 @@ x LSHIFT 2 -> f
 y RSHIFT 2 -> g
 NOT x -> h
 NOT y -> i
-'''
-    expected = dict([
-        ('d', 72), ('e', 507), ('f', 492), ('g', 114),
-        ('h', 65412), ('i', 65079), ('x', 123), ('y', 456)])
+"""
+    expected = dict(
+        [
+            ("d", 72),
+            ("e", 507),
+            ("f", 492),
+            ("g", 114),
+            ("h", 65412),
+            ("i", 65079),
+            ("x", 123),
+            ("y", 456),
+        ]
+    )
     circuit = Circuit(instructions)
     circuit.build()  # Ensure each wire has a value
     assert circuit._wires == expected
@@ -91,15 +103,14 @@ NOT y -> i
 
 def main(puzzle_input):
     first = Circuit(puzzle_input)
-    a_value = first['a']
-    print('Part one, signal on wire a:', a_value)
+    a_value = first["a"]
+    print("Part one, signal on wire a:", a_value)
 
     second = Circuit(puzzle_input)
-    second['b'] = a_value
-    print('Part two, signal on wire a after overriding b:', second['a'])
+    second["b"] = a_value
+    print("Part two, signal on wire a after overriding b:", second["a"])
 
 
-if __name__ == '__main__':
-    with open('../input/2015-07.txt') as f:
-        puzzle_input = f.read()
+if __name__ == "__main__":
+    puzzle_input = aoc.load_puzzle_input(2015, 7)
     main(puzzle_input)
