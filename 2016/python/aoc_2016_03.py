@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from more_itertools import chunked
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 Triple = tuple[int, int, int]
 
@@ -29,11 +29,13 @@ def sort_sides(triples: list[Triple]) -> list[Triple]:
 
 
 if __name__ == "__main__":
-    input_string = load_puzzle_input(day=3)
+    input_string = load_puzzle_input(2016, day=3)
     valid_horizontal = filter_valid_triangles(parse_horizontal(input_string))
     valid_vertical = filter_valid_triangles(parse_vertical(input_string))
-    report_solution(
-        puzzle_title="Day 3: Squares With Three Sides",
-        part_one_solution=len(valid_horizontal),
-        part_two_solution=len(valid_vertical),
+    print(
+        format_solution(
+            title="Day 3: Squares With Three Sides",
+            part_one=len(valid_horizontal),
+            part_two=len(valid_vertical),
+        )
     )

@@ -8,7 +8,7 @@ from typing import Iterable
 import pytest
 from lark import Lark, Transformer
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 _grammar = """
     ?start: turn_on | rotate_row | rotate_column
@@ -196,10 +196,12 @@ def test_screen() -> None:
 
 
 if __name__ == "__main__":
-    instructions = map(parse, load_puzzle_input(day=8).splitlines())
+    instructions = map(parse, load_puzzle_input(2016, day=8).splitlines())
     final_screen = Screen.process_all(instructions)
-    report_solution(
-        puzzle_title="Day 8: Two-Factor Authentication",
-        part_one_solution=final_screen.lit_pixels,
-        part_two_solution="\n" + str(final_screen),
+    print(
+        format_solution(
+            title="Day 8: Two-Factor Authentication",
+            part_one=final_screen.lit_pixels,
+            part_two="\n" + str(final_screen),
+        )
     )

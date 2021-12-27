@@ -6,7 +6,7 @@ from typing import Sequence
 import pytest
 from more_itertools import windowed
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 class IPv7Address:
@@ -110,11 +110,15 @@ def test_ipv7_ssl(address: str, supports_ssl: bool) -> None:
 
 
 if __name__ == "__main__":
-    addresses = [IPv7Address(line) for line in load_puzzle_input(day=7).splitlines()]
+    addresses = [
+        IPv7Address(line) for line in load_puzzle_input(2016, day=7).splitlines()
+    ]
     support_tls = [address for address in addresses if address.supports_tls]
     support_ssl = [address for address in addresses if address.supports_ssl]
-    report_solution(
-        puzzle_title="Day 7: Internet Protocol Version 7",
-        part_one_solution=len(support_tls),
-        part_two_solution=len(support_ssl),
+    print(
+        format_solution(
+            title="Day 7: Internet Protocol Version 7",
+            part_one=len(support_tls),
+            part_two=len(support_ssl),
+        )
     )

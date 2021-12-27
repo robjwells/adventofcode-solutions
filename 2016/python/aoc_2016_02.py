@@ -3,9 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
-from typing import Any, Generic, NamedTuple, Optional, cast
+from typing import Any, Generic, NamedTuple, Optional, TypeVar, cast
 
-from aoc_common import T, load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 class Location(NamedTuple):
@@ -30,6 +30,9 @@ class Direction(tuple[int, int], Enum):
         if s == "L":
             return cls.LEFT
         raise ValueError("Invalid string for Direction (must be U, R, D or L).")
+
+
+T = TypeVar("T")
 
 
 @dataclass
@@ -125,9 +128,11 @@ def find_grid_code(instructions: list[list[Direction]], grid: Grid2D[Any]) -> st
 
 
 if __name__ == "__main__":
-    instructions = parse_instructions(load_puzzle_input(day=2))
-    report_solution(
-        puzzle_title="Day 2: Bathroom Security",
-        part_one_solution=find_grid_code(instructions, SquareKeypad()),
-        part_two_solution=find_grid_code(instructions, DiamondKeypad()),
+    instructions = parse_instructions(load_puzzle_input(2016, day=2))
+    print(
+        format_solution(
+            title="Day 2: Bathroom Security",
+            part_one=find_grid_code(instructions, SquareKeypad()),
+            part_two=find_grid_code(instructions, DiamondKeypad()),
+        )
     )

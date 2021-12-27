@@ -2,7 +2,7 @@ import hashlib
 from itertools import count, islice
 from typing import Iterator, Tuple
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 def stream_md5_hash_digests(door_id: str) -> Iterator[str]:
@@ -47,11 +47,13 @@ def find_password_by_position(door_id: str) -> str:
 
 
 if __name__ == "__main__":
-    door_id = load_puzzle_input(day=5)
+    door_id = load_puzzle_input(2016, day=5)
     first_password = find_password_in_order(door_id)
     second_password = find_password_by_position(door_id)
-    report_solution(
-        puzzle_title="Day 5: How About a Nice Game of Chess?",
-        part_one_solution=first_password,
-        part_two_solution=second_password,
+    print(
+        format_solution(
+            title="Day 5: How About a Nice Game of Chess?",
+            part_one=first_password,
+            part_two=second_password,
+        )
     )

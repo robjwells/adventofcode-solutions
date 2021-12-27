@@ -5,7 +5,7 @@ from enum import Enum, auto
 from itertools import accumulate, chain
 from typing import Iterable
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 @dataclass
@@ -114,12 +114,14 @@ def find_first_repeat_location(
 
 
 if __name__ == "__main__":
-    instructions = parse_instructions(load_puzzle_input(1).split(", "))
+    instructions = parse_instructions(load_puzzle_input(2016, 1).split(", "))
     all_positions = list(follow_all_instructions(instructions))
     end_position = all_positions[-1]
     first_repeat = find_first_repeat_location(all_positions)
-    report_solution(
-        puzzle_title="Day 1: No Time for a Taxicab",
-        part_one_solution=end_position.manhattan_distance_from_origin,
-        part_two_solution=first_repeat.manhattan_distance_from_origin,
+    print(
+        format_solution(
+            title="Day 1: No Time for a Taxicab",
+            part_one=end_position.manhattan_distance_from_origin,
+            part_two=first_repeat.manhattan_distance_from_origin,
+        )
     )

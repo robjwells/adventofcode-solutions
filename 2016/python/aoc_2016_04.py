@@ -7,7 +7,7 @@ from typing import Optional
 
 import pytest
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 @pytest.mark.parametrize(
@@ -71,7 +71,7 @@ class Room:
 
 
 if __name__ == "__main__":
-    room_details = load_puzzle_input(day=4).splitlines()
+    room_details = load_puzzle_input(2016, day=4).splitlines()
     valid_rooms = [
         r for r in [Room.from_string(line) for line in room_details] if r is not None
     ]
@@ -82,8 +82,10 @@ if __name__ == "__main__":
         if room.decrypted_name == "northpole object storage"
     )
 
-    report_solution(
-        puzzle_title="Day 4: Security Through Obscurity",
-        part_one_solution=sum_of_sector_ids,
-        part_two_solution=northpole_room.sector,
+    print(
+        format_solution(
+            title="Day 4: Security Through Obscurity",
+            part_one=sum_of_sector_ids,
+            part_two=northpole_room.sector,
+        )
     )

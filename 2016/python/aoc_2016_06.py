@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from collections import Counter
 from functools import reduce
-from typing import Callable
-from typing import Counter as TCounter
+from typing import Callable, TypeVar, Counter as TCounter
 
 import pytest
 
-from aoc_common import T, load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 
 def update_counters_with_characters(
@@ -16,6 +15,9 @@ def update_counters_with_characters(
     for counter, character in zip(counters, string):
         counter.update(character)
     return counters
+
+
+T = TypeVar("T")
 
 
 def select_nth_most_common(counter: TCounter[T], n: int) -> T:
@@ -70,11 +72,13 @@ enarar""".splitlines()
 
 
 if __name__ == "__main__":
-    signals = load_puzzle_input(day=6).splitlines()
+    signals = load_puzzle_input(2016, day=6).splitlines()
     most_common = most_likely_message(signals, selector=most_common_counter_element)
     least_common = most_likely_message(signals, selector=least_common_counter_element)
-    report_solution(
-        puzzle_title="Day 6: Signals and Noise",
-        part_one_solution=most_common,
-        part_two_solution=least_common,
+    print(
+        format_solution(
+            title="Day 6: Signals and Noise",
+            part_one=most_common,
+            part_two=least_common,
+        )
     )

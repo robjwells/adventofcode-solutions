@@ -11,7 +11,7 @@ from pyrsistent.typing import PVector
 
 import pytest
 
-from aoc_common import load_puzzle_input
+from aoc import load_puzzle_input
 
 
 class ItemKind(Enum):
@@ -228,7 +228,7 @@ class State:
 
 
 if __name__ == "__main__":
-    lines = load_puzzle_input(day=11).splitlines()
+    lines = load_puzzle_input(2016, day=11).splitlines()
     s = State(0, pvector([parse(line) for line in lines]))
     s1 = State(0, pvector([parse(line) for line in lines]))
     s2 = State(1, pvector([parse(line) for line in lines]))

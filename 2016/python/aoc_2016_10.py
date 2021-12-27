@@ -9,7 +9,7 @@ from lark import Lark, Transformer
 from pyrsistent import m, v
 from pyrsistent.typing import PMap, PVector
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 grammar = """
 ?start: init | exchange
@@ -207,7 +207,9 @@ value 2 goes to bot 2"""
 
 
 if __name__ == "__main__":
-    instructions = [parse(line) for line in load_puzzle_input(day=10).splitlines()]
+    instructions = [
+        parse(line) for line in load_puzzle_input(2016, day=10).splitlines()
+    ]
     final_state = State.process_all(instructions)
 
     bot_we_want = final_state.find_bot_that_handled_chip_values(61, 17)
@@ -218,8 +220,10 @@ if __name__ == "__main__":
         * final_state.current["output 2"].chips[0]
     )
 
-    report_solution(
-        puzzle_title="Day 10: Balance Bots",
-        part_one_solution=bot_we_want.name,
-        part_two_solution=output_product,
+    print(
+        format_solution(
+            title="Day 10: Balance Bots",
+            part_one=bot_we_want.name,
+            part_two=output_product,
+        )
     )

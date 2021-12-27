@@ -5,7 +5,7 @@ from enum import Enum, auto
 
 import pytest
 
-from aoc_common import load_puzzle_input, report_solution
+from aoc import load_puzzle_input, format_solution
 
 _marker = re.compile(r"\( (?P<length> \d+ ) x (?P<times> \d+ ) \)", flags=re.VERBOSE)
 
@@ -74,11 +74,13 @@ def test_v2_decompressed_length(string: str, expected_length: int) -> None:
 
 
 if __name__ == "__main__":
-    compressed = load_puzzle_input(day=9)
+    compressed = load_puzzle_input(2016, day=9)
     v1_length = decompressed_length(compressed)
     v2_length = decompressed_length(compressed, FormatVersion.TWO)
-    report_solution(
-        puzzle_title="Day 9: Explosives in Cyberspace",
-        part_one_solution=v1_length,
-        part_two_solution=v2_length,
+    print(
+        format_solution(
+            title="Day 9: Explosives in Cyberspace",
+            part_one=v1_length,
+            part_two=v2_length,
+        )
     )
