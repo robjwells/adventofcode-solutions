@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from functools import reduce
-from pathlib import Path
 from typing import Literal, TypeGuard, TypeAlias, NoReturn
+
+import aoc
 
 
 def assert_never(value: NoReturn) -> NoReturn:
@@ -87,6 +88,6 @@ def main(puzzle_input_text: str) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    puzzle_input_file = Path(__file__).parent.parent.joinpath("input", "2021-02.txt")
-    results = main(puzzle_input_file.read_text())
-    print(results)
+    puzzle_input = aoc.load_puzzle_input(2021, 2)
+    p1, p2 = main(puzzle_input)
+    print(aoc.format_solution(title=__doc__, part_one=p1, part_two=p2))

@@ -1,6 +1,6 @@
 """--- Day 1: Sonar Sweep ---"""
-from pathlib import Path
 
+import aoc
 from more_itertools import windowed
 
 
@@ -26,13 +26,6 @@ def solve(puzzle_input_text: str) -> tuple[int, int]:
 
 
 if __name__ == "__main__":
-    puzzle_input_file = Path(__file__).parent.parent.joinpath("input", "2021-01.txt")
-    p1, p2 = solve(puzzle_input_file.read_text())
-    print(
-        "=" * len(__doc__ or ""),
-        __doc__,
-        "=" * len(__doc__ or ""),
-        f"Part one: {p1}",
-        f"Part two: {p2}",
-        sep="\n",
-    )
+    puzzle_input = aoc.load_puzzle_input(2021, 1)
+    p1, p2 = solve(puzzle_input)
+    print(aoc.format_solution(title=__doc__, part_one=p1, part_two=p2))
