@@ -4,7 +4,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-import aoc_common
+import aoc
 from intcode import HaltExecution, IntCode, parse_program
 
 DAY = 13
@@ -91,7 +91,7 @@ def main(program: List[int]) -> Tuple[int, int]:
 
 
 if __name__ == "__main__":
-    program = parse_program(aoc_common.load_puzzle_input(DAY))
+    program = parse_program(aoc.load_puzzle_input(2019, DAY))
     part_one_solution, part_two_solution = main(program)
 
     assert (
@@ -102,8 +102,10 @@ if __name__ == "__main__":
         part_two_solution == 12954
     ), "Part two solution doesn't match known-correct answer."
 
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

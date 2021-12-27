@@ -1,7 +1,7 @@
 """Day 2: 1202 Program Alarm"""
 from typing import List, Optional
 
-import aoc_common
+import aoc
 from intcode import IntCode, parse_program
 
 DAY = 2
@@ -31,7 +31,7 @@ def solve_part_two(input_data: List[int]) -> Optional[int]:
 
 
 if __name__ == "__main__":
-    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    puzzle_input = aoc.load_puzzle_input(2019, DAY)
     parsed = parse_program(puzzle_input)
     part_one_solution = solve_part_one(parsed)
     assert part_one_solution == 5866663, "Solution does not match known-correct"
@@ -39,8 +39,10 @@ if __name__ == "__main__":
     assert part_two_solution == 4259, "Solution does not match known-correct"
     if part_two_solution is None:
         print("!! Failed to find part two solution.")
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

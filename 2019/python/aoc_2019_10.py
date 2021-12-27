@@ -6,7 +6,7 @@ from typing import DefaultDict, Deque, Iterable, Iterator, List, NamedTuple, Set
 
 import pytest
 
-import aoc_common
+import aoc
 
 DAY = 10
 
@@ -280,7 +280,7 @@ def main(grid: ParsedGrid) -> Tuple[int, int]:
 
 
 if __name__ == "__main__":
-    grid = parse_grid(aoc_common.load_puzzle_input(DAY))
+    grid = parse_grid(aoc.load_puzzle_input(2019, DAY))
     part_one_solution, part_two_solution = main(grid)
     assert (
         part_one_solution == 276
@@ -288,8 +288,10 @@ if __name__ == "__main__":
     assert (
         part_two_solution == 1321
     ), "Part two solution doesn't match known-correct answer."
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

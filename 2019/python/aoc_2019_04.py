@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import List, Optional, Tuple
 
-import aoc_common
+import aoc
 
 DAY = 4
 
@@ -54,7 +54,7 @@ def is_acceptable(number: int, *, overlapping_ok: bool = True) -> bool:
         double_func = contains_double_number
     else:
         double_func = contains_nonoverlapping_double_number
-    place_list = aoc_common.split_number_by_places(number)
+    place_list = aoc.split_number_by_places(number)
     return is_in_nondecreasing_order(place_list) and double_func(place_list)
 
 
@@ -76,7 +76,7 @@ def parse_input(puzzle_input: str) -> range:
 
 
 def main() -> Tuple[int, Optional[int]]:
-    puzzle_range = parse_input(aoc_common.load_puzzle_input(DAY))
+    puzzle_range = parse_input(aoc.load_puzzle_input(2019, DAY))
     number_acceptable = count_acceptable_numbers(puzzle_range)
     number_acceptable_nonoverlapping = count_acceptable_numbers(
         puzzle_range, overlapping_ok=False
@@ -86,8 +86,10 @@ def main() -> Tuple[int, Optional[int]]:
 
 if __name__ == "__main__":
     part_one_solution, part_two_solution = main()
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

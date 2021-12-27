@@ -9,7 +9,7 @@ from typing import Deque, Dict, Iterator, List, Set, Tuple
 import png
 from PIL import Image
 
-import aoc_common
+import aoc
 from intcode import IntCode, parse_program
 
 DAY = 15
@@ -213,7 +213,7 @@ def render_maze_frame(maze: Dict[Position, Tile]) -> None:
 
 if __name__ == "__main__":
     part_one_solution, part_two_solution = main(
-        parse_program(aoc_common.load_puzzle_input(DAY))
+        parse_program(aoc.load_puzzle_input(2019, DAY))
     )
 
     assert (
@@ -224,8 +224,10 @@ if __name__ == "__main__":
         part_two_solution == 278
     ), "Part one solution doesn't match known-correct answer."
 
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

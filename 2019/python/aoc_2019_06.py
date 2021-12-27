@@ -4,7 +4,7 @@ from collections import defaultdict, deque
 from copy import deepcopy
 from typing import DefaultDict, Iterator, List, NamedTuple, Tuple
 
-import aoc_common
+import aoc
 
 DAY = 6
 
@@ -136,10 +136,12 @@ I)SAN"""
 
 
 if __name__ == "__main__":
-    parsed = parse_input(aoc_common.load_puzzle_input(DAY))
+    parsed = parse_input(aoc.load_puzzle_input(2019, DAY))
     part_one_solution, part_two_solution = main(parsed)
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

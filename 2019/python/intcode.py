@@ -14,7 +14,7 @@ from typing import (
     Union,
 )
 
-from aoc_common import split_number_by_places
+from aoc import split_number_by_places
 
 ParameterModeList = List[int]
 

@@ -7,7 +7,7 @@ from typing import DefaultDict, Deque, Dict, Iterator, List, Set, Tuple
 
 import pytest
 
-import aoc_common
+import aoc
 
 DAY = 14
 
@@ -229,7 +229,7 @@ def main(reactions: Reactions) -> Tuple[int, int]:
 
 
 if __name__ == "__main__":
-    reactions = dict(parse_input(aoc_common.load_puzzle_input(DAY)))
+    reactions = dict(parse_input(aoc.load_puzzle_input(2019, DAY)))
     part_one_solution, part_two_solution = main(reactions)
 
     assert (
@@ -240,8 +240,10 @@ if __name__ == "__main__":
         part_two_solution == 4366186
     ), "Part two solution doesn't match known-correct answer."
 
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

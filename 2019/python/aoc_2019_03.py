@@ -6,7 +6,7 @@ from typing import Callable, Dict, List, NamedTuple, Set, Tuple
 
 import pytest
 
-import aoc_common
+import aoc
 
 DAY = 3
 
@@ -156,7 +156,7 @@ def trace_wires(instructions: List[List[Instruction]]) -> List[TraceDict]:
 
 
 def main() -> Tuple[int, int]:
-    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    puzzle_input = aoc.load_puzzle_input(2019, DAY)
     instructions = parse_input(puzzle_input)
     wire_traces = trace_wires(instructions)
     part_one_solution = find_closest_intersection_distance(wire_traces)
@@ -166,8 +166,10 @@ def main() -> Tuple[int, int]:
 
 if __name__ == "__main__":
     part_one_solution, part_two_solution = main()
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

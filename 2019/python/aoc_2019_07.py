@@ -4,7 +4,7 @@ from typing import List, Tuple
 
 import pytest
 
-import aoc_common
+import aoc
 from intcode import HaltExecution, IntCode, parse_program
 
 DAY = 7
@@ -145,7 +145,7 @@ def test_max_of_feedback_loop(program: List[int], expected_result: int) -> None:
 
 
 if __name__ == "__main__":
-    program = parse_program(aoc_common.load_puzzle_input(DAY))
+    program = parse_program(aoc.load_puzzle_input(2019, DAY))
     part_one_solution, part_two_solution = main(program)
     assert (
         part_one_solution == 14902
@@ -153,8 +153,10 @@ if __name__ == "__main__":
     assert (
         part_two_solution == 6489132
     ), "Part one solution does not match known-correct solution."
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )

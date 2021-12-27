@@ -3,7 +3,7 @@ from typing import List
 
 import pytest
 
-import aoc_common
+import aoc
 
 DAY = 1
 
@@ -42,12 +42,14 @@ def parse_input(puzzle_input: str) -> List[int]:
 
 
 if __name__ == "__main__":
-    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    puzzle_input = aoc.load_puzzle_input(2019, DAY)
     parsed = parse_input(puzzle_input)
     fuel_required_for_modules = sum(map(fuel_to_launch_mass, parsed))
     total_fuel_required = sum(map(fuel_to_launch_mass_and_fuel, parsed))
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=fuel_required_for_modules,
-        part_two_solution=total_fuel_required,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=fuel_required_for_modules,
+            part_two=total_fuel_required,
+        )
     )

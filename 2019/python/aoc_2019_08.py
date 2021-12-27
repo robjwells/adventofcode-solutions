@@ -1,7 +1,7 @@
 """Day 8: Space Image Format"""
 from typing import Iterator, List, Tuple
 
-import aoc_common
+import aoc
 
 DAY = 8
 
@@ -88,7 +88,7 @@ def main(image: SpaceImage) -> Tuple[int, str]:
 
 
 if __name__ == "__main__":
-    image_data = aoc_common.load_puzzle_input(DAY)
+    image_data = aoc.load_puzzle_input(2019, DAY)
     image = SpaceImage(width=25, height=6, image_data=image_data)
     part_one_solution, part_two_solution = main(image)
     assert (
@@ -110,9 +110,11 @@ if __name__ == "__main__":
         part_two_stripped == part_two_expected
     ), "Part two solution does not match saved known-correct solution."
 
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution="\n\n" + part_two_solution,
-        # Prepend newlines to the image string to clear "Part two solution".
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two="\n\n" + part_two_solution,
+            # Prepend newlines to the image string to clear "Part two solution".
+        )
     )

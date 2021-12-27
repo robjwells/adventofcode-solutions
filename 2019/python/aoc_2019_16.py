@@ -4,7 +4,7 @@ from typing import Iterator, List, Tuple
 
 import pytest
 
-import aoc_common
+import aoc
 
 DAY = 16
 
@@ -96,7 +96,7 @@ def repeat_fft(signal: List[int], phases: int) -> List[int]:
     ],
 )
 def test_fft(signal: int, phases: int, first_eight_string: str) -> None:
-    result_signal = repeat_fft(aoc_common.split_number_by_places(signal), phases)
+    result_signal = repeat_fft(aoc.split_number_by_places(signal), phases)
     assert "".join(map(str, result_signal[:8])) == first_eight_string
 
 
@@ -136,7 +136,7 @@ def main(signal: List[int]) -> Tuple[str, str]:
 
 
 if __name__ == "__main__":
-    signal = aoc_common.split_number_by_places(int(aoc_common.load_puzzle_input(DAY)))
+    signal = aoc.split_number_by_places(int(aoc.load_puzzle_input(2019, DAY)))
     part_one_solution, part_two_solution = main(signal)
 
     assert (
@@ -147,8 +147,10 @@ if __name__ == "__main__":
         part_two_solution == "84024125"
     ), "Part two solution doesn't match known-correct answer."
 
-    aoc_common.report_solution(
-        puzzle_title=__doc__,
-        part_one_solution=part_one_solution,
-        part_two_solution=part_two_solution,
+    print(
+        aoc.format_solution(
+            title=__doc__,
+            part_one=part_one_solution,
+            part_two=part_two_solution,
+        )
     )
