@@ -1,5 +1,5 @@
 """Advent of Code 2018 Day 7: The Sum of Its Parts"""
-import aoc_common
+import aoc
 
 from collections import deque, defaultdict
 
@@ -126,7 +126,7 @@ def test_time_parallel_work():
 
 
 if __name__ == "__main__":
-    puzzle_input = parse_puzzle_input(aoc_common.load_puzzle_input(DAY))
+    puzzle_input = parse_puzzle_input(aoc.load_puzzle_input(2018, DAY))
 
     print(__doc__)
 

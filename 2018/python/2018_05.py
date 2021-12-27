@@ -2,7 +2,7 @@
 
 import collections
 
-import aoc_common
+import aoc
 
 DAY = 5
 
@@ -25,7 +25,7 @@ def solve_part_one(puzzle_input):
 
 
 if __name__ == "__main__":
-    puzzle_input = aoc_common.load_puzzle_input(DAY)
+    puzzle_input = aoc.load_puzzle_input(2018, DAY)
 
     print(__doc__)
 
