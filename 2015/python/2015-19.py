@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Advent of Code 2015, Day 19: Medicine for Rudolph"""
 
-import pathlib
 import re
 
-input_file = pathlib.Path("../input/2015-19.txt")
+import aoc
 
 
-def parse_input(text: str) -> (list, str):
+def parse_input(text: str) -> tuple[list, str]:
     """Return a list of replacement pairs and the molecule string"""
     replacement_block, molecule = text.rstrip().split("\n\n")
     replacement_pairs = [
@@ -117,7 +116,7 @@ def count(molecule, replacements):
     # Create a set of all the 'source' elements, with the strings reversed
     reps = {a[::-1] for a, b in replacements}
 
-    def loop(molecule, tokens=0, parens=0, commas=0):
+    def loop(molecule, tokens=0, parens=0, commas=0) -> tuple[int, int, int]:
         # Minimum length of the molecule list is 1.
         if len(molecule) == 1:
             return (tokens, parens, commas)
@@ -132,6 +131,7 @@ def count(molecule, replacements):
             return loop(molecule[1:], tokens + 1, parens, commas)
         elif first + second in reps:
             return loop(rest, tokens + 1, parens, commas)
+        assert False, "not reached"
 
     # This looks so gross in Python
     molecule = molecule.replace("Rn", "(").replace("Ar", ")").replace("Y", ",")
@@ -141,20 +141,17 @@ def count(molecule, replacements):
     return tokens - parens - 2 * commas
 
 
-def main():
-    replacement_pairs, molecule = parse_input(input_file.read_text())
+def main(puzzle_text: str) -> tuple[int, int]:
+    replacement_pairs, molecule = parse_input(puzzle_text)
     generated_molecules = generate_replacements(
         molecule=molecule, replacements=replacement_pairs
     )
     num_generated = len(generated_molecules)
-    print(f"Part one, number of molecules generated: {num_generated}")
-
-    min_steps_to_molecule = steps_to_molecule(molecule, replacement_pairs)
-    print(f"Part two, minimum steps to molecule: {min_steps_to_molecule}" " (iter)")
-
     min_steps_by_count = count(molecule, replacement_pairs)
-    print(f"Part two, minimum steps to molecule: {min_steps_by_count}" " (count)")
+    return num_generated, min_steps_by_count
 
 
 if __name__ == "__main__":
-    main()
+    puzzle_text = aoc.load_puzzle_input(2015, 19)
+    p1, p2 = main(puzzle_text)
+    print(aoc.format_solution(title=__doc__, part_one=p1, part_two=p2))
