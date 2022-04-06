@@ -37,7 +37,7 @@ def load_puzzle_input(year: int, day: int) -> str:
 
 def format_solution(
     *,
-    title: str,
+    title: str | None,
     part_one: int | str,
     part_two: int | str | None = None,
 ) -> str:
