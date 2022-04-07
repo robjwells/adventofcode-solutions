@@ -164,12 +164,19 @@ class Bingo:
     def any_won(self) -> bool:
         return any(board.has_won for board in self.boards)
 
-    def play_until_won(self) -> Board:
+    def play_until_next_winner(self) -> Board:
         while not self.any_won:
             self.draw()
         winner = [b for b in self.boards if b.has_won][0]
         return winner
 
+    def play_until_last_winner(self) -> Board:
+        # Clear out the earlier winners
+        while len(self.boards) > 1:
+            _ = self.play_until_next_winner()
+            self.boards = [b for b in self.boards if not b.has_won]
+        last_winner = self.play_until_next_winner()
+        return last_winner
 
 def test_example_input() -> None:
     example_data = """\
@@ -194,7 +201,7 @@ def test_example_input() -> None:
 2  0  12  3  7
 """
     game = Bingo.from_string(example_data)
-    winner = game.play_until_won()
+    winner = game.play_until_next_winner()
     last_number_played = game.last_drawn
     assert last_number_played == 24
     unmarked_sum = sum(winner.unmarked_numbers)
@@ -202,16 +209,24 @@ def test_example_input() -> None:
 
 
 def calculate_first_winner_final_score(game: Bingo) -> int:
-    winner = game.play_until_won()
+    winner = game.play_until_next_winner()
     last_number_played = cast(int, game.last_drawn)
     unmarked_sum = sum(winner.unmarked_numbers)
     return unmarked_sum * last_number_played
 
 
-def main(puzzle_input: str) -> tuple[int, None]:
+def calculate_last_winner_final_score(game: Bingo) -> int:
+    winner = game.play_until_last_winner()
+    last_number_played = cast(int, game.last_drawn)
+    unmarked_sum = sum(winner.unmarked_numbers)
+    return unmarked_sum * last_number_played
+
+
+def main(puzzle_input: str) -> tuple[int, int]:
     bingo = Bingo.from_string(puzzle_input)
     p1 = calculate_first_winner_final_score(bingo)
-    return p1, None
+    p2 = calculate_last_winner_final_score(bingo)
+    return p1, p2
 
 
 if __name__ == "__main__":
