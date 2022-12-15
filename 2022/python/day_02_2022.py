@@ -42,26 +42,36 @@ class Result(IntEnum):
                 raise ValueError(f"Invalid abbreviation: {char!r}")
 
 
+def responses_to_opponent_shape(s: Shape) -> dict[Shape, Result]:
+    # Opponent's Shape -> My Shape -> Result (for me)
+    STRATEGY: dict[Shape, dict[Shape, Result]] = {
+        # They play
+        Shape.ROCK: {
+            # I play
+            Shape.SCISSORS: Result.LOSE,
+            Shape.ROCK: Result.DRAW,
+            Shape.PAPER: Result.WIN,
+        },
+        # They play
+        Shape.PAPER: {
+            # I play
+            Shape.ROCK: Result.LOSE,
+            Shape.PAPER: Result.DRAW,
+            Shape.SCISSORS: Result.WIN,
+        },
+        # They play
+        Shape.SCISSORS: {
+            # I play
+            Shape.PAPER: Result.LOSE,
+            Shape.SCISSORS: Result.DRAW,
+            Shape.ROCK: Result.WIN,
+        },
+    }
+    return STRATEGY[s]
 
-def score_round(*, me: Shape, opponent: Shape) -> Result:
-    match (me, opponent):
-        case (Shape.ROCK, Shape.PAPER) | (Shape.PAPER, Shape.SCISSORS) | (
-            Shape.SCISSORS,
-            Shape.ROCK,
-        ):
-            return Result.LOSE
-        case (Shape.ROCK, Shape.ROCK) | (Shape.PAPER, Shape.PAPER) | (
-            Shape.SCISSORS,
-            Shape.SCISSORS,
-        ):
-            return Result.DRAW
-        case (Shape.ROCK, Shape.SCISSORS) | (Shape.PAPER, Shape.ROCK) | (
-            Shape.SCISSORS,
-            Shape.PAPER,
-        ):
-            return Result.WIN
-        case _:
-            raise ValueError(f"Should be unreachable. Got args:  {me=}  {opponent=}")
+
+def judge_round(*, me: Shape, opponent: Shape) -> Result:
+    return responses_to_opponent_shape(opponent)[me]
 
 
 @dataclass(frozen=True)
@@ -81,7 +91,7 @@ def parse_shape_pairs(puzzle_input: str) -> list[ShapePair]:
 def solve_part_one(puzzle_input: str) -> int:
     shape_pairs = parse_shape_pairs(puzzle_input)
     round_scores = [
-        pair.me + score_round(me=pair.me, opponent=pair.opponent)
+        pair.me + judge_round(me=pair.me, opponent=pair.opponent)
         for pair in shape_pairs
     ]
     return sum(round_scores)
@@ -101,19 +111,13 @@ def parse_shape_and_result(puzzle_input: str) -> list[ShapeResult]:
     ]
 
 
-def match_shape_to_outcome(opponent: Shape, outcome: Result) -> Shape:
-    if outcome == Result.DRAW:
-        return opponent
-
-    match (outcome, opponent):
-        case (Result.LOSE, Shape.ROCK): return Shape.SCISSORS
-        case (Result.WIN, Shape.ROCK): return Shape.PAPER
-        case (Result.LOSE, Shape.PAPER): return Shape.ROCK
-        case (Result.WIN, Shape.PAPER): return Shape.SCISSORS
-        case (Result.LOSE, Shape.SCISSORS): return Shape.PAPER
-        case (Result.WIN, Shape.SCISSORS): return Shape.ROCK
-        case _:
-            raise ValueError(f"Should be unreachable. Got args:  {opponent=}  {outcome=}")
+def match_shape_to_outcome(opponent: Shape, desired_result: Result) -> Shape:
+    for shape, result in responses_to_opponent_shape(opponent).items():
+        if result == desired_result:
+            return shape
+    raise ValueError(
+        f"Should be unreachable. Got args:  {opponent=}  {desired_result=}"
+    )
 
 
 def solve_part_two(puzzle_input: str) -> int:
