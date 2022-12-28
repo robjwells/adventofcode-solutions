@@ -90,20 +90,17 @@ def parse(s: str) -> Directory:
     return ds[0]
 
 
-def filter_dirs(
-    root: Directory, condition: Callable[[Directory], bool]
-) -> Iterator[Directory]:
+def walk_dirs(root: Directory) -> Iterator[Directory]:
     queue = deque([root])
     while queue:
         cwd = queue.popleft()
         queue.extend(cwd.dirs.values())
-        if condition(cwd):
-            yield cwd
+        yield cwd
 
 
 def solve_part_one(root: Directory) -> int:
     assert root.name == "/"
-    return sum(d.size for d in filter_dirs(root, lambda d: d.size <= 100_000))
+    return sum(d.size for d in walk_dirs(root) if d.size <= 100_000)
 
 
 def solve_part_two(root: Directory) -> int:
@@ -114,9 +111,7 @@ def solve_part_two(root: Directory) -> int:
     current_free = total_size - root.size
     minimum_size_to_delete = needed_free - current_free
 
-    return min(
-        d.size for d in filter_dirs(root, lambda d: d.size >= minimum_size_to_delete)
-    )
+    return min(d.size for d in walk_dirs(root) if d.size >= minimum_size_to_delete)
 
 
 def main() -> None:
