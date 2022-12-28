@@ -1,9 +1,12 @@
 from __future__ import annotations
+
 from collections import deque
 from dataclasses import dataclass
-from typing import Callable, Iterator, Sequence
+from functools import reduce
+from typing import Iterator, Sequence
 
 import pytest
+from pyrsistent import PVector, v
 
 from util import read_input
 
@@ -21,11 +24,13 @@ class Directory:
     name: str
     dirs: dict[str, Directory]
     files: dict[str, File]
+    _size: int | None
 
     def __init__(self, name: str) -> None:
         self.name = name
         self.dirs = {}
         self.files = {}
+        self._size = None
 
     def ensure_dir(self, name: str) -> Directory:
         return self.dirs.setdefault(name, Directory(name))
@@ -36,9 +41,11 @@ class Directory:
 
     @property
     def size(self) -> int:
-        files_total = sum(f.size for f in self.files.values())
-        dirs_total = sum(d.size for d in self.dirs.values())
-        return files_total + dirs_total
+        if self._size is None:
+            files_total = sum(f.size for f in self.files.values())
+            dirs_total = sum(d.size for d in self.dirs.values())
+            self._size = files_total + dirs_total
+        return self._size
 
     def __str__(self) -> str:
         output = f"- {self.name}\n"
@@ -64,30 +71,29 @@ class Directory:
         return cwd
 
 
-def parse(s: str) -> Directory:
-    ds: list[Directory] = []
-    for line in s.splitlines():
-        if line.startswith("$"):
-            line = line.split(" ", 1)[1]
-            if line.startswith("ls"):
-                continue
-            elif line.startswith("cd"):
-                new_dir = line.split()[1]
-                if new_dir == "..":
-                    ds.pop()
-                else:
-                    if not ds:
-                        ds.append(Directory(new_dir))
-                    else:
-                        nd = ds[-1].ensure_dir(new_dir)
-                        ds.append(nd)
-        elif line.startswith("dir"):
-            continue
-        else:
-            size, name = line.split()
-            ds[-1].add_file(name, int(size))
+def _parse_line(path: PVector[Directory], line: str) -> PVector[Directory]:
+    match line.split():
+        case ["$", "ls"]:
+            return path
+        case ["$", "cd", ".."]:
+            return path.delete(-1)
+        case ["$", "cd", d] if not path:
+            return path.append(Directory(d))
+        case ["$", "cd", d] if path:
+            nd = path[-1].ensure_dir(d)
+            return path.append(nd)
+        case ["dir", _]:
+            return path
+        case [size, name]:
+            path[-1].add_file(name, int(size))
+            return path
+        case _:
+            raise ValueError(r"Unexpected line: {line!r}")
 
-    return ds[0]
+
+def parse(s: str) -> Directory:
+    root, *_ = reduce(_parse_line, s.splitlines(), v())
+    return root
 
 
 def walk_dirs(root: Directory) -> Iterator[Directory]:
@@ -109,9 +115,9 @@ def solve_part_two(root: Directory) -> int:
     total_size = 70000000
     needed_free = 30000000
     current_free = total_size - root.size
-    minimum_size_to_delete = needed_free - current_free
+    minimum_size = needed_free - current_free
 
-    return min(d.size for d in walk_dirs(root) if d.size >= minimum_size_to_delete)
+    return min(d.size for d in walk_dirs(root) if d.size >= minimum_size)
 
 
 def main() -> None:
