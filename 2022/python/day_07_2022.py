@@ -1,7 +1,7 @@
 from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Callable, Iterator, Sequence
 
 import pytest
 
@@ -103,18 +103,20 @@ def parse(s: str) -> Directory:
     return ds[0]
 
 
-def solve_part_one(root: Directory) -> int:
-    assert root.name == "/"
-
-    candidates = []
+def filter_dirs(
+    root: Directory, condition: Callable[[Directory], bool]
+) -> Iterator[Directory]:
     queue = deque([root])
     while queue:
         cwd = queue.popleft()
         queue.extend(cwd.dirs.values())
-        if cwd.size <= 100_000:
-            candidates.append(cwd)
+        if condition(cwd):
+            yield cwd
 
-    return sum(d.size for d in candidates)
+
+def solve_part_one(root: Directory) -> int:
+    assert root.name == "/"
+    return sum(d.size for d in filter_dirs(root, lambda d: d.size <= 100_000))
 
 
 def solve_part_two(root: Directory) -> int:
@@ -122,21 +124,12 @@ def solve_part_two(root: Directory) -> int:
 
     total_size = 70000000
     needed_free = 30000000
-    current_size = root.size
-    current_free = total_size - current_size
+    current_free = total_size - root.size
     minimum_size_to_delete = needed_free - current_free
 
-    queue = deque([root])
-    candidate_sizes = []
-    while queue:
-        cwd = queue.popleft()
-        queue.extend(cwd.dirs.values())
-
-        cwd_size = cwd.size
-        if cwd_size >= minimum_size_to_delete:
-            candidate_sizes.append(cwd.size)
-
-    return min(candidate_sizes)
+    return min(
+        d.size for d in filter_dirs(root, lambda d: d.size >= minimum_size_to_delete)
+    )
 
 
 def main() -> None:
