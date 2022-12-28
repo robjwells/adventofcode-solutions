@@ -64,19 +64,6 @@ class Directory:
         return cwd
 
 
-def ensure_dir(tree, path):
-    for dir in path:
-        if dir not in tree:
-            tree[dir] = {}
-        tree = tree[dir]
-    return tree
-
-
-def record_file(tree, path, filename, size):
-    dir = ensure_dir(tree, path)
-    dir[filename] = size
-
-
 def parse(s: str) -> Directory:
     ds: list[Directory] = []
     for line in s.splitlines():
