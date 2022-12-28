@@ -117,12 +117,39 @@ def solve_part_one(root: Directory) -> int:
     return sum(d.size for d in candidates)
 
 
+def solve_part_two(root: Directory) -> int:
+    # Smallest directory that can be deleted to free up enough space.
+
+    total_size = 70000000
+    needed_free = 30000000
+    current_size = root.size
+    current_free = total_size - current_size
+    minimum_size_to_delete = needed_free - current_free
+
+    queue = deque([root])
+    candidate_sizes = []
+    while queue:
+        cwd = queue.popleft()
+        queue.extend(cwd.dirs.values())
+
+        cwd_size = cwd.size
+        if cwd_size >= minimum_size_to_delete:
+            candidate_sizes.append(cwd.size)
+
+    return min(candidate_sizes)
+
+
 def main() -> None:
     puzzle_input = read_input(7)
     root = parse(puzzle_input)
 
     part_one = solve_part_one(root)
+    assert part_one == 1_077_191
     print(f"Part one: {part_one:,}")
+
+    part_two = solve_part_two(root)
+    assert part_two == 5_649_896
+    print(f"Part two: {part_two:,}")
 
 
 if __name__ == "__main__":
@@ -165,7 +192,7 @@ $ ls
         (("d",), 24_933_642),
         (("/",), 48_381_165),
     ],
-)
+)  # type: ignore
 def test_parse(names: Sequence[str], size: int) -> None:
     tree = parse(SAMPLE_INPUT)
     assert tree.name == "/"
@@ -174,3 +201,7 @@ def test_parse(names: Sequence[str], size: int) -> None:
 
 def test_solve_part_one_sample_input() -> None:
     assert solve_part_one(parse(SAMPLE_INPUT)) == 95_437
+
+
+def test_solve_part_two_sample_input() -> None:
+    assert solve_part_two(parse(SAMPLE_INPUT)) == 24933642
